@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCG Coach Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--green-dark:#0a3d1e;--green-mid:#146b3a;--cream:#f5f0e8;--cream-dark:#d9d0c0;--white:#fff;--text:#2c3e50;--text-light:#666;--border:#e0d8cc;--gold:#d4a017;--red:#c0392b;--transition:all 0.2s ease;--radius:12px;--radius-sm:8px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--cream);color:var(--text);line-height:1.5;min-height:100vh}
+.hidden{display:none!important}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(135deg,#f5f0e8 0%,#e8e0d0 100%)}
+.login-logo{text-align:center;margin-bottom:24px}
+.login-logo img{width:120px;height:auto;margin-bottom:8px}
+.login-logo p{font-size:13px;color:var(--text-light);letter-spacing:2px;text-transform:uppercase}
+.login-subtitle{font-size:15px;color:var(--text-light);margin-bottom:20px}
+.coach-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:24px 0;max-width:500px;width:100%}
+.coach-btn{padding:10px 8px;border:2px solid var(--cream-dark);border-radius:var(--radius-sm);background:var(--white);cursor:pointer;font-size:13px;font-weight:600;color:#2c3e50;transition:var(--transition);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px}
+.coach-btn:hover{border-color:var(--green-dark);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.coach-btn.selected{border-color:var(--green-dark);background:rgba(10,61,30,0.06)}
+.coach-btn img{width:48px;height:48px;border-radius:50%;object-fit:cover}
+.coach-btn span{font-size:12px}
+.login-row{display:flex;gap:8px;max-width:300px;width:100%}
+.login-input{flex:1;padding:10px 14px;border:2px solid var(--cream-dark);border-radius:var(--radius-sm);font-size:14px;outline:none;background:var(--white);text-align:center}
+.login-input:focus{border-color:var(--green-dark)}
+.login-submit{padding:10px 20px;background:var(--green-dark);color:var(--white);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:var(--transition)}
+.login-submit:hover{background:var(--green-mid)}
+.login-error{color:var(--red);font-size:13px;margin-top:8px;min-height:20px}
+#appScreen{display:flex;height:100vh}
+.sidebar{width:220px;background:var(--green-dark);color:var(--white);flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column}
+.sidebar-header{display:flex;align-items:center;gap:10px;padding:16px;border-bottom:1px solid rgba(255,255,255,0.15)}
+.sidebar-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.sidebar-name{font-weight:700;font-size:14px;flex:1}
+.logout-btn{background:none;border:1px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;transition:var(--transition)}
+.logout-btn:hover{color:var(--white);border-color:var(--white)}
+.sidebar-section{padding:12px 16px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.5)}
+.team-item{padding:10px 16px;cursor:pointer;font-size:13px;transition:var(--transition);border-left:3px solid transparent;color:rgba(255,255,255,0.8);display:flex;flex-direction:column;gap:2px}
+.team-item:hover{background:rgba(255,255,255,0.08);color:var(--white)}
+.team-item.active{background:rgba(255,255,255,0.12);color:var(--white);border-left-color:var(--gold);font-weight:600}
+.team-item .team-sub{font-size:10px;color:rgba(255,255,255,0.4)}
+.main-content{flex:1;overflow-y:auto;padding:24px 28px}
+.page-header{margin-bottom:20px}
+.page-header h1{font-size:22px;font-weight:700;color:var(--green-dark)}
+.page-header p{font-size:13px;color:var(--text-light);margin-top:2px}
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--white);padding:14px 16px;border-radius:var(--radius-sm);text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.stat-card.gold{background:linear-gradient(135deg,#fef9e7,#fdf2d1)}
+.stat-card.green{background:linear-gradient(135deg,#e8f5e9,#d4edda)}
+.stat-card.red{background:linear-gradient(135deg,#fdecea,#f8d7da)}
+.stat-value{font-size:24px;font-weight:800;color:var(--green-dark)}
+.stat-card.gold .stat-value{color:var(--gold)}
+.stat-card.green .stat-value{color:var(--green-mid)}
+.stat-card.red .stat-value{color:var(--red)}
+.stat-label{font-size:11px;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+.card{background:var(--white);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.card-title{font-size:15px;font-weight:700;color:var(--green-dark);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title .icon{font-size:18px}
+.schedule-list{display:flex;flex-wrap:wrap;gap:6px}
+.schedule-tag{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600;color:var(--white)}
+.schedule-tag.hb{background:linear-gradient(135deg,#0a3d1e,#146b3a)}
+.schedule-tag.jx{background:linear-gradient(135deg,#7b2d8e,#9b59b6)}
+.tab-nav{display:flex;gap:4px;margin-bottom:16px}
+.tab-btn{padding:8px 20px;background:none;border:none;color:var(--text-light);cursor:pointer;font-size:13px;font-weight:600;border-radius:var(--radius-sm);transition:var(--transition)}
+.tab-btn:hover{color:var(--green-dark);background:rgba(10,61,30,0.04)}
+.tab-btn.active{background:var(--green-dark);color:var(--white)}
+.overview-charts{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.chart-card{min-height:300px}
+@media(max-width:900px){.overview-charts{grid-template-columns:1fr}}
+@media(max-width:768px){
+  #appScreen{flex-direction:column}
+  .sidebar{position:fixed;top:0;left:0;bottom:0;width:220px;z-index:200;transform:translateX(-100%);transition:transform .25s ease}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{width:100%;padding:16px;padding-top:56px}
+  .mobile-toggle{display:flex;position:fixed;top:10px;left:10px;z-index:201;background:var(--green-dark);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:16px;font-weight:700;cursor:pointer;align-items:center;gap:6px}
+  .mobile-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:199}
+  .mobile-overlay.show{display:block}
+}
+@media(min-width:769px){
+  .mobile-toggle{display:none}
+  .mobile-overlay{display:none}
+}
+.radar-container{max-width:420px;margin:0 auto}
+.radar-insights{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--cream-dark)}
+.insight-col h4{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;margin:0 0 10px 0}
+.insight-col:first-child h4{color:var(--green-dark)}
+.insight-col:last-child h4{color:var(--red)}
+.insight-item{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
+.insight-label{font-size:13px;font-weight:700;min-width:28px}
+.insight-desc{font-size:11px;color:#999;flex:1}
+.insight-avg{font-size:16px;font-weight:800;min-width:36px;text-align:right}
+.player-table-wrap{overflow-x:auto}
+.player-table{width:100%;border-collapse:collapse;font-size:13px}
+.player-table th{text-align:left;padding:10px 12px;background:var(--green-dark);color:var(--white);font-weight:600;cursor:pointer;white-space:nowrap;user-select:none;position:sticky;top:0}
+.player-table th:hover{background:var(--green-mid)}
+.player-table th .sort{font-size:10px;margin-left:4px;opacity:0.6}
+.player-table td{padding:10px 12px;border-bottom:1px solid var(--cream-dark);white-space:nowrap}
+.player-table tr:hover td{background:rgba(212,160,23,0.06)}
+.player-table tr{cursor:pointer;transition:var(--transition)}
+.per-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-weight:700;font-size:13px;min-width:44px;text-align:center}
+.per-high{background:rgba(10,61,30,0.12);color:var(--green-dark)}
+.per-mid{background:rgba(212,160,23,0.12);color:var(--gold)}
+.per-low{background:rgba(192,57,43,0.1);color:var(--red)}
+.att-bar-wrap{position:relative;width:100%;min-width:50px;height:22px;background:#e8e4dd;border-radius:11px;overflow:hidden}
+.att-bar{height:100%;border-radius:11px;transition:width 0.4s ease}
+.att-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;font-weight:700;color:#2c3e50;z-index:1}
+.quit-divider td{background:#f5f0e8!important;color:var(--text-light);font-size:11px;font-weight:600;text-align:center;padding:8px!important;letter-spacing:0.5px;text-transform:uppercase}
+.quit-divider:hover td{background:#f5f0e8!important}
+.trends-table{width:100%;border-collapse:collapse;font-size:12px}
+.trends-table th{padding:6px 8px;text-align:left;background:rgba(10,61,30,0.06);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:#666;border-bottom:2px solid var(--border)}
+.trends-table td{padding:5px 8px;border-bottom:1px solid #eee}
+.topic-pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.topic-pill{padding:5px 12px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid var(--border);background:var(--white);transition:var(--transition)}
+.topic-pill:hover{border-color:var(--green-dark)}
+.topic-pill.active{background:var(--green-dark);color:var(--white);border-color:var(--green-dark)}
+.topic-pill.attack{border-color:rgba(10,61,30,0.2)}
+.topic-pill.defend{border-color:rgba(142,68,173,0.2)}
+.topic-pill.attack.active{background:var(--green-dark)}
+.topic-pill.defend.active{background:#8e44ad}
+.gameplan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.gameplan-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.gameplan-card img{max-width:260px;width:100%;height:auto;display:block;margin:0 auto;cursor:pointer;border-radius:6px;transition:transform 0.2s}
+.gameplan-card img:hover{transform:scale(1.02)}
+@media(max-width:768px){.gameplan-card img{max-width:140px}}
+.gameplan-card .gp-label{padding:8px 12px;font-size:11px;color:var(--text-light);font-weight:600;text-align:center;background:#faf8f4}
+.gameplan-empty{text-align:center;padding:40px;color:var(--text-light)}
+.drill-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0;margin-bottom:16px;overflow:hidden}
+.drill-card-header{padding:12px 16px;background:linear-gradient(135deg,rgba(10,61,30,0.04) 0%,rgba(10,61,30,0.01) 100%);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.drill-card-header h4{font-size:14px;font-weight:700;color:var(--green-dark);margin:0}
+.drill-phase{display:inline-block;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.03em;background:var(--green-dark);color:var(--white)}
+.drill-card-body{display:flex;gap:0}
+.drill-card-body .drill-media-box{flex:0 0 300px;background:#fafaf8;border-right:1px solid var(--border);display:flex;flex-direction:column;min-height:200px}
+.drill-media-tabs{display:flex;border-bottom:1px solid var(--border)}
+.drill-media-tab{flex:1;padding:8px 12px;font-size:11px;font-weight:600;border:none;background:transparent;color:var(--text-light);cursor:pointer;transition:var(--transition)}
+.drill-media-tab.active{color:var(--green-dark);border-bottom:2px solid var(--green-dark);background:rgba(10,61,30,0.03)}
+.drill-media-tab:hover{background:rgba(10,61,30,0.02)}
+.drill-media-panel{flex:1;display:flex;align-items:center;justify-content:center;padding:12px}
+.drill-media-panel img{max-width:100%;max-height:260px;height:auto;border-radius:6px;cursor:pointer;transition:transform 0.2s}
+.drill-media-panel img:hover{transform:scale(1.03)}
+.drill-media-panel .no-image{color:#ccc;font-size:12px;text-align:center}
+.drill-video-panel{flex-direction:column;gap:8px}
+.drill-video-play-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 32px;background:linear-gradient(135deg,#d4a017,#b8860b);color:#fff;border-radius:12px;text-decoration:none;font-size:13px;font-weight:700;transition:transform 0.15s,box-shadow 0.15s}
+.drill-video-play-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(212,160,23,0.4);color:#fff;text-decoration:none}
+.drill-video-play-icon{font-size:28px;line-height:1}
+.drill-card-content{flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.drill-box{background:#f9f9f6;border-left:3px solid var(--green-dark);border-radius:0 6px 6px 0;padding:10px 14px;font-size:12px;line-height:1.65;color:var(--text)}
+.drill-box.methodology{border-left-color:#1565c0;background:rgba(21,101,192,0.03)}
+.drill-box.success{border-left-color:#2e7d32;background:rgba(46,125,50,0.04)}
+.drill-box-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;color:var(--text-light)}
+.drill-box.methodology .drill-box-label{color:#1565c0}
+.drill-box.success .drill-box-label{color:#2e7d32}
+@media(max-width:768px){
+  .drill-card-body{flex-direction:column}
+  .drill-card-body .drill-media-box{flex:0 0 auto;border-right:none;border-bottom:1px solid var(--border);min-height:auto}
+  .drill-card-body .drill-media-box img{max-height:180px}
+  .drill-video-play-btn{padding:18px 24px}
+}
+.player-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center}
+.player-modal-overlay.active{display:flex}
+.player-modal{background:var(--white);border-radius:var(--radius);padding:28px;max-width:400px;width:90%;position:relative}
+.player-modal h3{font-size:18px;color:var(--green-dark);margin-bottom:4px}
+.player-modal .modal-cn{font-size:14px;color:var(--text-light);margin-bottom:16px}
+.player-modal .modal-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-light)}
+.modal-scores{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.modal-score-item{text-align:center}
+.modal-score-val{font-size:20px;font-weight:800;color:var(--green-dark)}
+.modal-score-label{font-size:10px;color:var(--text-light);text-transform:uppercase}
+.modal-comps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.modal-comp{text-align:center;padding:8px;border-radius:6px;background:#faf8f4}
+.modal-comp-val{font-size:16px;font-weight:700}
+.modal-comp-label{font-size:10px;color:var(--text-light)}
+</style>
+</head>
+<body>
+<div id="loginScreen">
+  <div class="login-logo">
+    <img src="img/fcg-logo.png" alt="FCG" onerror="this.style.display='none'">
+    <p>COACH PORTAL</p>
+  </div>
+  <div class="login-subtitle">Select your name</div>
+  <div class="coach-grid" id="coachGrid"></div>
+  <div class="login-row">
+    <input type="password" class="login-input" id="passwordInput" placeholder="Enter password" autocomplete="off">
+    <button class="login-submit" id="loginBtn">Sign In</button>
+  </div>
+  <div class="login-error" id="loginError"></div>
+</div>
+<div id="appScreen" class="hidden">
+  <button class="mobile-toggle" onclick="toggleSidebar()">☰ Teams</button>
+  <div class="mobile-overlay" id="mobileOverlay" onclick="closeSidebar()"></div>
+  <div class="sidebar" id="sidebar"></div>
+  <div class="main-content" id="mainContent"></div>
+</div>
+<div class="player-modal-overlay" id="playerModalOverlay">
+  <div class="player-modal" id="playerModal"></div>
+</div>
+
+<script>
+const COACHES = ['Easy','Rash','Relax','Lance','Johan','Nikola','Ti','Roger','Ruan','Mia','Rico'];
+const COACH_PHOTOS = {'Easy':'easy.jpg','Rash':'rash.jpg','Relax':'relax.jpg','Lance':'lance.jpg','Johan':'johan.jpg','Nikola':'nikola.jpg','Ti':'tigran.jpg','Roger':'roger.jpg','Ruan':'roger.jpg','Mia':'mia.jpg','Rico':'rico.jpg'};
+
+const TEAMS = [
+  {id:1,gameplan:'U11',name:'U15-G',group:'MU',headCoach:'Relax',assistants:['Rash','Rico'],quit:1,newPlayers:0,sessions:'FRI-HB-18:50-20:20,SUN-HB-08:30-10:00'},
+  {id:2,gameplan:'U11',name:'U12-G',group:'MC',headCoach:'Rash',assistants:['Roger','Ti'],quit:2,newPlayers:0,sessions:'MON-HB-17:15-18:45,TUE-HB-18:50-20:20,THU-HB-17:15-18:45,FRI-HB-18:50-20:20,SAT-HB-08:00-12:00,SUN-HB-08:30-10:00'},
+  {id:3,gameplan:'U10',name:'U12-W',group:'VA',headCoach:'Relax',assistants:['Lance','Rico'],sessions:'TUE-HB-17:15-18:45,THU-HB-17:15-18:45,SAT-HB-16:30-18:00,SUN-HB-10:15-11:45'},
+  {id:4,gameplan:'U11',name:'U11-G',group:'RSB',headCoach:'Ti',assistants:['Rash','Lance'],quit:1,newPlayers:0,sessions:'MON-HB-17:15-18:45,TUE-HB-18:50-20:20,THU-HB-17:15-18:45,FRI-HB-18:50-20:20,SAT-HB-08:00-12:00,SUN-HB-08:30-10:00'},
+  {id:5,gameplan:'U10',name:'U11-W',group:'RSB',headCoach:'Lance',assistants:['Rico','Ti'],sessions:'MON-HB-17:15-18:45,TUE-HB-18:50-20:20,THU-HB-17:15-18:45,FRI-HB-18:50-20:20,SAT-HB-08:00-12:00,SUN-HB-08:30-10:00'},
+  {id:6,gameplan:'U10',name:'U10-G',group:'JUV',headCoach:'Nikola',assistants:['Johan'],quit:3,newPlayers:0,sessions:'MON-HB-17:15-18:45,TUE-HB-18:50-20:20,THU-HB-17:15-18:45,FRI-HB-18:50-20:20,SAT-HB-08:00-12:00,SUN-HB-08:30-10:00'},
+  {id:7,gameplan:'U09',name:'U10-W',group:'TWE',headCoach:'Rico',assistants:['Johan'],sessions:'MON-HB-18:50-20:20,TUE-HB-17:15-18:45,THU-HB-18:50-20:20,FRI-HB-17:15-18:45,SAT-HB-08:00-12:00,SUN-HB-10:15-11:45'},
+  {id:8,gameplan:'U09',name:'U9-G',group:'GAL',headCoach:'Johan',assistants:['Rico'],sessions:'MON-HB-18:50-20:20,TUE-HB-17:15-18:45,THU-HB-18:50-20:20,FRI-HB-17:15-18:45,SAT-HB-08:00-12:00,SUN-HB-10:15-11:45'},
+  {id:9,gameplan:'U07',name:'U9-W',group:'MA',headCoach:'Ti',assistants:['Lance','Roger'],quit:2,newPlayers:0,sessions:'MON-HB-18:50-20:20,TUE-HB-17:15-18:45,THU-HB-18:50-20:20,FRI-HB-17:15-18:45,SAT-HB-08:00-12:00,SUN-HB-10:15-11:45'},
+  {id:10,gameplan:'U06',name:'U9-B',group:'PS',headCoach:'Relax',assistants:['Lance','Rico'],quit:2,newPlayers:0,sessions:'MON-HB-18:50-20:20,TUE-HB-17:15-18:45,THU-HB-18:50-20:20,SAT-HB-16:30-18:00,SUN-HB-10:15-11:45'},
+  {id:11,gameplan:'U08',name:'U8-G',group:'BEN',headCoach:'Roger',assistants:['Ti'],quit:2,newPlayers:0,sessions:'MON-HB-18:50-20:20,TUE-HB-17:15-18:45,THU-HB-18:50-20:20,FRI-HB-17:15-18:45,SAT-HB-08:00-12:00,SUN-HB-10:15-11:45'},
+  {id:12,gameplan:'U07',name:'U8-W',group:'FE',headCoach:'Lance',assistants:['Nikola','Ti'],sessions:'MON-HB-18:50-20:20,TUE-HB-17:15-18:45,THU-HB-18:50-20:20,FRI-HB-17:15-18:45,SAT-HB-08:00-12:00,SUN-JX-14:15-15:45'},
+  {id:14,gameplan:'U07',name:'U7-G',group:'FE',headCoach:'Lance',assistants:['Nikola'],sessions:'MON-HB-18:50-20:20,TUE-HB-17:15-18:45,THU-HB-18:50-20:20,FRI-HB-17:15-18:45,SAT-HB-08:00-12:00,SUN-JX-14:15-15:45'},
+  {id:15,gameplan:'U06',name:'U7-W',group:'PAR',headCoach:'Mia',assistants:['Ruan'],sessions:'MON-JX-18:35-20:10,TUE-JX-18:35-20:10,THU-JX-17:00-18:35,FRI-JX-17:00-18:35,SAT-JX-09:00-10:30,SUN-JX-10:30-12:00'},
+  {id:16,gameplan:'U06',name:'U7-B',group:'CEL',headCoach:'Mia',assistants:['Ruan'],sessions:'MON-JX-17:00-18:35,TUE-JX-17:00-18:35,THU-JX-18:35-20:10,FRI-JX-18:35-20:10,SAT-JX-10:30-12:00,SUN-JX-09:00-10:30'},
+  {id:17,gameplan:'U06',name:'U6-G',group:'PAR',headCoach:'Mia',assistants:['Ruan'],sessions:'MON-JX-18:35-20:10,TUE-JX-18:35-20:10,THU-JX-17:00-18:35,FRI-JX-17:00-18:35,SAT-JX-09:00-10:30,SUN-JX-10:30-12:00'},
+  {id:18,gameplan:'U05',name:'U6-W',group:'CEL',headCoach:'Mia',assistants:['Ruan'],sessions:'MON-JX-17:00-18:35,TUE-JX-17:00-18:35,THU-JX-18:35-20:10,FRI-JX-18:35-20:10,SAT-JX-10:30-12:00,SUN-JX-09:00-10:30'},
+  {id:19,gameplan:'U05',name:'U5-G',group:'CEL',headCoach:'Mia',assistants:['Ruan'],quit:1,newPlayers:0,sessions:'MON-JX-17:00-18:35,TUE-JX-17:00-18:35,THU-JX-18:35-20:10,FRI-JX-18:35-20:10,SAT-JX-10:30-12:00,SUN-JX-09:00-10:30'},
+  {id:20,gameplan:'U04',name:'U5-W',group:'ATM',headCoach:'Mia',assistants:['Easy','Ruan'],quit:2,newPlayers:0,sessions:'THU-JX-18:35-20:10,SAT-JX-14:15-15:45,SUN-JX-16:00-17:30'}
+];
+const PLAYERS = {
+  'U10-G': [
+    {name:'Carsten',cn:'彭子辰',per:2.6,att:14,rat:33,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0},
+    {name:'Kim',cn:'何钲恩',per:3.8,att:27,rat:81,com:3.5,apb:3.9,amb:4.0,gi:3.6,mi:4.0,ph:4.2},
+    {name:'Plum',cn:'欧阳志劼',per:2.8,att:57,rat:177,com:2.7,apb:3.1,amb:2.6,gi:2.8,mi:3.1,ph:3.0},
+    {name:'Rock',cn:'刘昱希',per:3.2,att:18,rat:50,com:2.9,apb:3.3,amb:3.4,gi:3.0,mi:3.4,ph:3.6},
+    {name:'Charlie',cn:'章岂显',per:2.5,att:49,rat:123,com:2.2,apb:2.6,amb:2.7,gi:2.3,mi:2.7,ph:2.9},
+    {name:'Dan',cn:'杨承',per:3.0,att:68,rat:211,com:3.1,apb:2.9,amb:3.0,gi:3.2,mi:3.1,ph:3.3},
+    {name:'Thomas',cn:'郑斯哲',per:3.1,att:33,rat:87,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5},
+    {name:'Yoyo',cn:'赵奕凯',per:2.8,att:63,rat:193,com:2.9,apb:2.7,amb:2.8,gi:3.0,mi:2.9,ph:3.1},
+    {name:'Ryder',cn:'谭以轩',per:3.4,att:55,rat:170,com:3.5,apb:3.3,amb:3.4,gi:3.6,mi:3.5,ph:3.7},
+    {name:'Kimi',cn:'谢禹喆',per:3.8,att:58,rat:174,com:3.7,apb:4.1,amb:3.6,gi:3.8,mi:4.1,ph:4.0},
+    {name:'Kimi',cn:'郭宥浠',per:2.7,att:41,rat:131,com:2.6,apb:3.0,amb:2.5,gi:2.7,mi:3.0,ph:2.9},
+    {name:'Ryan',cn:'谷知彻',per:2.9,att:41,rat:124,com:2.6,apb:3.0,amb:3.1,gi:2.7,mi:3.1,ph:3.3},
+    {name:'Xiaobei',cn:'隆子毅',per:3.2,att:57,rat:181,com:3.3,apb:3.1,amb:3.2,gi:3.4,mi:3.3,ph:3.5},
+    {name:'Max',cn:'邵尊柏',per:3.2,att:9,rat:30,com:3.1,apb:3.5,amb:3.0,gi:3.2,mi:3.5,ph:3.4}
+  ],
+  'U10-W': [
+    {name:'Barton',cn:'何宸浩',per:3.0,att:11,rat:43,com:2.9,apb:3.3,amb:2.8,gi:3.0,mi:3.3,ph:3.2},
+    {name:'Ocean',cn:'罗骁禹',per:2.8,att:5,rat:14,com:2.5,apb:2.9,amb:3.0,gi:2.6,mi:3.0,ph:3.2},
+    {name:'Dylan',cn:'关子航',per:2.5,att:13,rat:41,com:2.4,apb:2.8,amb:2.3,gi:2.5,mi:2.8,ph:2.7},
+    {name:'Andy',cn:'卓安成',per:2.7,att:45,rat:150,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Austin',cn:'李奕楷',per:3.1,att:47,rat:170,com:3.2,apb:3.0,amb:3.1,gi:3.3,mi:3.2,ph:3.4},
+    {name:'Neil',cn:'郭义峻',per:3.5,att:6,rat:22,com:3.6,apb:3.4,amb:3.5,gi:3.7,mi:3.6,ph:3.8,quit:true},
+    {name:'Rain',cn:'江雨霖',per:2.8,att:2,rat:8,com:2.7,apb:3.1,amb:2.6,gi:2.8,mi:3.1,ph:3.0}
+  ],
+  'U11-G': [
+    {name:'Jayden',cn:'王彦杰',per:3.1,att:29,rat:72,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5},
+    {name:'Hunter',cn:'李梓源',per:3.4,att:20,rat:35,com:3.1,apb:3.5,amb:3.6,gi:3.2,mi:3.6,ph:3.8},
+    {name:'Jack',cn:'张家赫',per:3.2,att:48,rat:88,com:3.1,apb:3.5,amb:3.0,gi:3.2,mi:3.5,ph:3.4},
+    {name:'Lincoln',cn:'孟子城',per:3.1,att:48,rat:114,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5}
+  ],
+  'U11-W': [
+    {name:'Davis',cn:'刘益承',per:3.1,att:35,rat:92,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5},
+    {name:'Yuchen',cn:'司雨辰',per:2.9,att:31,rat:64,com:2.6,apb:3.0,amb:3.1,gi:2.7,mi:3.1,ph:3.3},
+    {name:'Anton',cn:'吴安广',per:3.1,att:57,rat:104,com:3.2,apb:3.0,amb:3.1,gi:3.3,mi:3.2,ph:3.4},
+    {name:'Jojo',cn:'窦以恒',per:3.5,att:36,rat:64,com:3.6,apb:3.4,amb:3.5,gi:3.7,mi:3.6,ph:3.8},
+    {name:'Steven',cn:'林泽旭',per:2.6,att:48,rat:51,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0},
+    {name:'Qiangjing',cn:'敬宝强',per:3.1,att:50,rat:53,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5},
+    {name:'Jesson',cn:'姜思臣',per:2.6,att:14,rat:19,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0,quit:true},
+    {name:'Eric',cn:'朱鹏瑞',per:3.0,att:35,rat:61,com:2.9,apb:3.3,amb:2.8,gi:3.0,mi:3.3,ph:3.2},
+    {name:'Alex',cn:'罗以同',per:3.3,att:27,rat:26,com:3.2,apb:3.6,amb:3.1,gi:3.3,mi:3.6,ph:3.5},
+    {name:'Eason',cn:'段屹石',per:3.0,att:41,rat:67,com:3.1,apb:2.9,amb:3.0,gi:3.2,mi:3.1,ph:3.3},
+    {name:'Tony',cn:'许智宸',per:3.0,att:67,rat:130,com:2.7,apb:3.1,amb:3.2,gi:2.8,mi:3.2,ph:3.4},
+    {name:'Sam',cn:'金穗',per:3.4,att:47,rat:63,com:3.1,apb:3.5,amb:3.6,gi:3.2,mi:3.6,ph:3.8},
+    {name:'Messi',cn:'李志昊',per:2.9,att:53,rat:105,com:2.6,apb:3.0,amb:3.1,gi:2.7,mi:3.1,ph:3.3}
+  ],
+  'U12-G': [
+    {name:'Fabio',cn:'张钦栋',per:2.8,att:26,rat:45,com:2.7,apb:3.1,amb:2.6,gi:2.8,mi:3.1,ph:3.0},
+    {name:'Pickar',cn:'江柏辰',per:2.6,att:48,rat:80,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Ray',cn:'罗梓睿',per:3.2,att:66,rat:117,com:2.9,apb:3.3,amb:3.4,gi:3.0,mi:3.4,ph:3.6},
+    {name:'Bobby',cn:'王文晏',per:3.0,att:23,rat:25,com:2.9,apb:3.3,amb:2.8,gi:3.0,mi:3.3,ph:3.2},
+    {name:'Zoey',cn:'陈佐',per:2.7,att:21,rat:3,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Henry',cn:'李弘毅',per:3.1,att:40,rat:72,com:3.2,apb:3.0,amb:3.1,gi:3.3,mi:3.2,ph:3.4},
+    {name:'Michael',cn:'车启铭',per:3.4,att:32,rat:16,com:3.3,apb:3.7,amb:3.2,gi:3.4,mi:3.7,ph:3.6},
+    {name:'Eason',cn:'朱奕铖',per:3.2,att:40,rat:88,com:3.3,apb:3.1,amb:3.2,gi:3.4,mi:3.3,ph:3.5},
+    {name:'Bowen',cn:'张博文',per:2.6,att:19,rat:45,com:2.5,apb:2.9,amb:2.4,gi:2.6,mi:2.9,ph:2.8},
+    {name:'Beck',cn:'胡宇灏',per:3.3,att:8,rat:5,com:3.0,apb:3.4,amb:3.5,gi:3.1,mi:3.5,ph:3.7},
+    {name:'Perry',cn:'胡宇沛',per:3.3,att:17,rat:9,com:3.0,apb:3.4,amb:3.5,gi:3.1,mi:3.5,ph:3.7},
+    {name:'Doudou',cn:'李明澈',per:3.8,att:50,rat:119,com:3.7,apb:4.1,amb:3.6,gi:3.8,mi:4.1,ph:4.0},
+    {name:'Ben',cn:'祝天泽',per:3.6,att:22,rat:43,com:3.5,apb:3.9,amb:3.4,gi:3.6,mi:3.9,ph:3.8,quit:true}
+  ],
+  'U12-W': [
+    {name:'Eleven',cn:'李熹',per:2.3,att:11,rat:35,com:2.2,apb:2.6,amb:2.1,gi:2.3,mi:2.6,ph:2.5},
+    {name:'Ethan',cn:'周禹辰',per:2.6,att:12,rat:33,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0},
+    {name:'Jack',cn:'郑伟铮',per:2.5,att:11,rat:15,com:2.4,apb:2.8,amb:2.3,gi:2.5,mi:2.8,ph:2.7},
+    {name:'James',cn:'言朝阳',per:2.6,att:17,rat:56,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0},
+    {name:'Fischer',cn:'彭星匀',per:3.7,att:6,rat:12,com:3.8,apb:3.6,amb:3.7,gi:3.9,mi:3.8,ph:4.0},
+    {name:'Simon',cn:'许诺',per:3.5,att:10,rat:35,com:3.6,apb:3.4,amb:3.5,gi:3.7,mi:3.6,ph:3.8},
+    {name:'Kenny',cn:'林一肯',per:3.1,att:22,rat:63,com:3.0,apb:3.4,amb:2.9,gi:3.1,mi:3.4,ph:3.3},
+    {name:'Yoyo',cn:'窦以哲',per:2.5,att:32,rat:66,com:2.6,apb:2.4,amb:2.5,gi:2.7,mi:2.6,ph:2.8},
+    {name:'George',cn:'袁觉清',per:2.8,att:34,rat:45,com:2.7,apb:3.1,amb:2.6,gi:2.8,mi:3.1,ph:3.0},
+    {name:'Harry',cn:'袁瀚李',per:3.2,att:32,rat:40,com:3.3,apb:3.1,amb:3.2,gi:3.4,mi:3.3,ph:3.5},
+    {name:'Helene',cn:'杨和意',per:2.7,att:19,rat:46,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Marco',cn:'颜铭焘',per:2.4,att:26,rat:65,com:2.5,apb:2.3,amb:2.4,gi:2.6,mi:2.5,ph:2.7},
+    {name:'Jaden',cn:'刘曦童',per:3.1,att:13,rat:31,com:3.2,apb:3.0,amb:3.1,gi:3.3,mi:3.2,ph:3.4},
+    {name:'Julian',cn:'李思远',per:2.6,att:23,rat:59,com:2.5,apb:2.9,amb:2.4,gi:2.6,mi:2.9,ph:2.8}
+  ],
+  'U15-G': [
+    {name:'Diego',cn:'吴学璟',per:0,att:3,rat:0,com:0.1,apb:0,amb:0,gi:0.2,mi:0.1,ph:0.3},
+    {name:'Eric',cn:'刘冠辰',per:0,att:6,rat:0,com:0,apb:0.3,amb:0,gi:0,mi:0.3,ph:0.2},
+    {name:'Michael',cn:'陈瀚彬',per:0,att:0,rat:0,com:0,apb:0.3,amb:0,gi:0,mi:0.3,ph:0.2},
+    {name:'Gleb',cn:'格列布',per:0,att:9,rat:0,com:0.1,apb:0,amb:0,gi:0.2,mi:0.1,ph:0.3},
+    {name:'Silva',cn:'王朔',per:0,att:0,rat:0,com:0,apb:0.3,amb:0,gi:0,mi:0.3,ph:0.2},
+    {name:'Percy',cn:'廖荣颢',per:0,att:1,rat:0,com:0.1,apb:0,amb:0,gi:0.2,mi:0.1,ph:0.3,quit:true},
+    {name:'James',cn:'李知行',per:2.7,att:11,rat:4,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Jerry',cn:'季睿',per:0,att:24,rat:0,com:0,apb:0.3,amb:0,gi:0,mi:0.3,ph:0.2},
+    {name:'Mike',cn:'马浩瑞',per:2.7,att:16,rat:4,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Lightning',cn:'温宗易',per:2.6,att:22,rat:3,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Keeweon',cn:'蔡奇原',per:0,att:7,rat:0,com:0.1,apb:0,amb:0,gi:0.2,mi:0.1,ph:0.3,quit:true},
+    {name:'Michael',cn:'祝启民',per:0,att:27,rat:0,com:0,apb:0.3,amb:0,gi:0,mi:0.3,ph:0.2},
+    {name:'Simba',cn:'李羽桦',per:3.3,att:12,rat:4,com:3.4,apb:3.2,amb:3.3,gi:3.5,mi:3.4,ph:3.6},
+    {name:'Potter',cn:'李昊泽',per:3.4,att:15,rat:4,com:3.5,apb:3.3,amb:3.4,gi:3.6,mi:3.5,ph:3.7}
+  ],
+  'U5-G': [
+    {name:'Leo',cn:'欧阳铭浩',per:3.6,att:29,rat:69,com:3.7,apb:3.5,amb:3.6,gi:3.8,mi:3.7,ph:3.9},
+    {name:'Colm',cn:'卢瀚宇',per:3.2,att:27,rat:74,com:3.3,apb:3.1,amb:3.2,gi:3.4,mi:3.3,ph:3.5},
+    {name:'Roman',cn:'李初言',per:2.7,att:4,rat:3,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1,quit:true},
+    {name:'CC',cn:'吴浠芃',per:3.2,att:29,rat:54,com:3.1,apb:3.5,amb:3.0,gi:3.2,mi:3.5,ph:3.4},
+    {name:'Jalen',cn:'杜星佑',per:3.4,att:39,rat:79,com:3.1,apb:3.5,amb:3.6,gi:3.2,mi:3.6,ph:3.8},
+    {name:'Eric',cn:'黄焌亮',per:3.2,att:29,rat:51,com:3.1,apb:3.5,amb:3.0,gi:3.2,mi:3.5,ph:3.4}
+  ],
+  'U5-W': [
+    {name:'William',cn:'张蕴乐',per:2.4,att:3,rat:11,com:2.1,apb:2.5,amb:2.6,gi:2.2,mi:2.6,ph:2.8},
+    {name:'Leon',cn:'刘哲成',per:2.0,att:2,rat:3,com:2.1,apb:1.9,amb:2.0,gi:2.2,mi:2.1,ph:2.3},
+    {name:'X',cn:'黄毅',per:3.4,att:5,rat:11,com:3.5,apb:3.3,amb:3.4,gi:3.6,mi:3.5,ph:3.7},
+    {name:'John',cn:'刘元',per:1.9,att:6,rat:7,com:1.6,apb:2.0,amb:2.1,gi:1.7,mi:2.1,ph:2.3,quit:true},
+    {name:'WU',cn:'孔澈',per:1.9,att:8,rat:15,com:2.0,apb:1.8,amb:1.9,gi:2.1,mi:2.0,ph:2.2},
+    {name:'George',cn:'林鸿创',per:2.8,att:7,rat:13,com:2.7,apb:3.1,amb:2.6,gi:2.8,mi:3.1,ph:3.0},
+    {name:'Steven',cn:'张继元',per:0,att:4,rat:0,com:0,apb:0.1,amb:0.2,gi:0,mi:0.2,ph:0.4},
+    {name:'Barry',cn:'徐秉睿',per:2.3,att:7,rat:12,com:2.4,apb:2.2,amb:2.3,gi:2.5,mi:2.4,ph:2.6},
+    {name:'Henry',cn:'徐焕宸',per:2.4,att:17,rat:30,com:2.5,apb:2.3,amb:2.4,gi:2.6,mi:2.5,ph:2.7},
+    {name:'Wendy',cn:'赵紫玥',per:1.0,att:7,rat:4,com:0.7,apb:1.1,amb:1.2,gi:0.8,mi:1.2,ph:1.4,quit:true},
+    {name:'Nathan',cn:'肖陆子谦',per:2.4,att:12,rat:11,com:2.5,apb:2.3,amb:2.4,gi:2.6,mi:2.5,ph:2.7},
+    {name:'Thomas',cn:'陈泽宸',per:2.6,att:9,rat:7,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0},
+    {name:'Steven',cn:'张圳南',per:2.7,att:43,rat:63,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Leo',cn:'李丰元',per:2.7,att:12,rat:8,com:2.8,apb:2.6,amb:2.7,gi:2.9,mi:2.8,ph:3.0,quit:true},
+    {name:'Justin',cn:'张嘉扬',per:2.3,att:46,rat:59,com:2.2,apb:2.6,amb:2.1,gi:2.3,mi:2.6,ph:2.5},
+    {name:'Riva',cn:'郝一苇',per:2.4,att:12,rat:12,com:2.5,apb:2.3,amb:2.4,gi:2.6,mi:2.5,ph:2.7},
+    {name:'Benson',cn:'沈昊邦',per:2.7,att:12,rat:17,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Eason',cn:'周一辰',per:2.7,att:4,rat:10,com:2.8,apb:2.6,amb:2.7,gi:2.9,mi:2.8,ph:3.0}
+  ],
+  'U6-G': [
+    {name:'Darren',cn:'李子裕',per:3.5,att:53,rat:133,com:3.4,apb:3.8,amb:3.3,gi:3.5,mi:3.8,ph:3.7},
+    {name:'Zhengzheng',cn:'王炜铮',per:2.7,att:37,rat:89,com:2.8,apb:2.6,amb:2.7,gi:2.9,mi:2.8,ph:3.0},
+    {name:'Jack',cn:'温沐旭',per:3.3,att:31,rat:71,com:3.2,apb:3.6,amb:3.1,gi:3.3,mi:3.6,ph:3.5},
+    {name:'Eric',cn:'王瀚铭',per:3.2,att:50,rat:122,com:3.1,apb:3.5,amb:3.0,gi:3.2,mi:3.5,ph:3.4}
+  ],
+  'U6-W': [
+    {name:'Joshua',cn:'林杰克逊',per:2.8,att:6,rat:18,com:2.9,apb:2.7,amb:2.8,gi:3.0,mi:2.9,ph:3.1},
+    {name:'Henry',cn:'包锦睿',per:3.1,att:9,rat:9,com:3.2,apb:3.0,amb:3.1,gi:3.3,mi:3.2,ph:3.4},
+    {name:'Eibhlis',cn:'卢依娜',per:2.9,att:28,rat:68,com:2.8,apb:3.2,amb:2.7,gi:2.9,mi:3.2,ph:3.1},
+    {name:'Bob',cn:'林永琰',per:3.5,att:10,rat:21,com:3.6,apb:3.4,amb:3.5,gi:3.7,mi:3.6,ph:3.8},
+    {name:'Yile',cn:'龚一乐',per:2.3,att:28,rat:52,com:2.0,apb:2.4,amb:2.5,gi:2.1,mi:2.5,ph:2.7},
+    {name:'Norman',cn:'伦启然',per:2.6,att:19,rat:37,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0},
+    {name:'Sven',cn:'胡偲远',per:2.6,att:45,rat:104,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Max',cn:'黄元昊',per:3.0,att:32,rat:53,com:2.9,apb:3.3,amb:2.8,gi:3.0,mi:3.3,ph:3.2}
+  ],
+  'U7-B': [
+    {name:'Haochen',cn:'袁皓宸',per:2.3,att:11,rat:22,com:2.2,apb:2.6,amb:2.1,gi:2.3,mi:2.6,ph:2.5},
+    {name:'Liam',cn:'杜明峻',per:2.7,att:16,rat:38,com:2.6,apb:3.0,amb:2.5,gi:2.7,mi:3.0,ph:2.9},
+    {name:'Leo',cn:'李治贤',per:2.6,att:18,rat:34,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Vincent',cn:'杨孝灿',per:3.1,att:22,rat:37,com:3.0,apb:3.4,amb:2.9,gi:3.1,mi:3.4,ph:3.3},
+    {name:'Joey',cn:'陈星乔',per:3.1,att:28,rat:49,com:3.0,apb:3.4,amb:2.9,gi:3.1,mi:3.4,ph:3.3},
+    {name:'Arin',cn:'孟宪敦',per:2.5,att:32,rat:58,com:2.4,apb:2.8,amb:2.3,gi:2.5,mi:2.8,ph:2.7}
+  ],
+  'U7-G': [
+    {name:'Max',cn:'马克思',per:3.2,att:32,rat:77,com:3.1,apb:3.5,amb:3.0,gi:3.2,mi:3.5,ph:3.4},
+    {name:'Richie',cn:'卢瀚林',per:3.7,att:36,rat:81,com:3.4,apb:3.8,amb:3.9,gi:3.5,mi:3.9,ph:4.1},
+    {name:'Sophia',cn:'苏菲亚',per:3.3,att:15,rat:34,com:3.4,apb:3.2,amb:3.3,gi:3.5,mi:3.4,ph:3.6},
+    {name:'Jason',cn:'陈境修',per:3.4,att:50,rat:76,com:3.3,apb:3.7,amb:3.2,gi:3.4,mi:3.7,ph:3.6},
+    {name:'Yoyo',cn:'王进宁',per:3.4,att:55,rat:100,com:3.5,apb:3.3,amb:3.4,gi:3.6,mi:3.5,ph:3.7},
+    {name:'Lily',cn:'林淑淇',per:3.6,att:66,rat:123,com:3.3,apb:3.7,amb:3.8,gi:3.4,mi:3.8,ph:4.0},
+    {name:'Ellen',cn:'杜俊熠',per:3.4,att:77,rat:152,com:3.1,apb:3.5,amb:3.6,gi:3.2,mi:3.6,ph:3.8}
+  ],
+  'U7-W': [
+    {name:'QQ',cn:'刘敬谦',per:2.8,att:23,rat:73,com:2.9,apb:2.7,amb:2.8,gi:3.0,mi:2.9,ph:3.1},
+    {name:'Nobel',cn:'杨永新',per:3.1,att:20,rat:48,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5},
+    {name:'Lucy',cn:'温沐淇',per:3.6,att:29,rat:61,com:3.3,apb:3.7,amb:3.8,gi:3.4,mi:3.8,ph:4.0},
+    {name:'YI',cn:'金翊',per:3.3,att:30,rat:82,com:3.4,apb:3.2,amb:3.3,gi:3.5,mi:3.4,ph:3.6},
+    {name:'Laura',cn:'苏景煦',per:2.4,att:50,rat:104,com:2.3,apb:2.7,amb:2.2,gi:2.4,mi:2.7,ph:2.6},
+    {name:'Freya',cn:'苏景仪',per:2.4,att:56,rat:122,com:2.1,apb:2.5,amb:2.6,gi:2.2,mi:2.6,ph:2.8},
+    {name:'Felix',cn:'刘子睿',per:1.7,att:4,rat:4,com:1.6,apb:2.0,amb:1.5,gi:1.7,mi:2.0,ph:1.9},
+    {name:'Penelope',cn:'王曼曼',per:3.3,att:47,rat:85,com:3.2,apb:3.6,amb:3.1,gi:3.3,mi:3.6,ph:3.5},
+    {name:'Frank',cn:'黄宸睿',per:2.6,att:52,rat:122,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Jayden',cn:'袁原',per:3.0,att:46,rat:99,com:2.7,apb:3.1,amb:3.2,gi:2.8,mi:3.2,ph:3.4},
+    {name:'Dodo',cn:'何熹',per:2.7,att:52,rat:98,com:2.4,apb:2.8,amb:2.9,gi:2.5,mi:2.9,ph:3.1},
+    {name:'Anson',cn:'罗安玄',per:2.2,att:24,rat:63,com:2.1,apb:2.5,amb:2.0,gi:2.2,mi:2.5,ph:2.4},
+    {name:'Enen',cn:'蹇斯年',per:2.9,att:54,rat:130,com:2.6,apb:3.0,amb:3.1,gi:2.7,mi:3.1,ph:3.3},
+    {name:'Yellow',cn:'温恬熙',per:3.0,att:33,rat:66,com:2.7,apb:3.1,amb:3.2,gi:2.8,mi:3.2,ph:3.4}
+  ],
+  'U8-G': [
+    {name:'Alex',cn:'付灏',per:2.9,att:26,rat:67,com:2.8,apb:3.2,amb:2.7,gi:2.9,mi:3.2,ph:3.1},
+    {name:'Meeks',cn:'刘淏丞',per:3.1,att:52,rat:138,com:3.0,apb:3.4,amb:2.9,gi:3.1,mi:3.4,ph:3.3},
+    {name:'Jensen',cn:'罗健鑫',per:3.3,att:43,rat:111,com:3.2,apb:3.6,amb:3.1,gi:3.3,mi:3.6,ph:3.5,quit:true},
+    {name:'Erik',cn:'吴北辰',per:3.0,att:52,rat:124,com:3.1,apb:2.9,amb:3.0,gi:3.2,mi:3.1,ph:3.3},
+    {name:'Shawn',cn:'韩尚弦',per:2.8,att:49,rat:135,com:2.5,apb:2.9,amb:3.0,gi:2.6,mi:3.0,ph:3.2},
+    {name:'Ivan',cn:'林泽楷',per:3.1,att:57,rat:156,com:3.2,apb:3.0,amb:3.1,gi:3.3,mi:3.2,ph:3.4},
+    {name:'Pakkit',cn:'王柏杰',per:3.5,att:41,rat:117,com:3.6,apb:3.4,amb:3.5,gi:3.7,mi:3.6,ph:3.8},
+    {name:'Ryan',cn:'谭予正',per:2.4,att:51,rat:129,com:2.1,apb:2.5,amb:2.6,gi:2.2,mi:2.6,ph:2.8},
+    {name:'Changpu',cn:'马菖浦',per:3.3,att:48,rat:127,com:3.0,apb:3.4,amb:3.5,gi:3.1,mi:3.5,ph:3.7},
+    {name:'Tony',cn:'闫皓淳',per:2.4,att:6,rat:12,com:2.1,apb:2.5,amb:2.6,gi:2.2,mi:2.6,ph:2.8,quit:true},
+    {name:'Steven',cn:'莫云哲',per:3.4,att:54,rat:158,com:3.1,apb:3.5,amb:3.6,gi:3.2,mi:3.6,ph:3.8}
+  ],
+  'U8-W': [
+    {name:'Chris',cn:'张育翔',per:2.6,att:11,rat:36,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Jason',cn:'欧阳硕',per:3.2,att:34,rat:90,com:3.1,apb:3.5,amb:3.0,gi:3.2,mi:3.5,ph:3.4},
+    {name:'Frank',cn:'张佑汀',per:3.4,att:30,rat:51,com:3.5,apb:3.3,amb:3.4,gi:3.6,mi:3.5,ph:3.7},
+    {name:'Christopher',cn:'姜启泽',per:3.1,att:52,rat:94,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5},
+    {name:'Jay',cn:'李宜劼',per:3.2,att:32,rat:80,com:3.3,apb:3.1,amb:3.2,gi:3.4,mi:3.3,ph:3.5},
+    {name:'Tracy',cn:'李纯熙',per:3.0,att:23,rat:57,com:3.1,apb:2.9,amb:3.0,gi:3.2,mi:3.1,ph:3.3},
+    {name:'Payson',cn:'张佩森',per:2.8,att:55,rat:123,com:2.7,apb:3.1,amb:2.6,gi:2.8,mi:3.1,ph:3.0},
+    {name:'Frank',cn:'解梓源',per:3.4,att:12,rat:28,com:3.5,apb:3.3,amb:3.4,gi:3.6,mi:3.5,ph:3.7}
+  ],
+  'U9-B': [
+    {name:'Henry',cn:'陆思睿',per:2.5,att:18,rat:35,com:2.6,apb:2.4,amb:2.5,gi:2.7,mi:2.6,ph:2.8},
+    {name:'Daniel',cn:'林亿铭',per:2.1,att:4,rat:10,com:1.8,apb:2.2,amb:2.3,gi:1.9,mi:2.3,ph:2.5},
+    {name:'Benjamin',cn:'隋智斌',per:1.9,att:9,rat:21,com:1.8,apb:2.2,amb:1.7,gi:1.9,mi:2.2,ph:2.1},
+    {name:'Harry',cn:'罗海荣',per:2.5,att:11,rat:21,com:2.6,apb:2.4,amb:2.5,gi:2.7,mi:2.6,ph:2.8},
+    {name:'Tony',cn:'王子熠',per:2.9,att:25,rat:62,com:2.6,apb:3.0,amb:3.1,gi:2.7,mi:3.1,ph:3.3},
+    {name:'Xiuhe',cn:'周修禾',per:3.3,att:18,rat:37,com:3.4,apb:3.2,amb:3.3,gi:3.5,mi:3.4,ph:3.6},
+    {name:'George',cn:'王力行',per:3.0,att:11,rat:22,com:2.9,apb:3.3,amb:2.8,gi:3.0,mi:3.3,ph:3.2},
+    {name:'Haoxuan',cn:'向皓轩',per:3.3,att:27,rat:56,com:3.2,apb:3.6,amb:3.1,gi:3.3,mi:3.6,ph:3.5},
+    {name:'Kieran',cn:'陈彦廷',per:2.9,att:24,rat:38,com:3.0,apb:2.8,amb:2.9,gi:3.1,mi:3.0,ph:3.2},
+    {name:'Seven',cn:'李泽',per:2.8,att:26,rat:62,com:2.5,apb:2.9,amb:3.0,gi:2.6,mi:3.0,ph:3.2},
+    {name:'Leon',cn:'李赞',per:2.6,att:26,rat:51,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Fred',cn:'蔡佩希',per:2.9,att:30,rat:43,com:3.0,apb:2.8,amb:2.9,gi:3.1,mi:3.0,ph:3.2},
+    {name:'Eason',cn:'余羽宸',per:2.8,att:45,rat:98,com:2.9,apb:2.7,amb:2.8,gi:3.0,mi:2.9,ph:3.1},
+    {name:'Leo',cn:'何霖',per:2.6,att:23,rat:48,com:2.7,apb:2.5,amb:2.6,gi:2.8,mi:2.7,ph:2.9},
+    {name:'Miles',cn:'安景堂',per:3.0,att:39,rat:66,com:2.7,apb:3.1,amb:3.2,gi:2.8,mi:3.2,ph:3.4},
+    {name:'Terry',cn:'叶腾煦',per:2.9,att:1,rat:4,com:2.8,apb:3.2,amb:2.7,gi:2.9,mi:3.2,ph:3.1},
+    {name:'Hank',cn:'杨熠恒',per:2.6,att:20,rat:42,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0}
+  ],
+  'U9-G': [
+    {name:'Bryce',cn:'石齐轩',per:2.9,att:40,rat:129,com:2.8,apb:3.2,amb:2.7,gi:2.9,mi:3.2,ph:3.1},
+    {name:'Louis',cn:'卢果',per:2.9,att:56,rat:159,com:2.8,apb:3.2,amb:2.7,gi:2.9,mi:3.2,ph:3.1},
+    {name:'Brian',cn:'常鑫乐',per:3.6,att:48,rat:149,com:3.7,apb:3.5,amb:3.6,gi:3.8,mi:3.7,ph:3.9},
+    {name:'Jordan',cn:'容宇軒',per:0,att:0,rat:0,com:0,apb:0.1,amb:0.2,gi:0,mi:0.2,ph:0.4,quit:true},
+    {name:'Andrew',cn:'张恩浚',per:2.9,att:23,rat:70,com:2.6,apb:3.0,amb:3.1,gi:2.7,mi:3.1,ph:3.3},
+    {name:'Aki',cn:'张传承',per:3.3,att:36,rat:117,com:3.2,apb:3.6,amb:3.1,gi:3.3,mi:3.6,ph:3.5},
+    {name:'Allen',cn:'刘安然',per:2.8,att:50,rat:156,com:2.9,apb:2.7,amb:2.8,gi:3.0,mi:2.9,ph:3.1},
+    {name:'Mason',cn:'马梓洵',per:3.1,att:29,rat:91,com:2.8,apb:3.2,amb:3.3,gi:2.9,mi:3.3,ph:3.5,quit:true},
+    {name:'Max',cn:'马梓瀚',per:3.0,att:1,rat:4,com:2.9,apb:3.3,amb:2.8,gi:3.0,mi:3.3,ph:3.2,quit:true},
+    {name:'Eason',cn:'周宇森',per:3.0,att:42,rat:145,com:3.1,apb:2.9,amb:3.0,gi:3.2,mi:3.1,ph:3.3},
+    {name:'Daniel',cn:'孟令炜',per:3.0,att:46,rat:137,com:2.7,apb:3.1,amb:3.2,gi:2.8,mi:3.2,ph:3.4},
+    {name:'Vincent',cn:'唐诗睿',per:3.4,att:47,rat:149,com:3.3,apb:3.7,amb:3.2,gi:3.4,mi:3.7,ph:3.6}
+  ],
+  'U9-W': [
+    {name:'Lin',cn:'张泽霖',per:2.8,att:33,rat:84,com:2.7,apb:3.1,amb:2.6,gi:2.8,mi:3.1,ph:3.0},
+    {name:'Qiqi',cn:'李羽骐',per:2.6,att:34,rat:72,com:2.5,apb:2.9,amb:2.4,gi:2.6,mi:2.9,ph:2.8},
+    {name:'Gavin',cn:'刘宣宏',per:3.1,att:41,rat:86,com:3.0,apb:3.4,amb:2.9,gi:3.1,mi:3.4,ph:3.3},
+    {name:'Marshall',cn:'刘辰安',per:2.6,att:49,rat:108,com:2.3,apb:2.7,amb:2.8,gi:2.4,mi:2.8,ph:3.0},
+    {name:'Sayyid',cn:'马哲贤',per:2.7,att:1,rat:4,com:2.6,apb:3.0,amb:2.5,gi:2.7,mi:3.0,ph:2.9,quit:true}
+  ],
+};
+const GAMEPLAN_STYLE = {'U04':'3v3','U05':'3v3','U06':'5v5','U07':'5v5','U08':'7v7','U09':'7v7','U10':'8v8-1','U11':'8v8-2'};
+const COACH_TEAMS = {'Easy':['U5-W'],'Rash':['U12-G','U15-G'],'Relax':['U12-W','U15-G','U9-B'],'Lance':['U7-G','U8-W','U9-W','U11-W','U12-W','U9-B'],'Johan':['U9-G','U10-G','U10-W'],'Nikola':['U7-G','U8-W','U10-G'],'Ti':['U5-W','U8-G','U9-W','U11-G','U11-W','U12-G'],'Roger':['U8-G','U9-W','U12-G'],'Ruan':['U5-G','U5-W','U6-G','U6-W','U7-B','U7-W'],'Mia':['U5-G','U5-W','U6-G','U6-W','U7-B','U7-W'],'Rico':['U9-G','U10-W','U11-W','U12-W','U15-G','U9-B']};
+
+const TOPIC_NAMES = {
+  A1:'Start from GK',A2:'Build up',A3:'Through the middle',A4:'Scoring goals',
+  A5:'Keep the ball',A6:'Switch sides',A7:'Wing attack',A8:'Cross and finish',
+  D1:'Press the GK ball',D2:'Push them outside',D3:'Shifting',D4:'Long balls',
+  D5:'Defend our wings',D6:'Defend our goal'
+};
+
+const GAMEPLANS = {
+  'A1-3v3':{how:'🟢1 (GK): Play fast to 🟢10 if FREE.\n- IF 🟢10 is marked → FAKE and DRIBBLE into SPACE.\n\n🟢4: GO OPEN fast with OPEN BODY.\n- RECEIVE forward (turn and play ahead) OR give BACK PASS to 🟢1.\n\n🟢1 (after back pass): Always READY for back pass → SWITCH sides.'},
+  'A1-5v5':{how:'🟢1 (GK): Play fast to 🟢9 or 🟢10 if FREE.\n- IF both are marked → FAKE or 1-2 PASS and DRIBBLE into SPACE.\n\n🟢4: GO OPEN fast with OPEN BODY.\n- SCAN: Receive forward OR give BACK PASS to 🟢1.\n\n🟢1 (after pass): Always READY for back pass from 🟢4 → SWITCH sides.'},
+  'A1-7v7':{how:'🟢1 (GK): Play fast to 🟢10 if FREE.\n- IF 🟢10 is marked → pass to 🟢4 and move up to support.\n\n🟢4: RECEIVE with OPEN BODY, SCAN before touch.\n- IF 🟢10 is FREE → pass to 🟢10 (2v1 created).\n- IF 🔴 marks 🟢10 → DRIBBLE into MIDFIELD.\n\n🟢10: Move to create a 2v1 with 🟢4. Call for the ball.\n\n🟢7: Remains LOW → creates SPACE for 🟢10.\n- REST DEFENCE: protect against counter on 🟢4\'s side.'},
+  'A1-8v8-1':{how:'🟢1 (GK): Play fast to 🟢6 or 🟢10 if FREE.\n- IF both are marked → pass to 🟢4 and move up.\n\n🟢4: RECEIVE with OPEN BODY, SCAN before touch.\n- 🟢10 moves DIAGONAL, 🟢6 moves to CENTER to be FREE.\n- DEPENDING on 🔴6/10 positions:\n  - IF 🟢6 or 🟢10 FREE → pass to them.\n  - IF both marked → DRIBBLE further into MIDFIELD.\n\n🟢7: Remains LOW → creates SPACE for 🟢10.\n- REST DEFENCE: track 🔴 counter runs.'},
+  'A1-8v8-2':{how:'🟢1 (GK): Play fast to 🟢6 or 🟢10 if FREE.\n- IF marked → pass to 🟢4, then move up to support.\n\n🟢4: RECEIVE with OPEN BODY, play quickly forward.\n- Pass to 🟢6 or 🟢10 (who moved to be FREE).\n\n🟢10: Moves DIAGONAL to receive.\n🟢6: Moves CENTER to be FREE.\n\n🟢11: At the moment 🟢6/10 RECEIVES → move FORWARD into SPACE behind 🔴.\n\n🟢7: Remains LOW → REST DEFENCE → protect against counter.'},
+  'A2-3v3':{how:'🟢10: RECEIVE with OPEN BODY, SCAN before touch.\n- IF SPACE ahead → DRIBBLE forward, LOOK for 2v1.\n- IF 🔴 marks → pass to 🟢9 who ran WIDE.\n\n🟢9: Run WIDE or DEEP → CREATE SPACE for 🟢10.\n- Call for the ball when FREE.\n\n🟢5: Fast RUN forward → support the attack.\n🟢4: PROTECT the middle → MARK 🔴9.'},
+  'A2-5v5':{how:'🟢10: RECEIVE with OPEN BODY, SCAN before touch.\n- IF SPACE ahead → DRIBBLE forward, LOOK for 2v1/3v2.\n- IF 🔴 presses → pass to 🟢9 or SWITCH to 🟢11.\n\n🟢9: Run DIAGONAL → CREATE SPACE for 🟢10.\n🟢11: Fast RUN forward → support on the left.\n\n🟢7: STAY LOW → REST DEFENCE, protect against counter.\n🟢4: PROTECT the middle → MARK 🔴9.'},
+  'A2-7v7':{how:'🟢10: RECEIVE with OPEN BODY, SCAN before touch.\n- IF SPACE ahead → DRIBBLE forward, LOOK for 2v1/3v2.\n- IF 🔴 presses → 1-2 PASS with 🟢6, continue forward.\n\n🟢6: SHOW UP in midfield → create passing options.\n- Call for the ball, ready to RECEIVE and play forward.\n\n🟢9: Run DIAGONAL → CREATE SPACE.\n🟢11: Fast RUN forward → support attack.\n\n🟢7: STAY LOW → REST DEFENCE.\n🟢4/5: PROTECT the middle → MARK 🔴9.'},
+  'A2-8v8-1':{how:'🟢10: RECEIVE with OPEN BODY, SCAN before touch.\n- IF SPACE ahead → DRIBBLE forward, LOOK for 2v1/3v2.\n- IF 🔴 presses → 1-2 PASS with 🟢6, continue forward.\n\n🟢6: SHOW UP in midfield → create triangle with 🟢10 and 🟢9.\n- Receive and play forward OR DRIBBLE into space.\n\n🟢9: Run DIAGONAL → CREATE SPACE.\n🟢11: Fast RUN forward into SPACE behind 🔴.\n\n🟢7: STAY LOW → creates SPACE for 🟢10.\n🟢4/5: REST DEFENCE — 🟢4 MARKS 🔴9, 🟢5 protects middle.'},
+  'A2-8v8-2':{how:'🟢10: RECEIVE with OPEN BODY, SCAN before touch.\n- Pass to 🟢6 who SWITCHES play to the wing.\n\n🟢6: RECEIVE and SWITCH → pass to the OPEN wing.\n🟢7/11: RECEIVE on the wing → DRIBBLE forward.\n- IF SPACE opens → CUT inside.\n- IF 🔴 blocks → CROSS or pass back to 🟢9/10.\n\n🟢9: Move to penalty area → ready for finish.\n🟢10: Follow up → support in the box.\n\n🟢4/5: REST DEFENCE — protect middle, MARK 🔴 forwards.'},
+  'A3-3v3':{how:'🟢4: Find SPACE, pass to 🟢9.\n\n🟢9: RECEIVE, PROTECT the ball.\n- IF SPACE to turn → TURN and WIN 1v1.\n- IF 🔴 presses → LAY OFF to 🟢10.'},
+  'A3-5v5':{how:'🟢4: Find SPACE, pass to 🟢9.\n\n🟢9: RECEIVE, PROTECT the ball, SCAN before touch.\n- IF SPACE to turn → TURN and WIN 1v1.\n- IF 🔴 presses → LAY OFF to 🟢10.\n\n🟢4/5: PROTECT the middle → MARK 🔴9.\n- REST DEFENCE: cover against counter.'},
+  'A3-7v7':{how:'🟢4: Pass to 🟢9 who CHECKED IN/OUT.\n\n🟢9: CHECK IN then CHECK OUT → lose the marker.\n- RECEIVE, PROTECT the ball.\n- IF SPACE to turn → TURN and BEAT the defender.\n- IF 🔴 presses → LAY OFF to 🟢10 or 🟢7.\n\n🟢4/5: PROTECT the middle → MARK 🔴9.\n- REST DEFENCE.'},
+  'A3-8v8-1':{how:'🟢4: Pass to 🟢9 who CHECKED IN/OUT.\n\n🟢9: CHECK IN/OUT → lose the marker.\n- RECEIVE with OPEN BODY, SCAN before touch.\n- IF SPACE to turn → TURN and BEAT the defender → SHOOT.\n- IF 🔴 presses → LAY OFF to 🟢10 (moved DIAGONAL).\n- IF 🔴 blocks 🟢10 → LAY OFF to 🟢7 (on the wing).\n\n🟢10: Move DIAGONAL → be READY for lay-off.\n🟢7: Stay WIDE → be READY for lay-off.\n🟢4/5: PROTECT the middle → MARK 🔴9.\n- REST DEFENCE.'},
+  'A3-8v8-2':{how:'🟢4: Pass quickly THROUGH the middle to 🟢9.\n- IF 🔴 blocks the passing lane → pass to 🟢6 who switches play.\n\n🟢9: RECEIVE on the run, PROTECT the ball.\n- IF SPACE → TURN and FINISH.\n- IF 🔴 presses → 1-2 PASS with 🟢10, continue forward.\n\n🟢6: SUPPORT in midfield → switch play if needed.\n🟢10: Follow up → ready for 1-2 or rebound.\n🟢4/5: REST DEFENCE — protect middle, MARK 🔴 forwards.'},
+  'A4-3v3':{how:'🟢10: DRIBBLE towards 🔴 defender, SCAN the keeper.\n- IF 🔴 keeper stays → SHOOT.\n- IF 🔴 keeper comes OUT → pass to 🟢9 and FINISH.\n\n🟢9: Open up → RECEIVE IN FRONT of body.\n- FIRST TOUCH → GET READY to FINISH.'},
+  'A4-5v5':{how:'🟢10: DRIBBLE towards 🔴 defender.\n- IF SPACE opens → FINISH yourself.\n- IF 🔴 blocks → pass in FRONT of 🟢9.\n\n🟢9: Open up → RECEIVE IN FRONT of body.\n- FIRST TOUCH → PREPARE - WATCH - AIM - FAKE → FINISH.'},
+  'A4-7v7':{how:'🟢10: DRIBBLE FAST towards 🔴 defender.\n- IF SPACE to beat → BEAT and FINISH.\n- IF 🔴 blocks → pass to 🟢9 on DIAGONAL run.\n\n🟢9: DIAGONAL run → RECEIVE and FINISH.\n- PREPARE - WATCH - AIM - FAKE - SURFACE - BODY BALANCE.\n\n🟢11: Follow up → ready for rebound.'},
+  'A4-8v8-1':{how:'🟢10: DRIBBLE FAST towards 🔴 defender.\n- IF SPACE to beat → BEAT and FINISH at near post.\n- IF 🔴 blocks → pass to 🟢9 on DIAGONAL run.\n\n🟢9: DIAGONAL run → RECEIVE and FINISH.\n- PREPARE - WATCH - AIM - FAKE - SURFACE - BODY BALANCE.\n\n🟢10: After pass → continue forward for rebound.\n🟢11: Move to far post → ready for rebound or cut-back.'},
+  'A4-8v8-2':{how:'🟢10: DRIBBLE towards 🔴, ATTRACT pressure.\n- Pass wide to 🟢7 on the wing.\n\n🟢7: RECEIVE on wing → DRIBBLE to the corner.\n- CUT-BACK to 🟢9 at penalty spot.\n\n🟢9: Position at penalty spot → FINISH the cut-back.\n- PREPARE - WATCH - AIM - FAKE.\n\n🟢10: Follow up → ready for rebound.\n🟢11: Far post → ready for cross variation.'},
+  'A5-3v3':{how:'🟢10: Under pressure → CALL "Pass Back!"\n\n🟢4/5: GO OPEN fast to HELP.\n- IF forward option → RUN forward to the FRONT.\n- IF no forward option → pass back to 🟢10 or switch.'},
+  'A5-5v5':{how:'🟢4: Under pressure → CALL "Pass Back!"\n🟢4/5: OPEN UP fast → create passing angles.\n\n🟢1 (GK): TRY to SWITCH sides (3v1 on the other side).\n- MOVE with the ball.\n- ONE TOUCH if possible.\n- LOOK - EASY - USE GK.'},
+  'A5-7v7':{how:'🟢1 (GK): MOVE with the ball → create better passing lines.\n\n🟢5: OPEN FAST → create receiving angle.\n🟢7/11: Stay LOW → position WIDE to stretch 🔴.\n🟢10: Stay central → always a passing option.\n\nPlay 6v4 → LOOK - EASY - USE GK.'},
+  'A5-8v8-1':{how:'🟢1 (GK): MOVE with the ball → steer the team.\n\n🟢5: OPEN FAST → create receiving angle.\n🟢7/11: Stay LOW → position WIDE to stretch 🔴.\n🟢6/10: ROTATE positions → create confusion for 🔴.\n\nPlay 7v5 → LOOK - EASY - USE GK.\n- IF 🔴 presses high → pass through 🟢6/10 who rotated FREE.'},
+  'A5-8v8-2':{how:'🟢1 (GK): MOVE with the ball → find the OPEN side.\n\n🟢5: OPEN FAST on the LEFT.\n🟢4: OPEN FAST on the RIGHT.\n- IF 🔴 presses one side → SWITCH to the other side via 🟢1.\n\n🟢7/11: Stay LOW and WIDE → ready for long switch.\n🟢6/10: ROTATE → create passing triangles.\n\nPlay 7v4 → LOOK - EASY - USE GK.'},
+  'A6-3v3':{how:'🟢1 (GK): Move to the SIDE → better PASSING LINE.\n- Pass into SPACE for 🟢4.\n\n🟢4: OPEN UP WIDE → RECEIVE in FRONT of body.\n- SPEED UP before receiving.\n- PUSH the ball → ATTACK the SPACE on the other side.'},
+  'A6-5v5':{how:'🟢1 (GK): Move to the SIDE → better PASSING LINE.\n- Pass into SPACE for 🟢4.\n\n🟢4: OPEN UP WIDE → RECEIVE in FRONT of body.\n- SPEED UP before receiving.\n- PUSH the ball → ATTACK the SPACE on the other side.\n\n🟢5: PROTECT the middle → MARK 🔴9.\n- REST DEFENCE.'},
+  'A6-7v7':{how:'🟢1 (GK): Move with the ball → find the OPEN side.\n\n🟢4: OPEN UP WIDE → RECEIVE in FRONT.\n🟢7: Run forward → CREATE SPACE for 🟢4.\n🟢4: RECEIVE → DRIBBLE FAST into SPACE → ATTACK the other side.\n\n🟢5: PROTECT the middle → MARK 🔴9.\n- REST DEFENCE.'},
+  'A6-8v8-1':{how:'🟢1 (GK): Move with the ball → find the OPEN side.\n\n🟢4: OPEN UP WIDE → RECEIVE in FRONT.\n🟢7: Run forward → CREATE SPACE for 🟢4.\n🟢10: Run DIAGONAL → CREATE SPACE → be READY for pass.\n🟢4: RECEIVE → DRIBBLE FAST → IF 🔴 blocks → pass to 🟢10.\n\n🟢5: PROTECT the middle → MARK 🔴9.\n- REST DEFENCE.'},
+  'A6-8v8-2':{how:'🟢1 (GK): Move with the ball → SWITCH side.\n\n🟢4: OPEN UP WIDE → RECEIVE in FRONT.\n🟢7: Run forward → CREATE SPACE for 🟢4.\n🟢4: RECEIVE → DRIBBLE FAST into SPACE.\n🟢10: Run forward → create 2v1 with 🟢4 on the wing.\n\n🟢5: PROTECT the middle → MARK 🔴9.\n- REST DEFENCE.'},
+  'A7-3v3':{how:'🟢5: DRIBBLE WIDE to PULL 🔴10 OUTSIDE.\n- IF 🟢10 is FREE → pass into SPACE for 🟢10.\n- IF 🔴10 blocks the passing line → DRIBBLE to the outside.'},
+  'A7-5v5':{how:'🟢4: DRIBBLE towards 🔴10.\n- 🟢9/10: SHOW UP for a 1-2 pass → CALL for the ball.\n- IF 🔴10 blocks the passing line → SPEED DRIBBLE to the CORNER.\n\n🟢5: PROTECT the MIDDLE → MARK 🔴9.'},
+  'A7-7v7':{how:'🟢4: DRIBBLE towards 🔴11 → ATTRACT pressure.\n\n🟢7: CHECK IN/OUT → lose the marker, CALL for the ball.\n🟢9: SHOW UP → receive and pass to 🟢7 on the wing.\n\n🟢5: PROTECT the MIDDLE → MARK 🔴9.\n- REST DEFENCE.'},
+  'A7-8v8-1':{how:'🟢4: DRIBBLE towards 🔴11 → ATTRACT pressure.\n\n🟢7: CHECK IN/OUT → lose the marker.\n- Receive from 🟢4 or 🟢9 → DRIBBLE on the wing.\n🟢9: SHOW UP → link play to 🟢7.\n🟢11: Stay LOW on opposite wing → stretch 🔴.\n\n🟢5: PROTECT the MIDDLE → MARK 🔴9.\n- REST DEFENCE.'},
+  'A7-8v8-2':{how:'🟢4: DRIBBLE towards 🔴11 → ATTRACT pressure.\n\n🟢7: CHECK IN/OUT → receive on the wing.\n- IF SPACE inside → CUT inside and DRIBBLE towards goal.\n- IF 🔴 blocks inside → SPEED DRIBBLE to CORNER, CROSS to 🟢9.\n\n🟢9: Position near post → ready for CROSS or cut-back.\n🟢5: PROTECT the MIDDLE → MARK 🔴9.\n- REST DEFENCE.'},
+  'A8-3v3':{how:'🟢10: DRIBBLE fast OVER THE WING, and LOOK:\n- IF possible → SHOOT.\n- IF 🔴1 comes OUT of the GOAL → pass to 🟢9 and FINISH.'},
+  'A8-5v5':{how:'🟢7: DRIBBLE fast OVER THE WING, and LOOK:\n- IF possible → SHOOT.\n- IF 🔴1 comes OUT of the GOAL → pass to 🟢9 and FINISH.'},
+  'A8-7v7':{how:'🟢7: DRIBBLE FAST over the wing → SCAN for space and teammates.\n- Cross with the best ANGLE:\n  • 🟢11 at penalty spot (BEST option).\n  • 🟢9 at first post (CREATE space).\n  • 🟢10 at far post (be READY).\n- FINISH WITH ACCURACY.'},
+  'A8-8v8-1':{how:'🟢7: DRIBBLE FAST over the wing → SCAN for space and teammates.\n- Cross with the best ANGLE:\n  • 🟢11 at penalty spot (BEST option).\n  • 🟢9 at first post (CREATE space).\n  • 🟢10 at far post (be READY).\n🟢6: Follow up → ready for second ball / rebound.\n- FINISH WITH ACCURACY.'},
+  'A8-8v8-2':{how:'🟢7: DRIBBLE FAST over the wing → SCAN for space.\n- IF 🔴 blocks the cross → CUT BACK to 🟢6 at the edge of the box.\n- IF space to cross → Cross with best ANGLE:\n  • 🟢11 at penalty spot.\n  • 🟢9 at first post.\n  • 🟢10 at far post.\n🟢6: Position at edge of box → ready for CUT-BACK.\n- FINISH WITH ACCURACY.'},
+  'D1-3v3':{how:'🟢9: PUSH 🔴1 to their LEFT (our RIGHT).\n- GIVE SPACE to 🔴5 to receive → then PRESS from BEHIND.\n🟢10: PROTECT the middle → BLOCK the split pass to 🔴4.\n🟢4: MARK 🔴5 → PUSH outside OR WIN the ball.\n- READY FOR POSITIVE TRANSITION.'},
+  'D1-5v5':{how:'🟢9: PUSH 🔴1 to their LEFT (our RIGHT).\n- GIVE SPACE to 🔴5 → then PRESS from BEHIND.\n🟢10: BLOCK the split pass to 🔴10.\n🟢4: MARK 🔴5 → PUSH outside.\n🟢5: PROTECT the middle → MARK 🔴9.\n- READY FOR POSITIVE TRANSITION.'},
+  'D1-7v7':{how:'🟢9: GIVE SPACE to 🔴1/5 → let them build over their LEFT side.\n- WHEN 🔴1 plays the ball → PRESS 🔴5 from BEHIND/SIDE.\n🟢10: MARK 🔴10 → CLOSE the middle.\n🟢7: STAY BEHIND 🔴11 → CLOSE the passing lane to 🔴9.\n- WHEN 🔴11 receives → FULL PRESSURE → WIN and PLAY to 🟢9/10.\n🟢4/5: PROTECT the middle → MARK 🔴9.\n- READY FOR POSITIVE TRANSITION.'},
+  'D1-8v8-1':{how:'🟢9: GIVE SPACE to 🔴1/5 → let them build over their LEFT side.\n- WHEN 🔴1 plays the ball → PRESS 🔴5 from BEHIND/SIDE.\n🟢6: MARK 🔴6 → BLOCK forward pass.\n🟢10: MARK 🔴10 → CLOSE the middle.\n🟢7: STAY BEHIND 🔴11 → CLOSE the passing lane to 🔴9.\n- WHEN 🔴11 receives → FULL PRESSURE → WIN and PLAY to 🟢9/10.\n🟢4/5: PROTECT the middle → MARK 🔴9.\n- READY FOR POSITIVE TRANSITION.'},
+  'D1-8v8-2':{how:'🟢9: PRESS 🔴1 IMMEDIATELY → don\'t give space.\n- FORCE 🔴1 to play LEFT → 🔴5 receives under pressure.\n🟢6/10: MARK 🔴6/10 → CLOSE the middle.\n🟢7: POSITION behind 🔴11 → TRAP when 🔴5 plays to 🔴11.\n- 🟢9 and 🟢7 DOUBLE PRESS 🔴11 on the wing.\n🟢4/5: PROTECT the middle → MARK 🔴9.\n- READY FOR POSITIVE TRANSITION.'},
+  'D2-3v3':{how:'🟢9: PRESS 🔴5 → never give up.\n🟢10: DELAY 🔴5 → curved run, LOW BALANCE, PUSH OUTSIDE.\n- BLOCK the split pass to 🔴9.\n🟢4: SHADOW 🟢10 → ready to support.\n- FULL PRESSURE when 🔴9 receives → WIN the ball.'},
+  'D2-5v5':{how:'🟢9: PRESS 🔴5 → never give up.\n🟢10: DELAY 🔴5 → curved run, LOW BALANCE, PUSH OUTSIDE to 🔴11.\n- BLOCK the split pass to 🔴10.\n🟢4: SHADOW 🟢10 → ready to step in.\n🟢5: MARK 🔴9 → CLOSE the middle.\n- FULL PRESSURE when 🔴9 receives → WIN the ball.'},
+  'D2-7v7':{how:'🟢9: PRESS 🔴5 → never give up.\n🟢6: DELAY 🔴5 → curved run, LOW BALANCE, PUSH OUTSIDE.\n- IF 🔴5 plays to 🔴11 → BLOCK or WIN the ball.\n- IF winning → DRIBBLE forward → PASS to 🟢9/10.\n🟢7: FULL PRESSURE when 🔴11 receives → WIN and PLAY forward.\n🟢4: SHADOW 🟢7 → cover if 🟢7 gets beaten.\n🟢5/11: PROTECT the middle → MARK 🔴9.\n- READY FOR POSITIVE TRANSITION.'},
+  'D2-8v8-1':{how:'🟢9: PRESS 🔴5 → never give up.\n🟢6: DELAY 🔴5 → curved run, LOW BALANCE, PUSH OUTSIDE.\n- IF 🔴5 plays to 🔴11 → BLOCK or WIN.\n🟢7: FULL PRESSURE when 🔴11 receives → DOUBLE with 🟢6.\n🟢10: MARK 🔴10 → CLOSE the middle.\n🟢4: SHADOW 🟢7 → cover behind.\n🟢5/11: PROTECT the middle → MARK 🔴9.\n- READY FOR POSITIVE TRANSITION.'},
+  'D2-8v8-2':{how:'🟢9: PRESS 🔴5 → never give up.\n🟢6: DELAY 🔴5 → curved run, LOW BALANCE.\n- PUSH 🔴5 INSIDE (into 🟢6/10 traffic) → NOT outside.\n🟢10: MARK 🔴10 → CLOSE the middle → READY to WIN.\n🟢7: POSITION to intercept if 🔴5 plays wide.\n🟢4: SHADOW 🟢7 → cover behind.\n🟢5: MARK 🔴9.\n- IF 🔴5 turns inside → 🟢6 and 🟢10 TRAP → WIN the ball.\n- READY FOR POSITIVE TRANSITION.'},
+  'D3-3v3':{how:'🟢4: SHADOW 🔴10 → BLOCK the SHOT.\n- WAIT for 🟢9 and 🟢10 to COME BACK → then SWITCH to PRESSURE.\n🟢10: BLOCK the split pass to 🔴9.\n🟢9: CLOSE the back pass to 🔴5.\n- MOVE TOGETHER AS A TEAM.'},
+  'D3-5v5':{how:'🟢5: SHADOW 🔴7 → DELAY and BLOCK the shot.\n- WHEN teammates recover → SWITCH to PRESSURE.\n🟢4: SHADOW 🟢5 → MARK 🔴9 (cover behind).\n🟢10: BLOCK the split pass to 🔴11.\n🟢9: CLOSE the back pass to 🔴1/5.\n🟢1 (GK): MOVE with the ball → position to save.\n- MOVE TOGETHER AS A TEAM.'},
+  'D3-7v7':{how:'🟢11: DELAY 🔴7 → CLOSE the passing line to 🔴9.\n- PUSH 🔴7 to the SIDE → force wide.\n🟢10: MARK 🔴10 → CLOSE the middle.\n🟢4: MARK 🔴9 → stay tight.\n🟢5: SHADOW 🟢11 → cover if 🟢11 gets beaten.\n🟢9: CLOSE the back pass to 🔴4/5.\n🟢7: SUPPORT FAST → ATTACK the ball when opportunity comes.\n🟢1 (GK): MOVE with the ball.\n- MOVE TOGETHER AS A TEAM.\n- READY FOR POSITIVE TRANSITION.'},
+  'D3-8v8-1':{how:'🟢11: DELAY 🔴7 → CLOSE the passing line.\n- PUSH 🔴7 to the SIDE → force wide.\n🟢6: MARK 🔴6 → CLOSE the middle.\n🟢10: MARK 🔴10 → BLOCK forward pass.\n🟢4: MARK 🔴9 → stay tight.\n🟢5: SHADOW 🟢11 → cover behind.\n🟢9: CLOSE the back pass to 🔴4/5.\n🟢7: SUPPORT → ready to ATTACK the ball when 🔴7 is isolated.\n🟢1 (GK): MOVE with the ball → COMMAND the shape.\n- MOVE TOGETHER AS A TEAM.\n- READY FOR POSITIVE TRANSITION.'},
+  'D3-8v8-2':{how:'🟢11: DELAY 🔴7 → CLOSE the passing line.\n🟢9: QUICKLY CLOSE the back pass → CUT the retreat.\n🟢6: MARK 🔴6 → CLOSE the middle.\n🟢10: MARK 🔴10.\n🟢7: AGGRESSIVE → step up and DOUBLE PRESS 🔴7 with 🟢11.\n- WIN the ball → PLAY forward to 🟢9/10.\n🟢4: MARK 🔴9.\n🟢5: SHADOW → cover the switch.\n🟢1 (GK): MOVE with the ball.\n- MOVE TOGETHER AS A TEAM.\n- READY FOR POSITIVE TRANSITION.'},
+  'D4-3v3':{how:'🟢4/5/9: Make a TRIANGLE → one presses, two SHADOW.\n- 🟢 who TOUCHES the ball first → PRESS immediately.\n🟢9: Move SMART → become a FREE PLAYER.\n🟢1 (GK): READY → TALK to teammates → COMMAND the press.'},
+  'D4-5v5':{how:'🟢4/5/10: Make a TRIANGLE → one presses, two SHADOW.\n- 🟢 who TOUCHES the ball first → PRESS immediately.\n- Others CLOSE passing lanes.\n🟢9: Move SMART → become FREE → ready to receive on transition.\n🟢1 (GK): READY → TALK to teammates.'},
+  'D4-7v7':{how:'🟢4/5/10: Make a TRIANGLE → one presses, two SHADOW.\n- 🟢 who TOUCHES the ball → PRESS immediately.\n- Others CLOSE passing lanes → BLOCK split.\n🟢9: Move SMART → become FREE → target for positive transition.\n🟢7/11 (wingers): SUPPORT → attack the ball OR shadow the wide player.\n🟢1 (GK): MOVE with the ball → COACH teammates.\n- READY FOR POSITIVE TRANSITION.'},
+  'D4-8v8-1':{how:'🟢4/5/6/10: Make a DIAMOND → one presses, three SHADOW.\n- 🟢 who TOUCHES the ball → PRESS immediately.\n- Others CLOSE passing lanes → BLOCK split to 🔴6/10.\n🟢9: Move SMART → become FREE → target on transition.\n🟢7/11: SUPPORT → attack the ball OR shadow wide.\n🟢1 (GK): MOVE with the ball → COACH teammates → STEER the press.\n- READY FOR POSITIVE TRANSITION.'},
+  'D4-8v8-2':{how:'🟢4/5/6/10: Make a DIAMOND → compact and tight.\n- TWO press (closest + second) → TWO BLOCK passing lanes.\n- IF 🔴 plays wide → SHIFT the diamond → press again.\n🟢9: Stay central → become the transition target.\n🟢7/11: Track 🔴 wingers → stay tight.\n🟢1 (GK): MOVE with the ball → COMMAND the shift.\n- READY FOR POSITIVE TRANSITION.'},
+  'D5-3v3':{how:'🟢4: QUICKLY CLOSE the SPACE for 🔴10.\n- DON\'T let 🔴10: 1. Dribble inside for SHOOTING 2. Dribble outside for CROSSING.\n🟢9: CLOSE the back pass → CUT the retreat.\n🟢10: PRESSURE and ATTACK → WIN the ball.'},
+  'D5-5v5':{how:'🟢4: QUICKLY CLOSE the SPACE for 🔴10.\n- DON\'T let 🔴10: 1. Dribble inside for SHOOTING 2. Dribble outside for CROSSING.\n🟢9: CLOSE the back pass → CUT the retreat.\n🟢10: PRESSURE and ATTACK → WIN the ball.\n🟢5: MARK 🔴9 → PROTECT the middle.'},
+  'D5-7v7':{how:'🟢4: QUICKLY CLOSE the SPACE → then DELAY → PUSH 🔴11 to the SIDE.\n- DON\'T let 🔴11: 1. Dribble inside 2. Cross 3. Pass back to SWITCH.\n🟢7: SUPPORT FAST → ATTACK the ball → DOUBLE with 🟢4.\n🟢10: MARK 🔴10 → CLOSE the middle.\n🟢9: CLOSE the back pass.\n🟢5: MARK 🔴9.\n🟢11: SHADOW 🟢5 → cover behind.\n- READY FOR POSITIVE TRANSITION.'},
+  'D5-8v8-1':{how:'🟢4: QUICKLY CLOSE the SPACE → DELAY → PUSH 🔴11 to the SIDE.\n🟢7: SUPPORT FAST → ATTACK the ball → DOUBLE with 🟢4.\n- DON\'T let 🔴11: 1. Dribble inside 2. Cross 3. Switch.\n🟢6/10: MARK 🔴6/10 → CLOSE the middle.\n🟢9: CLOSE the back pass.\n🟢5: MARK 🔴9.\n🟢11: SHADOW → cover behind 🟢5.\n- READY FOR POSITIVE TRANSITION.'},
+  'D5-8v8-2':{how:'🟢4: QUICKLY CLOSE the SPACE → PUSH 🔴11 INSIDE (not outside).\n- INTO 🟢6/10 traffic → TRAP → WIN.\n🟢7: COVER behind 🟢4 → ready if 🔴11 beats 🟢4.\n🟢6: MARK 🔴6 → CLOSE the middle → ready to trap.\n🟢10: MARK 🔴10.\n🟢9: CLOSE the back pass.\n🟢5: MARK 🔴9.\n🟢11: SHADOW → cover the switch.\n- DON\'T let 🔴11: 1. Turn inside alone 2. Cross 3. Switch sides.\n- READY FOR POSITIVE TRANSITION.'},
+  'D6-3v3':{how:'In the A-Area → ALL 🔴 are MARKED.\n🟢: ALWAYS position between 🔴 and the GOAL.\n- MAKE CONTACT → PUSH/PULL (no foul!) → DISRUPT.\n- ATTACK the ball → WIN it.\n🟢1 (GK): STEP UP from the line → COMMAND the area.\n🟢 forwards: WIN the ball → PASS/HEAD to 🟢9 → POSITIVE TRANSITION.'},
+  'D6-5v5':{how:'In the A-Area → ALL 🔴 are MARKED.\n🟢4/5: MARK 🔴9/10 → position between 🔴 and goal.\n- MAKE CONTACT → PUSH/PULL (no foul!) → DISRUPT.\n🟢9: TRACK 🔴5 → close the back pass.\n🟢10: MARK 🔴10 → BLOCK the shot.\n🟢1 (GK): STEP UP → COMMAND → READY to save.\n- WIN the ball → POSITIVE TRANSITION to 🟢9.'},
+  'D6-7v7':{how:'In the A-Area → ALL 🔴 are MARKED.\n🟢4: MARK 🔴9 → position between 🔴9 and goal → CONTACT.\n🟢5: MARK 🔴10 → BLOCK the shot.\n🟢10: MARK 🔴10 → CLOSE the middle.\n🟢7: TRACK 🔴7 → don\'t let cross.\n🟢11: TRACK 🔴11 → cover the far side.\n🟢9: CLOSE the back pass → first to transition.\n🟢1 (GK): COME OFF the line → COMMAND the area.\n- WIN the ball → POSITIVE TRANSITION to 🟢9.\n- MOVE TOGETHER AS A TEAM.'},
+  'D6-8v8-1':{how:'In the A-Area → ALL 🔴 are MARKED.\n🟢4: MARK 🔴9 → CONTACT → between 🔴9 and goal.\n🟢5: MARK 🔴10 → BLOCK the shot.\n🟢6: MARK 🔴6 → CLOSE the middle.\n🟢10: MARK 🔴10 → support 🟢5.\n🟢7: TRACK 🔴7 → BLOCK the cross.\n🟢11: TRACK 🔴11 → cover far post.\n🟢9: CLOSE the back pass → transition target.\n🟢1 (GK): STEP UP → COMMAND → STEER the defence.\n- WIN the ball → POSITIVE TRANSITION.\n- MOVE TOGETHER AS A TEAM.'},
+  'D6-8v8-2':{how:'In the A-Area → ALL 🔴 are MARKED → STEP UP together.\n🟢4/5: MARK 🔴9/10 → STEP UP → push 🔴 away from goal.\n🟢6: MARK 🔴6 → BLOCK forward pass from 🔴 midfield.\n🟢10: MARK 🔴10 → close the space → force 🔴 backwards.\n🟢7/11: TRACK 🔴7/11 → BLOCK cross AND cut-back.\n🟢9: PRESS high → CLOSE all back passes → TRAP.\n🟢1 (GK): STEP UP from the line → COMMAND → ready to sweep.\n- WIN the ball → IMMEDIATE POSITIVE TRANSITION to 🟢9/10.\n- MOVE TOGETHER AS A TEAM.'}
+};
+
+// ===== GAMEPLAN MATRIX — Age-appropriate skill descriptions =====
+const GAMEPLAN_MATRIX = {
+  "Passing":              {"U4-U5":"Inside pass and kick","U6":"Stationary pass","U7":"Pass while dribbling","U8":"One-touches","U9":"Pass under pressure","U10":"Different distances","U11-U12":"Combo and crosses"},
+  "Receiving":            {"U4-U5":"Stop and adjust","U6":"Receiving","U7":"Open-body positioning","U8":"Receive while moving","U9":"First touch","U10":"First touch with feint","U11-U12":"Lay-offs & aerial"},
+  "Dribbling 1v1":        {"U4-U5":"Ball control","U6":"Direction changes","U7":"Changing speeds","U8":"Speed dribbling","U9":"1v1 without pressure","U10":"1v1 under pressure","U11-U12":"Dominate 1v1"},
+  "Finishing":            {"U4-U5":"Hit a target","U6":"Get the ball up","U7":"Accuracy","U8":"Quick finish","U9":"Angles shooting","U10":"Distance finish","U11-U12":"Aerial finish"},
+  "Actions -":            {"U4-U5":"Intention to steal","U6":"Mark the opponent","U7":"1v1 Defending","U8":"Shadow and cover","U9":"Push outside","U10":"Stay compact","U11-U12":"Stay compact as a team"},
+  "Actions +":            {"U4-U5":"Go open","U6":"Create receiving lines","U7":"Show up","U8":"Check in/out","U9":"Check in/out full pressure","U10":"Create spaces","U11-U12":"Create overloads"},
+  "Insights -":           {"U4-U5":"Press the opponent","U6":"Protect the goal","U7":"When/how to press","U8":"Close the middle","U9":"Delay and guide","U10":"Rest attack","U11-U12":"Adapting formations"},
+  "Insights +":           {"U4-U5":"Dribble or pass","U6":"Find spaces","U7":"Know your position","U8":"Third man play","U9":"Timing","U10":"Rest defence","U11-U12":"Adapting formations"},
+  "Technical":            {"U5":"Encouraging","U6":"Asking balls","U7":"Messaging","U8":"Coach without ball","U9":"Receptive","U10":"Motivating","U11":"Tactical communication"},
+  "Social":               {"U5":"Manners","U6":"English and Chinese","U7":"Follow instructions","U8":"Social and tactical","U9":"Active discussing","U10":"Positive team impact","U11":"Leading team communication"},
+  "Motivation":           {"U5":"Enjoy to play","U6":"Energy and effort","U7":"Wants to improve","U8":"Task discipline","U9":"Self control","U10":"Competitive drive","U11":"Intrinsic motivation"},
+  "Teamwork":             {"U5":"Plays together","U6":"Support and courage","U7":"Team work","U8":"Team discipline","U9":"Reliable player","U10":"Improves cohesion","U11":"Leads the team"},
+  "Goalkeeper":           {"U4-U5":"Goalkeeper","U6":"Goalkeeper","U7":"Goalkeeper","U8":"Goalkeeper","U9":"Goalkeeper","U10":"Goalkeeper","U11-U12":"Goalkeeper"},
+  "Agility / Endurance":  {"U4-U5":"Agility / Endurance","U6":"Agility / Endurance","U7":"Agility / Endurance","U8":"Agility / Endurance","U9":"Agility / Endurance","U10":"Agility / Endurance","U11-U12":"Agility / Endurance"},
+  "Strength / Reaction":  {"U4-U5":"Strength / Reaction","U6":"Strength / Reaction","U7":"Strength / Reaction","U8":"Strength / Reaction","U9":"Strength / Reaction","U10":"Strength / Reaction","U11-U12":"Strength / Reaction"}
+};
+
+// Map topics to exactly 4 Focus Points (from FP sheet in Components and Building blocks)
+const TOPIC_SKILLS = {
+  A1: ["Passing", "Actions +", "Technical", "Goalkeeper"],
+  A2: ["Receiving", "Insights +", "Social", "Agility / Endurance"],
+  A3: ["Receiving", "Actions +", "Teamwork", "Strength / Reaction"],
+  A4: ["Finishing", "Insights +", "Motivation", "Goalkeeper"],
+  A5: ["Passing", "Insights +", "Technical", "Agility / Endurance"],
+  A6: ["Receiving", "Insights +", "Social", "Agility / Endurance"],
+  A7: ["Dribbling 1v1", "Actions +", "Technical", "Agility / Endurance"],
+  A8: ["Finishing", "Actions +", "Motivation", "Strength / Reaction"],
+  D1: ["Passing", "Actions -", "Teamwork", "Agility / Endurance"],
+  D2: ["Dribbling 1v1", "Insights -", "Technical", "Strength / Reaction"],
+  D3: ["Dribbling 1v1", "Actions -", "Teamwork", "Agility / Endurance"],
+  D4: ["Receiving", "Insights -", "Motivation", "Strength / Reaction"],
+  D5: ["Dribbling 1v1", "Insights -", "Motivation", "Strength / Reaction"],
+  D6: ["Finishing", "Actions -", "Teamwork", "Goalkeeper"]
+};
+
+// Map each skill to its component group and color
+const SKILL_COMPONENT = {
+  "Passing":             {group:"Actions with ball",      color:"#1565c0", icon:"\u26BD"},
+  "Receiving":           {group:"Actions with ball",      color:"#1565c0", icon:"\u26BD"},
+  "Dribbling 1v1":       {group:"Actions with ball",      color:"#1565c0", icon:"\u26BD"},
+  "Finishing":           {group:"Actions with ball",      color:"#1565c0", icon:"\u26BD"},
+  "Actions +":           {group:"Actions without ball",   color:"#6a1b9a", icon:"\uD83C\uDFC3"},
+  "Actions -":           {group:"Actions without ball",   color:"#6a1b9a", icon:"\uD83C\uDFC3"},
+  "Insights +":          {group:"Game insight",           color:"#0d47a1", icon:"\uD83E\uDDE0"},
+  "Insights -":          {group:"Game insight",           color:"#0d47a1", icon:"\uD83E\uDDE0"},
+  "Technical":           {group:"Communication",          color:"#2e7d32", icon:"\uD83D\uDCAC"},
+  "Social":              {group:"Communication",          color:"#2e7d32", icon:"\uD83D\uDCAC"},
+  "Motivation":          {group:"Mindset",                color:"#c62828", icon:"\uD83D\uDD25"},
+  "Teamwork":            {group:"Mindset",                color:"#c62828", icon:"\uD83D\uDD25"},
+  "Goalkeeper":          {group:"Athletic Development",   color:"#f9a825", icon:"\uD83D\uDCAA"},
+  "Agility / Endurance": {group:"Athletic Development",   color:"#f9a825", icon:"\uD83D\uDCAA"},
+  "Strength / Reaction": {group:"Athletic Development",   color:"#f9a825", icon:"\uD83D\uDCAA"}
+};
+
+// Map gameplan age to matrix level
+function gameplanToLevel(gp) {
+  var m = {"U04":"U4-U5","U05":"U4-U5","U06":"U6","U07":"U7","U08":"U8","U09":"U9","U10":"U10","U11":"U11-U12"};
+  return m[gp] || "U10";
+}
+
+const SEASON_WEEKS = [
+  {week:'W0', topic:'A6', label:'W0'},
+  {week:'W1', topic:'D5', label:'W1'},
+  {week:'W2', topic:'A7', label:'W2'},
+  {week:'W3', topic:'A8', label:'W3'},
+  {week:'W4', topic:'D6', label:'W4'},
+  {week:'W5', topic:'A1', label:'W5'},
+  {week:'W6', topic:'A2', label:'W6'},
+  {week:'W7', topic:'D1', label:'W7'},
+  {week:'W8', topic:'A3', label:'W8'},
+  {week:'W9', topic:'A4', label:'W9'},
+  {week:'W10',topic:'D2', label:'W10'},
+  {week:'W11',topic:'A5', label:'W11'},
+  {week:'W12',topic:'A6', label:'W12'},
+  {week:'W13',topic:'D3', label:'W13'},
+  {week:'W14',topic:'A7', label:'W14'},
+  {week:'W15',topic:'A8', label:'W15'},
+  {week:'W16',topic:'D4', label:'W16 (current)'},
+];
+const CURRENT_WEEK_IDX = 15;
+
+const CYCLE_DATA = {
+  'tryout':{D1:[1]},
+  '丁亨瑞':{D5:[3, 3.8],D6:[2, 3.8],A1:[2],A2:[1],D1:[2, 4.0],A3:[2, 3.8],A4:[1, 3.5],D2:[2, 4.0],A5:[2, 3.8],A6:[4, 4.1],D3:[2, 4.3],A7:[2, 4.1],A8:[4, 4.3]},
+  '丁家瑞':{D5:[4, 3.8],D6:[1, 4.0],A1:[1],D1:[1, 3.5],A3:[1, 3.5],A4:[1, 3.0],D2:[1, 3.0],A5:[4, 3.8],A6:[3, 3.1],D3:[3, 3.1],A7:[4, 2.7],A8:[3, 2.9]},
+  '丘子文':{D4:[5, 3.3],D5:[4, 3.4],D6:[3, 3.0],A1:[3],A2:[4, 3.4],D1:[3, 3.3],A3:[3, 2.5],A4:[3, 2.3],D2:[2, 2.3],A5:[5, 2.5],A6:[5, 2.4],D3:[4, 3.1],A7:[4, 3.2],A8:[3, 3.2]},
+  '于茗希':{D4:[5, 3.0],D5:[5, 2.6],D6:[4, 2.3],A1:[3, 2.1],A2:[2, 2.8],D1:[4, 3.0],A3:[3, 2.6],A4:[3, 2.4],D2:[0],A5:[4, 2.7],A6:[3, 3.0],D3:[3, 2.7],A7:[1, 2.8],A8:[4, 2.9]},
+  '付灏':{A1:[2, 3.0],A2:[3, 2.6],D1:[3, 3.5],A3:[4, 3.0],A4:[3, 2.9],D2:[2, 2.6],A5:[1, 2.7],A6:[3, 3.0],D3:[3, 3.4],A7:[1, 3.3],A8:[1, 2.8]},
+  '代达霖':{A8:[3, 3.2]},
+  '伍毅':{D4:[5, 3.7],D5:[4, 2.4],D6:[4, 3.7],A1:[4, 3.5],A2:[3, 3.1],D1:[4, 3.4],A3:[4, 3.8],A4:[3, 3.4],D2:[3, 3.6],A5:[5, 3.4],A6:[4, 3.2],D3:[4, 3.1],A7:[4, 3.3],A8:[5, 2.9]},
+  '伦启然':{D5:[2, 2.3],A2:[2, 2.5],D1:[2, 3.0],A3:[2, 2.3],A5:[2, 3.5],A6:[2, 2.6],D3:[2, 2.6],A8:[1, 3.0]},
+  '何与恒':{D4:[5, 3.3],D5:[6, 3.9],D6:[5, 3.5],A1:[5, 3.9],A2:[4, 3.8],D1:[5, 4.0],A3:[5, 3.5],A4:[4, 3.2],D2:[5, 3.2],A5:[5, 4.2],A6:[4, 4.1],D3:[4, 4.2],A7:[3, 4.0],A8:[3, 3.7]},
+  '何宇浩':{A7:[2, 3.1]},
+  '何宸浩':{A5:[3, 3.1],A6:[2, 3.6],D3:[3, 2.8],A8:[3, 2.8]},
+  '何熹':{D4:[5, 3.7],D5:[2, 3.0],D6:[4, 2.4],A1:[3],A2:[3, 2.6],D1:[4, 3.0],A3:[3, 2.6],A4:[1, 2.0],D2:[5, 2.7],A5:[2, 3.3],A6:[3, 2.8],D3:[3, 2.9],A7:[3, 2.8],A8:[3, 3.1]},
+  '何钲恩':{D6:[4, 3.9],A1:[1, 3.7],A2:[3, 3.8],D1:[3, 3.8],A3:[3, 4.0],A4:[1, 4.0],D2:[1, 3.5],A5:[1, 4.0],A6:[2, 3.6],D3:[4, 3.7],A8:[3, 3.7]},
+  '何霖':{D6:[2],A1:[2],A2:[2, 3.3],D1:[2, 3.0],A3:[2, 2.3],A4:[2, 2.3],D2:[2, 2.0],A5:[1, 2.7],A6:[2, 2.3],D3:[3, 2.8],A7:[2, 2.9],A8:[0]},
+  '余羽宸':{D5:[3, 2.7],D6:[3, 2.7],A1:[4, 2.0],A2:[3, 3.2],D1:[3, 2.9],A3:[4, 2.4],A4:[3, 3.0],D2:[1, 2.5],A5:[3, 2.0],A6:[3, 2.8],D3:[3, 2.5],A7:[3, 3.2],A8:[3, 2.9]},
+  '修禾':{A3:[2]},
+  '倪锦宸':{D5:[2, 2.8],D6:[3, 3.1],A1:[2, 2.0],A2:[2, 3.0],D1:[1, 2.3],A3:[3, 2.9],A4:[1],D2:[1, 3.0],A5:[2, 2.8],A6:[2, 2.5],D3:[2, 3.0],A7:[2, 2.5],A8:[2, 2.8]},
+  '倪锦秋':{D5:[6, 3.2],D6:[5, 3.4],A1:[2, 3.5],A2:[5, 3.3],D1:[4, 2.6],A3:[4, 3.2],A4:[3, 3.3],D2:[4, 3.5],A5:[6, 3.7],A6:[6, 3.2],D3:[6, 3.0],A8:[6, 3.4]},
+  '关子航':{A3:[1, 2.0],A4:[2, 2.5],D2:[2, 3.0],A5:[2, 2.5],D3:[2, 2.3],A7:[2, 2.8],A8:[2, 2.5]},
+  '刘伟琪':{A8:[1]},
+  '刘元':{D2:[2],A5:[1],A6:[1, 1.7],D3:[2, 2.0]},
+  '刘冠辰':{A3:[1],D2:[1],A5:[1],A6:[2],D3:[0],A8:[2]},
+  '刘哲成':{D2:[1, 2.0],A5:[1],A6:[0]},
+  '刘子睿':{D5:[1],D6:[1, 1.7],A2:[1, 2.0],A3:[0],D2:[1]},
+  '刘安然':{D5:[4, 3.3],D6:[4, 2.1],A1:[3, 2.0],A2:[4, 3.3],D1:[3, 2.8],A3:[3, 2.3],A4:[1, 2.7],D2:[3, 3.4],A5:[3, 2.4],A6:[4, 2.9],D3:[3, 2.5],A7:[5, 3.0],A8:[2, 2.5]},
+  '刘宣宏':{D4:[5, 3.3],D5:[4, 3.1],D6:[2, 2.9],A1:[3, 2.0],A2:[2, 2.5],D1:[1, 3.5],A3:[1, 3.0],A4:[1, 3.0],D2:[3, 3.0],A5:[3, 1.5],A6:[3, 3.4],D3:[3, 3.6],A7:[2, 3.0],A8:[1, 3.3]},
+  '刘宸安':{D5:[2, 3.0],D6:[2, 3.0],A1:[1],A2:[3, 2.7],D1:[2, 4.0],A3:[2, 3.0],D2:[3, 3.4],A5:[2, 3.0],A6:[2, 2.9],D3:[2, 3.3],A8:[2, 2.6]},
+  '刘恒垣':{D6:[2, 3.7],A1:[4, 3.0],A2:[1, 3.3],D1:[3, 3.5],A3:[0],D2:[1, 2.5]},
+  '刘敬谦':{A3:[1],A4:[1, 2.5],D2:[1],A5:[4, 2.2],A6:[3, 2.7],D3:[4, 2.9],A7:[5, 2.9],A8:[3, 3.3]},
+  '刘昱希':{D6:[1],A5:[2, 3.1],A6:[3, 3.3],D3:[5, 3.5],A7:[4, 3.0],A8:[3, 3.1]},
+  '刘曦童':{D5:[1, 3.8],D6:[0],A1:[1],A2:[1, 3.3],D1:[1, 3.0],A3:[1],A4:[1],D2:[1, 3.3],A5:[1, 3.5],A6:[1, 2.5],D3:[1, 2.8],A8:[1, 3.0]},
+  '刘沛知':{D4:[0, 3.3]},
+  '刘泽芃':{D6:[5, 3.8],A1:[5, 3.9],A2:[2, 3.6],D1:[3, 4.0],A3:[5, 3.8],A4:[4, 3.6],D2:[2, 3.6],A5:[3, 3.9],A6:[2, 3.8],D3:[3, 4.1],A7:[4, 3.6],A8:[4, 3.7]},
+  '刘浩明':{D5:[1],D6:[1],A2:[1],D1:[1],A3:[1],D2:[2],A5:[1],A6:[1, 3.3],D3:[1],A8:[1]},
+  '刘淏丞':{D6:[4, 3.3],A1:[4, 2.5],A2:[5, 3.1],D1:[5, 3.3],A3:[3, 3.1],A4:[3, 3.0],D2:[2, 2.8],A5:[3, 2.6],A6:[4, 3.1],D3:[6, 3.5],A7:[5, 2.9],A8:[4, 3.0]},
+  '刘深明':{D5:[2, 2.4],D6:[2, 3.3],A1:[2, 3.0],A2:[2, 2.8],A3:[1, 3.0],A4:[2, 3.2],D2:[3, 3.5],A5:[3, 3.0],A6:[3, 2.8],D3:[2, 2.6],A7:[2, 2.7],A8:[1, 3.0]},
+  '刘益承':{A1:[2],A2:[2, 3.5],D1:[4, 3.0],A3:[3, 2.8],A4:[5, 3.6],D2:[2, 3.5],A5:[3, 3.0],A6:[5, 2.9],D3:[2, 3.1],A7:[3, 3.0],A8:[4, 3.2]},
+  '刘穆穆':{D4:[5, 3.0],D5:[2, 2.7],D6:[2, 2.8],A1:[2, 2.5],A2:[1, 3.0],D1:[2, 2.0],A3:[2, 3.0],A4:[1, 2.5],D2:[1, 2.3],A5:[2, 2.8],A6:[2, 3.0],D3:[1, 2.8]},
+  '刘缙宁':{D5:[6, 2.8],D6:[6, 3.0],A1:[4, 2.3],A2:[5, 3.3],D1:[5, 3.9],A3:[5, 3.5],A4:[2, 3.0],D2:[4, 3.2],A5:[6, 2.8],A6:[6, 2.6],D3:[6, 2.7],A7:[6, 3.1],A8:[5, 3.1]},
+  '刘轩澈':{D5:[1],D6:[1],A1:[1],A2:[1],D1:[1],D2:[1],A5:[0],A6:[1],D3:[1],A8:[1]},
+  '刘辰安':{D5:[4, 2.2],D6:[4, 2.2],A1:[3, 2.0],D1:[3, 2.3],A3:[3, 2.0],A4:[3, 2.8],D2:[1],A5:[4, 2.0],A6:[4, 2.9],D3:[4, 2.9],A8:[3, 2.9]},
+  '包锦睿':{D6:[1],A1:[0],A2:[1],D1:[1],A3:[1],D2:[1, 2.0],A5:[1],A6:[1, 2.0],D3:[1, 3.0],A8:[1, 3.5]},
+  '卓安成':{D5:[5, 3.0],D6:[3, 2.8],A1:[2],A2:[3, 2.6],D1:[4, 2.9],A3:[2, 3.0],A4:[3, 3.0],D2:[3, 2.7],A5:[3, 2.4],A6:[1, 2.5],D3:[3, 2.2],A7:[3, 2.2],A8:[2, 2.5]},
+  '卓诗远':{D5:[1]},
+  '卢依娜':{D6:[1, 2.0],A1:[2],A2:[2, 4.0],D1:[2, 3.3],A3:[3, 2.5],A4:[2, 2.3],D2:[3, 3.3],A5:[2, 2.4],A6:[3, 2.6],D3:[3, 2.8],A7:[3, 2.9],A8:[2, 2.8]},
+  '卢果':{D6:[4, 2.6],A1:[3, 2.3],A2:[2, 3.0],D1:[4, 3.1],A3:[5, 2.4],A4:[3, 2.3],D2:[2, 3.5],A5:[4, 2.7],A6:[5, 3.0],D3:[5, 3.0],A7:[5, 3.6],A8:[5, 2.9]},
+  '卢瀚宇':{A2:[2, 3.0],D1:[2, 3.8],A3:[3, 3.3],A4:[2, 3.0],D2:[3, 3.7],A5:[2, 2.4],A6:[4, 2.8],D3:[3, 3.2],A7:[3, 3.3],A8:[2, 3.4]},
+  '卢瀚林':{D6:[2, 3.6],A1:[1],A2:[2, 3.5],D1:[4, 3.6],A3:[4],A4:[3, 3.3],D2:[3, 3.9],A5:[4, 3.8],A6:[3, 3.4],D3:[3, 4.0],A7:[3, 3.6],A8:[4, 3.6]},
+  '卢益铖':{D4:[5, 3.0],D5:[4, 3.1],D6:[4, 3.2],A1:[4, 2.4],A2:[1, 2.8],D1:[4, 3.5],A3:[4, 2.5],A4:[3, 3.0],D2:[2, 2.7],A5:[4, 3.1],A6:[4, 2.9],D3:[4, 2.9],A7:[4, 3.1],A8:[4, 3.4]},
+  '卢逸森':{D4:[5, 3.0],D5:[1, 4.0],D6:[2, 3.0],A1:[1],A2:[2, 2.0],D1:[2, 2.8],A3:[2, 1.8],D2:[1, 2.0],A5:[3, 2.3],A6:[3, 2.5],D3:[3, 2.2],A7:[4, 2.6],A8:[3, 3.7]},
+  '叶腾焰':{A7:[0]},
+  '叶腾煦':{A6:[1, 2.8],D3:[2, 2.3]},
+  '司雨辰':{D6:[3, 3.2],A1:[1],D1:[4, 3.1],A3:[3, 2.8],A4:[1],D2:[1, 3.3],A5:[3, 3.0],A6:[2, 3.0],D3:[2, 3.0],A7:[1],A8:[4, 2.9]},
+  '向烜轩':{A7:[2, 2.4]},
+  '向皓轩':{D4:[0, 3.7],D5:[4, 3.3],D6:[1, 2.7],A1:[2],A2:[1, 2.3],D1:[2, 3.3],A3:[2],D2:[6, 3.7],A5:[2, 3.6],A6:[3, 3.3],D3:[2, 2.7],A8:[1, 3.8]},
+  '吴北辰':{D5:[4, 3.1],D6:[4, 3.1],A1:[3, 2.0],A2:[4, 3.0],D1:[4, 3.2],A3:[4, 2.3],A4:[3, 3.4],D2:[5, 3.2],A5:[3, 2.7],A6:[5, 3.2],D3:[5, 3.5],A8:[2, 2.9]},
+  '吴学璟':{D2:[1],A5:[1],D3:[1],A8:[0]},
+  '吴安广':{D5:[5],D6:[5, 3.5],A1:[3, 2.0],A2:[4, 3.0],D1:[5, 3.3],A3:[4, 2.9],A4:[3, 2.8],D2:[5, 3.5],A5:[4, 3.3],A6:[4, 3.1],D3:[3, 2.5],A8:[2]},
+  '吴律吕':{D5:[2, 3.3],D6:[2, 3.0],A1:[2, 3.0],A2:[2, 3.0],D1:[2, 3.5],A3:[2, 2.3],A4:[2, 3.3],D2:[1, 3.0],A5:[2, 2.3],A6:[2, 2.7],D3:[2, 3.0],A7:[2, 2.9],A8:[2, 3.1]},
+  '吴浠芃':{D5:[2, 2.8],D6:[2, 3.0],A1:[3],A2:[2, 3.3],D1:[2, 3.5],A3:[2, 3.0],A4:[2, 3.5],D2:[2, 3.5],A5:[2, 3.5],A6:[2, 3.0],D3:[2, 2.6],A8:[2, 3.4]},
+  '吴浩宇':{D5:[3, 3.6],D6:[4, 3.9],A1:[3, 3.8],A2:[2, 3.8],D1:[4],A3:[4, 4.0],A4:[3, 3.5],D2:[4, 3.6],A5:[5, 4.2],A6:[3, 3.4],D3:[1, 3.8],A7:[0],A8:[4, 3.8]},
+  '吴纳多':{D4:[5, 3.3],D5:[4, 4.0],D6:[5, 3.6],A1:[3],A2:[4, 3.7],D1:[4, 3.3],A3:[4, 3.1],A4:[3, 4.0],D2:[3, 4.0],A5:[3, 4.0],A6:[4, 3.4],D3:[3, 3.9],A7:[4, 3.5],A8:[2, 4.7]},
+  '吴边汪洋':{D5:[2],D6:[2, 2.5],A1:[1],A5:[2, 2.0],A6:[3, 3.1],D3:[2, 3.5],A7:[2, 2.8],A8:[2]},
+  '周一辰':{D3:[2, 2.3],A8:[2, 3.0]},
+  '周修禾':{D6:[2, 3.0],A2:[2, 3.7],D1:[2, 3.7],A4:[1],D2:[1, 2.0],A5:[2, 3.1],A6:[0],D3:[2, 3.3],A7:[2, 3.3],A8:[2, 3.0]},
+  '周宇森':{D5:[5, 3.0],D6:[4, 3.0],A1:[4, 2.8],A2:[2, 3.0],D1:[4, 2.9],A3:[4, 2.9],A4:[2, 2.9],D2:[1, 3.3],A5:[3, 3.3],A6:[0],D3:[2, 3.4],A7:[3, 2.2],A8:[2, 2.0]},
+  '周方果':{D5:[4, 3.6],D6:[3, 3.7],A1:[3, 3.0],A2:[2, 2.8],D1:[2, 3.0],A3:[4, 3.0],A4:[2, 3.0],D2:[4],A5:[4, 3.0],A6:[4, 3.0],D3:[4, 3.8],A7:[4, 3.4],A8:[4, 3.7]},
+  '周永哲':{D5:[5, 3.9],D6:[4, 4.1],A1:[5, 3.4],A2:[3, 3.6],D1:[4, 3.4],A3:[5, 3.9],A4:[4, 4.1],D2:[1, 4.3],A5:[4, 3.6],A6:[4, 3.4],D3:[3, 3.7],A7:[3, 3.6],A8:[3, 3.8]},
+  '周睿程':{D4:[5, 3.3],D5:[3, 3.6],D6:[5, 3.5],A1:[3],A2:[3, 2.7],D1:[5, 3.1],A3:[4, 3.2],A4:[3, 3.9],D2:[3, 3.3],A5:[4, 3.4],A6:[6, 3.5],D3:[2, 2.7],A7:[4, 3.1],A8:[2, 3.0]},
+  '周禹辰':{D6:[2, 2.9],A1:[1, 2.0],A2:[1, 2.0],D1:[1, 2.0],A3:[0],A4:[1, 3.0],D2:[1, 3.0],A5:[1, 2.3],A6:[1],D3:[1, 2.0],A7:[1, 2.0],A8:[1]},
+  '唐启宸':{D5:[4, 2.7],D6:[4, 3.3],A1:[3, 3.0],A2:[3, 3.0],D1:[5, 2.8],A3:[3, 2.4],A4:[2, 2.8],D2:[4, 2.4],A5:[3, 2.5],A6:[3, 2.5],D3:[2, 2.3],A8:[1, 2.0]},
+  '唐启深':{D5:[2],D6:[2, 3.0],A1:[2],A2:[2, 3.0],D1:[1],A3:[2, 3.0],A4:[3, 2.0],D2:[2, 2.7],A5:[2, 3.0],A6:[2, 3.3],D3:[2, 3.0],A8:[1, 2.5]},
+  '唐诗睿':{D5:[4, 3.1],D6:[3, 3.7],A1:[3, 3.5],A2:[3, 3.7],D1:[4, 3.8],A3:[3, 3.7],A4:[2, 3.3],D2:[1, 3.5],A5:[4, 3.3],A6:[4, 3.3],D3:[3, 3.3],A8:[3, 2.8]},
+  '喻树':{D4:[0, 1.7]},
+  '喻荣麒':{D5:[1],D6:[1],A1:[1],A2:[1],D1:[1],A3:[0],D2:[0],A5:[1],A6:[2, 3.0],D3:[1],A7:[2]},
+  '姚络钒':{D5:[5, 4.0],D6:[5, 3.7],A1:[5, 3.0],A2:[4, 3.5],D1:[1, 3.3],A3:[5, 3.5],A4:[4, 3.5],D2:[5, 3.2],A5:[6, 3.3],A6:[5, 3.4],D3:[4, 3.3],A7:[7, 3.2],A8:[5, 3.7]},
+  '姜启泽':{D4:[5, 3.0],D5:[4, 2.3],D6:[4, 3.1],A1:[3, 3.3],A2:[2, 3.3],D1:[4, 3.3],A3:[3],A4:[2],D2:[2, 3.1],A5:[1],A6:[3, 2.9],D3:[4, 3.6],A7:[4, 3.1],A8:[2, 3.3]},
+  '姜思臣':{D5:[6, 3.0]},
+  '姜权祐':{D4:[5, 3.3],D5:[1],D6:[2],A1:[1],A2:[2],D1:[2],A3:[2],D2:[4],A5:[2],A6:[2],D3:[1],A8:[2]},
+  '孔澈':{D1:[1],A3:[1, 2.0],A4:[1, 1.5],D2:[1, 1.8],A5:[1, 2.0],A6:[1, 1.8],D3:[1, 2.0],A8:[1]},
+  '孟令炜':{D4:[5],D5:[2, 2.8],D6:[3, 3.1],A1:[3, 4.0],A2:[2, 3.0],D1:[2, 4.0],A3:[4, 3.6],A4:[1, 2.7],D2:[3, 3.1],A5:[4, 3.1],A6:[3, 2.8],D3:[3, 2.6],A7:[2, 2.8],A8:[3, 2.1]},
+  '孟子城':{D4:[5, 3.0],D5:[4, 3.0],D6:[5, 3.7],A1:[3],A2:[4, 3.3],D1:[4, 3.0],A3:[4, 2.7],A4:[1, 3.3],D2:[1, 2.8],A5:[3, 3.4],A6:[4, 2.7],D3:[2, 3.0],A8:[2, 3.2]},
+  '孟宪敦':{D5:[2, 3.0],D6:[2, 3.0],A1:[2, 2.5],A2:[1, 1.0],D1:[2],A3:[1, 2.0],A4:[2, 2.2],D2:[2, 2.0],A5:[2, 2.2],A6:[3, 2.4],D3:[2, 2.0],A8:[2, 2.5]},
+  '季睿':{D5:[1],D6:[2],A1:[1],A2:[2],D1:[2],A3:[2],D2:[3],A5:[2],A6:[2],D3:[2],A8:[2]},
+  '宁博俨':{D4:[5, 3.3],D5:[3, 3.1],D6:[3, 2.9],A1:[1],A2:[3, 3.0],D1:[3, 3.1],A3:[2, 2.9],A4:[2, 2.0],D2:[2, 2.9],A5:[3, 3.2],A6:[2, 3.3],D3:[3, 2.6],A7:[3, 2.7],A8:[2, 2.4]},
+  '安景堂':{D4:[5, 3.3],D5:[2, 2.9],D6:[3, 2.9],A1:[2],D1:[4, 3.3],A3:[3, 2.5],A4:[2],D2:[3, 2.9],A5:[2, 2.7],A6:[3, 2.9],D3:[2, 2.8],A8:[3, 3.7]},
+  '宋悦文':{D5:[4, 3.2],D6:[4, 3.4],A1:[4, 2.5],A2:[3, 2.8],D1:[4, 3.4],A3:[5, 3.3],A4:[3, 3.4],D2:[1, 3.8],A5:[5, 2.7],A6:[4, 3.2],D3:[4, 3.3],A7:[4, 3.4],A8:[4, 3.2]},
+  '宋琪':{A7:[4, 4.0]},
+  '宋瑭':{D4:[5, 4.0],D5:[4, 3.6],D6:[3, 3.1],A1:[1],A2:[3, 3.2],D1:[3, 4.0],A3:[4, 2.8],A4:[3, 3.0],D2:[1, 3.8],A5:[3, 3.9],A6:[3, 3.8],D3:[3, 3.9],A8:[3, 3.5]},
+  '封俊宇':{D4:[10, 3.0],D5:[4, 3.6],D6:[4, 3.6],A1:[1, 4.0],A2:[3, 3.6],D1:[4, 3.8],A3:[4, 3.9],A4:[2, 3.0],D2:[2, 3.9],A5:[4, 3.5],A6:[4, 3.4],D3:[3, 3.7],A7:[3, 3.4],A8:[3, 2.7]},
+  '常鑫乐':{D6:[3, 2.9],A1:[3, 3.0],A2:[2, 4.0],D1:[5, 3.5],A3:[4, 3.5],A4:[2, 3.7],D2:[2, 3.6],A5:[3, 3.3],A6:[4, 3.3],D3:[4, 3.8],A7:[4, 4.1],A8:[4, 3.8]},
+  '廉翔云':{D4:[5, 3.7],D5:[6, 3.8],D6:[5, 3.6],A1:[5, 3.0],A2:[4, 3.0],D1:[6, 2.4],A3:[5, 2.9],A4:[3],D2:[4, 3.4],A5:[5, 3.5],A6:[4, 2.8],D3:[5, 3.0],A7:[5, 2.8],A8:[5, 3.3]},
+  '廖煊宸':{A7:[3, 3.0]},
+  '廖煦宸':{D5:[1],D6:[4, 3.0],A1:[3, 3.0],A2:[2, 3.3],D1:[2, 3.1],A3:[2],D2:[4, 3.0],A5:[2, 2.9],A6:[4, 3.1],D3:[2, 3.1]},
+  '廖知至':{D5:[0]},
+  '廖荣颢':{D6:[1]},
+  '张乐杨':{D5:[4, 2.6],D6:[3, 2.6],A1:[3, 2.7],A2:[1, 2.3],D1:[4, 2.4],A3:[2, 2.4],A4:[4, 2.3],D2:[1, 2.5],A5:[4, 2.3]},
+  '张亨元':{D4:[0, 4.0],D5:[1],A1:[0],A2:[1],D1:[1],A3:[1]},
+  '张传承':{D5:[2, 3.4],D6:[3, 3.2],A1:[3, 3.7],A2:[1, 3.0],D1:[3, 3.4],A3:[5, 2.9],A4:[2, 2.7],D2:[2, 3.6],A5:[2, 3.1],A6:[2, 3.9],D3:[2, 3.8],A7:[2, 3.6]},
+  '张佑汀':{D5:[2, 2.5],D6:[2, 3.9],A1:[3, 3.5],A2:[2, 3.0],D1:[1],A3:[2],A4:[2],D2:[2, 3.5],A5:[3, 3.5],A6:[2, 3.3],D3:[2],A8:[2, 3.4]},
+  '张佩森':{D5:[4, 2.6],D6:[4, 3.1],A1:[3, 2.2],A2:[4, 3.0],D1:[3, 2.1],A3:[4, 2.5],A4:[2, 2.3],D2:[4, 3.1],A5:[3, 3.0],A6:[3, 3.2],D3:[4, 2.6],A7:[3, 2.7],A8:[3, 3.0]},
+  '张力维':{D5:[3, 4.0],D6:[3, 3.4],A1:[4, 2.0],A2:[3, 3.3],D1:[4, 3.1],A3:[4, 3.5],A4:[4, 2.9],D2:[1, 2.8],A5:[1, 3.5],A6:[4, 3.3],D3:[3, 3.7],A7:[3, 2.6],A8:[4, 3.0]},
+  '张博文':{D4:[5, 2.3],D5:[2, 3.0],D6:[2, 3.0],A1:[2, 3.0],A2:[1],D1:[1, 3.7],A3:[2, 2.6],A4:[1, 2.3],D2:[1],A5:[1, 2.0],A6:[0],D3:[1, 2.3],A7:[1, 3.0],A8:[1, 2.0]},
+  '张嘉扬':{D5:[4, 2.0],D6:[3, 2.5],A1:[2, 1.5],A2:[1],D1:[3, 2.0],A3:[2, 3.0],A4:[2, 2.0],D2:[4, 2.0],A5:[2, 3.0],A6:[3, 2.1],D3:[2, 2.6],A7:[2, 3.0],A8:[3, 2.6]},
+  '张圳南':{D5:[3, 3.0],D6:[3, 2.3],A1:[3, 2.5],A2:[3, 3.0],D1:[3],A3:[2, 3.0],A4:[2, 2.5],D2:[3, 2.8],A5:[3, 2.6],A6:[3, 2.3],D3:[3, 2.8],A7:[4, 2.7],A8:[2, 3.1]},
+  '张夏蒙':{D4:[5, 4.0],D5:[6, 3.7],D6:[7, 3.3],A1:[5, 3.6],A2:[4, 3.0],D1:[5, 3.4],A3:[5, 3.5],A4:[4, 3.1],D2:[4, 3.9],A5:[6, 3.3],A6:[3, 3.4],D3:[5, 3.7],A7:[7, 3.7],A8:[6, 3.3]},
+  '张家赫':{D4:[5, 3.0],D5:[3, 3.4],D6:[4, 3.1],A1:[4],A2:[4, 2.7],D1:[3, 2.7],A3:[3, 3.0],A4:[2, 3.6],D2:[2, 3.5],A5:[3, 3.8],A6:[4, 3.1],D3:[0],A8:[2, 3.2]},
+  '张宸烨':{D4:[5, 4.0],D5:[5, 3.0],D6:[5, 3.2],A1:[4],A2:[4, 3.3],D1:[4, 3.5],A3:[3, 3.5],A4:[3],D2:[3, 3.7],A5:[4, 3.7],A6:[4, 4.1],D3:[5, 3.4],A7:[5, 2.7],A8:[2, 3.0]},
+  '张恩浚':{D4:[5],D5:[1, 3.0],A2:[0],D1:[3, 3.1],A3:[3, 3.0],A4:[3, 3.0],D2:[0],A5:[1, 3.0],A6:[2, 2.9],D3:[3, 2.6],A7:[4, 3.1],A8:[3, 2.8]},
+  '张恩祐':{D5:[1, 4.0],D6:[2, 2.0],A2:[2, 3.7],A3:[2, 2.7],D2:[1, 2.8],A5:[2, 2.0],A6:[2, 2.9],D3:[2, 2.7],A8:[2, 2.4]},
+  '张泽霖':{D5:[2, 3.3],D6:[2, 2.8],A1:[2, 2.0],A2:[4, 2.5],D1:[4, 3.2],A3:[2, 2.3],D2:[1],A6:[3, 2.5],D3:[3, 2.7],A7:[2, 2.3],A8:[2, 2.7]},
+  '张澂之':{D5:[5, 3.0],D6:[5, 3.5],A1:[4, 3.5],A2:[4, 3.6],D1:[5, 3.7],A3:[2],A4:[2, 3.7],D2:[4, 3.5],A5:[5, 3.5],A6:[5, 3.6],D3:[5, 3.6],A7:[5, 3.3],A8:[5, 3.3]},
+  '张继元':{A1:[1],A2:[1],D1:[1],A3:[1],D2:[0]},
+  '张育翔':{D2:[3, 3.0],A5:[1, 2.3],A6:[0],D3:[3, 2.7],A7:[2, 2.4],A8:[2, 2.6]},
+  '张蕴乐':{D3:[2, 2.4],A8:[1, 2.3]},
+  '张钦栋':{D6:[3, 3.5],A1:[2, 2.0],A2:[2, 2.6],D1:[2, 2.5],A3:[3, 2.3],A4:[2, 2.8],D2:[1],A5:[2],A6:[2],D3:[2],A8:[3, 3.3]},
+  '彭子辰':{A1:[1, 2.7],A2:[4, 3.0],D1:[2, 3.5],A3:[0],A4:[1, 2.3],D2:[1],A5:[1, 2.0],A6:[1, 2.8],A7:[2, 2.3],A8:[1, 2.3]},
+  '彭星匀':{D6:[0],A2:[1, 3.8],D1:[0],A4:[1],D2:[0],A5:[1],A6:[1],D3:[1, 4.0]},
+  '彭浩成':{D4:[5, 3.0],D5:[6, 2.8],D6:[5, 2.9],A1:[5, 2.0],A2:[3, 2.6],D1:[5, 2.9],A3:[5, 3.0],A4:[3, 2.5],D2:[4, 3.1],A5:[5, 2.7],A6:[5, 2.8],D3:[4, 2.4],A7:[6, 3.0],A8:[4, 2.5]},
+  '徐子扬':{D4:[5, 3.0],D5:[5, 3.4],D6:[6, 3.2],A1:[4, 2.3],A2:[4, 3.5],D1:[5, 3.4],A3:[5, 2.9],A4:[2, 2.0],D2:[5, 2.9],A5:[4, 2.8],A6:[4, 2.2],D3:[4, 2.3],A7:[5, 2.7],A8:[4, 2.9]},
+  '徐思衡':{D5:[1, 4.0],D6:[2, 3.3],A1:[2],A2:[2, 3.0],D1:[2, 3.0],A3:[2, 2.5],A4:[1, 3.0],D2:[2, 2.7],A5:[2, 3.0],A6:[2, 2.9],D3:[2, 3.0],A8:[2, 3.2]},
+  '徐意':{D5:[4, 3.0],D6:[4, 3.1],A1:[3, 3.0],A2:[3, 2.9],D1:[4, 3.0],A3:[2, 3.0],D2:[1, 3.3],A5:[3, 2.8],A6:[1, 3.0],D3:[3, 2.8],A7:[3, 3.2],A8:[4, 3.3]},
+  '徐焕宸':{D6:[2, 2.0],A1:[0],A2:[3, 2.0],D1:[2],A3:[2, 2.0],A4:[1, 2.0],A5:[1],A6:[2, 2.8],D3:[2, 2.6],A8:[2, 2.9]},
+  '徐相南':{D5:[2, 3.2],D6:[2, 2.8],A1:[2, 2.5],A2:[0],D1:[2, 3.0],A3:[2, 2.2],A4:[2, 3.2],D2:[2, 4.0],A5:[2, 2.4],A6:[1, 2.5],D3:[3, 2.6],A7:[2, 3.3],A8:[2, 3.3]},
+  '徐秉睿':{D6:[1, 2.0],A2:[1],D1:[1],A3:[1, 3.0],D2:[1, 2.7],A5:[1, 3.0],D3:[1, 2.3]},
+  '徐章南':{D5:[2, 3.0],D6:[2, 2.5],A1:[2, 1.0],A2:[1],D1:[2, 2.0],A3:[2, 2.5],A4:[1, 2.5],D2:[3, 2.5],A5:[2, 2.6],A6:[2, 2.3],D3:[2, 2.1],A7:[2, 2.4],A8:[2, 2.9]},
+  '成为':{D5:[3, 2.4],D6:[2, 3.0],A1:[0],A3:[1],D3:[1, 2.0],A8:[2, 2.5]},
+  '敬宝强':{D4:[5, 2.3],D5:[3],D6:[4, 3.5],A1:[4],A2:[4, 3.2],D1:[4],A3:[3, 2.8],A4:[3],A5:[4, 3.1],A6:[4, 2.6],D3:[4, 3.0],A7:[4, 3.0],A8:[3, 3.3]},
+  '施文远':{D5:[5, 3.0],D6:[4, 3.3],A1:[3, 3.3],A2:[3, 3.1],D1:[4, 2.9],A3:[3, 2.8],A4:[4, 3.4],D2:[2, 3.5],A5:[2, 3.1],A6:[4, 3.3],D3:[4, 3.1],A7:[4, 2.7],A8:[3, 2.7]},
+  '曹运朗':{D4:[5, 3.3],D5:[5, 3.4],D6:[4, 3.2],A1:[4, 3.0],A2:[3, 4.0],D1:[4, 4.2],A3:[4, 3.7],A4:[3, 3.0],D2:[3, 2.9],A5:[4, 3.3],A6:[4, 3.5],D3:[4, 4.1],A7:[5, 3.7],A8:[4, 3.6]},
+  '曾凡瑄':{A7:[2, 3.6]},
+  '曾凡瑾':{D5:[3, 4.8],D6:[3, 3.2],A1:[1],A2:[3, 4.0],D1:[3, 4.6],A3:[2, 4.5],A4:[2, 3.5],D2:[2, 2.8],A5:[2, 3.5],A6:[3, 3.2],D3:[3, 3.5],A8:[3, 4.0]},
+  '朱奕铖':{D5:[4, 3.3],D6:[3, 3.9],A1:[2, 3.0],A2:[3, 3.3],D1:[4, 3.3],A3:[3, 2.8],A4:[2, 3.1],D2:[0],A5:[3, 3.5],A6:[3, 3.3],D3:[1],A7:[2, 3.3],A8:[3, 3.7]},
+  '朱子豪':{D5:[2, 2.7],D6:[2, 2.9],A1:[3, 2.0],A2:[1],D1:[2, 2.7],A3:[2, 2.5],A4:[2, 3.0],D2:[1, 3.0],A5:[2],A6:[2, 2.8],D3:[3, 3.4],A8:[0]},
+  '朱宸泽':{D4:[5, 4.3],D5:[2],D6:[1, 3.0],A1:[1],A2:[1, 2.5],D1:[1, 3.0],A3:[0],A4:[1, 3.0],A5:[1],A6:[2, 3.0],D3:[2, 3.6],A8:[2, 2.7]},
+  '朱鹏瑞':{D5:[4],D6:[4, 3.4],A1:[2],A2:[3, 3.0],D1:[3, 3.0],A3:[0],A4:[3, 2.8],D2:[1, 3.0],A5:[3, 2.9],A6:[3, 2.6],D3:[2, 3.0],A8:[2, 3.3]},
+  '李丰元':{D5:[1, 3.0],A1:[1],A2:[2, 1.0],D1:[1],A3:[0],A5:[1],A6:[1],D3:[0],A7:[1, 3.0]},
+  '李初言':{D6:[1, 3.0],A2:[1]},
+  '李国熔':{D5:[1],D6:[0],A2:[1],D1:[1],A3:[1],D2:[2],A5:[1],A6:[1],D3:[1],A8:[0]},
+  '李奕宸':{D4:[5, 3.3],D5:[5, 2.7],D6:[4, 3.2],A1:[3, 3.1],A2:[4, 2.9],D1:[4, 3.4],A3:[5, 3.3],A4:[3, 3.7],D2:[3, 2.7],A5:[3, 3.7],A6:[5, 3.8],D3:[5, 2.7],A7:[5, 2.9],A8:[5, 3.3]},
+  '李奕昂':{D4:[5, 4.0],D5:[4],D6:[5, 3.2],A1:[3, 3.0],A2:[4, 4.0],D1:[5, 3.3],A3:[5, 2.9],A4:[4, 3.0],D2:[3, 3.1],A5:[5, 3.1],A6:[4, 2.9],D3:[5, 3.3],A7:[5, 2.8],A8:[5, 3.3]},
+  '李奕楷':{D5:[3, 3.8],D6:[4, 3.5],A1:[1, 3.0],A2:[2, 3.1],D1:[4, 2.9],A3:[3, 3.3],A4:[2, 3.3],D2:[4, 2.9],A5:[3, 3.2],A6:[4, 3.0],D3:[3, 3.2],A7:[3, 2.7],A8:[3, 2.8]},
+  '李子懿':{D4:[0],D5:[2],D6:[2, 3.4],A1:[2, 2.0],A2:[1, 4.0],D1:[2, 3.0],A3:[2, 3.8],A4:[1, 3.5],D2:[2, 3.3],A5:[2, 3.3],A6:[2],D3:[2, 3.5],A7:[2, 3.1],A8:[1]},
+  '李子裕':{D5:[3, 3.6],D6:[3, 3.9],A1:[3, 3.2],A2:[3, 3.0],D1:[5, 3.4],A3:[3, 3.5],A4:[3, 3.6],D2:[3, 3.0],A5:[4, 3.4],A6:[3, 3.5],D3:[4, 3.8],A7:[4, 3.6],A8:[5, 3.9]},
+  '李安泽':{D4:[5, 3.0],D5:[4, 2.3],D6:[3, 3.0],A1:[2, 3.0],A2:[3, 3.3],D1:[3, 2.9],A3:[2, 2.7],D2:[4, 2.9],A5:[2, 3.0],A6:[4, 3.5],D3:[3, 3.5],A8:[4, 3.5]},
+  '李宜助':{A7:[0]},
+  '李宜劼':{D5:[3, 3.8],D6:[3, 3.4],A1:[1, 2.7],A2:[2, 3.7],D1:[3, 3.3],A3:[2],D2:[2, 3.0],A5:[3, 3.1],A6:[4, 2.9],D3:[3, 3.0],A8:[2, 3.0]},
+  '李家盛':{D5:[2, 3.0],D6:[2, 3.3],A1:[0],A2:[2, 3.0],D1:[1],A3:[2],D2:[3, 2.6],A5:[2, 2.8],A6:[2, 2.9],D3:[2, 3.1],A8:[2, 3.3]},
+  '李弘毅':{D5:[3, 3.3],D6:[3, 3.1],A1:[3, 3.0],A2:[2],D1:[4, 2.7],A3:[3, 2.9],A4:[2, 2.7],A5:[2, 3.5],A6:[3, 3.3],D3:[2, 3.5],A7:[3, 3.0],A8:[4, 3.0]},
+  '李志昊':{D5:[4, 3.8],D6:[4, 2.8],A1:[5, 2.0],A2:[3, 3.0],D1:[4, 3.0],A3:[3, 2.4],A4:[3, 2.3],D2:[4, 3.3],A5:[4, 3.3],A6:[4, 2.8],D3:[4, 3.2],A7:[2, 2.5],A8:[2, 3.0]},
+  '李思圻':{D4:[5, 3.3],D5:[4, 2.8],D6:[4, 2.8],A1:[3],A2:[3, 2.3],D1:[2, 3.1],A3:[3, 2.7],A4:[2, 3.3],D2:[4, 3.3],A5:[4, 2.7],A6:[4, 3.5],D3:[4, 3.8],A7:[4, 3.0],A8:[4, 2.5]},
+  '李思远':{D4:[5, 3.0],D5:[2, 2.9],D6:[2, 2.4],A1:[0],A2:[2, 2.5],D1:[1],A3:[2],A4:[2],D2:[2, 3.0],A5:[2, 2.6],A6:[2, 2.4],D3:[2, 2.8],A8:[0]},
+  '李政和':{D5:[6, 3.0],D6:[4, 3.8],A1:[5, 3.1],A2:[4, 2.8],D1:[5, 2.9],A3:[5, 3.1],A4:[4, 3.3],D2:[3, 3.2],A5:[5, 3.2],A6:[5, 3.5],D3:[5, 3.3],A7:[5, 3.1],A8:[4, 3.0]},
+  '李敦锐':{D5:[4, 2.9],D6:[3, 3.1],A1:[4, 3.0],A2:[4, 2.8],D1:[0],A3:[3, 2.6],A4:[1, 2.0],D2:[0]},
+  '李昊泽':{D5:[1],D6:[1],A1:[1],A2:[1],D1:[1],A3:[1],D2:[2],A5:[1],A6:[1, 3.5],D3:[1],A8:[1]},
+  '李明澈':{D5:[4, 3.8],D6:[3, 3.7],A1:[4, 3.2],A2:[3, 3.8],D1:[3, 4.0],A3:[5, 3.6],A4:[3, 3.5],A5:[4, 3.8],A6:[4, 4.0],D3:[4, 3.9],A7:[3, 3.8],A8:[4, 4.3]},
+  '李树泽':{D5:[4, 3.0],D6:[4, 3.0],A1:[4, 2.0],A2:[4, 2.9],D1:[4, 3.1],A3:[4],A4:[3, 3.1],D2:[4, 3.2],A5:[4, 3.2],A6:[4, 3.2],D3:[3, 3.0],A7:[4, 3.2],A8:[5, 3.0]},
+  '李梓源':{D4:[5, 3.0],D5:[3, 3.3],D6:[2, 3.4],A1:[0],A7:[2],A8:[4, 3.6]},
+  '李治贤':{A2:[2],D1:[1, 2.0],A3:[1, 2.0],A4:[2, 2.4],D2:[4, 3.6],A5:[2, 2.5],A6:[2, 1.9],D3:[2, 2.4],A7:[2, 2.3]},
+  '李泽':{D5:[1, 2.0],D6:[1, 2.5],A2:[2, 3.2],D1:[2, 3.0],A3:[2, 2.3],A4:[1, 3.3],D2:[2, 3.3],A5:[3, 3.0],A6:[2, 2.4],D3:[2, 3.0],A7:[2, 2.0],A8:[3, 2.5]},
+  '李熹':{D6:[1, 3.0],A2:[1, 2.5],D1:[1],A3:[1],A5:[2, 2.4],A6:[2, 1.9],D3:[1, 2.0],A8:[1, 2.0]},
+  '李知行':{D6:[1],A1:[1],A2:[1],D1:[1],A3:[0],A5:[1],A6:[2, 2.8],D3:[1],A8:[1]},
+  '李纯熙':{D5:[3, 2.3],D6:[3, 3.1],A1:[1, 4.0],D1:[3, 3.5],A3:[1, 3.5],A4:[1, 3.7],A5:[2, 2.8],A6:[1, 2.5],D3:[2, 3.0],A7:[0]},
+  '李羽桦':{D5:[1],D6:[1],A2:[0],D1:[1],A3:[1],D2:[2],A5:[1],A6:[1, 3.3],D3:[1],A8:[1]},
+  '李羽骐':{D5:[3, 2.0],D6:[3, 2.6],A1:[1, 2.0],A2:[2, 2.0],D1:[3, 2.3],A3:[3, 2.6],A4:[1, 3.3],D2:[2],A5:[2],A6:[2, 2.5],D3:[2, 2.5],A8:[3, 2.6]},
+  '李舷歌':{D5:[4, 3.0],D6:[4, 3.1],A1:[3, 2.0],A2:[3, 2.9],D1:[4, 2.7],A3:[4, 3.0],A4:[1, 2.8],D2:[2, 2.8],A5:[5, 3.3],A6:[4, 3.5],D3:[4, 3.7],A7:[3, 2.6],A8:[4, 2.3]},
+  '李赞':{D4:[5, 5.0],D5:[2, 3.2],D6:[2, 2.7],A1:[2],A2:[1, 2.7],D1:[2, 2.5],A3:[2, 2.0],A4:[1],D2:[1, 2.0],A5:[2, 2.3],A6:[2, 3.0],D3:[2, 2.7],A7:[1, 2.8],A8:[2, 3.0]},
+  '杜俊熠':{D4:[5, 3.0],D5:[5, 3.4],D6:[5, 3.5],A1:[5, 4.0],A2:[4, 3.3],D1:[5, 3.5],A3:[5, 3.3],A4:[5, 3.0],D2:[4, 3.8],A5:[5, 3.6],A6:[5, 3.3],D3:[5, 3.5],A7:[5, 3.6],A8:[4, 2.8]},
+  '杜明峻':{A2:[1, 2.3],A3:[2],A4:[2, 3.0],D2:[1, 4.0],A5:[2, 1.8],A6:[1, 2.0],D3:[2, 2.5],A7:[3, 2.7],A8:[2, 2.5]},
+  '杜星佑':{D5:[4, 3.5],D6:[2, 2.4],A1:[3],A2:[4, 2.9],D1:[2, 2.3],A3:[3, 3.0],A4:[1, 3.5],D2:[3, 3.5],A5:[2, 3.4],A6:[3, 3.7],D3:[1, 3.8],A7:[3, 3.7],A8:[2, 3.4]},
+  '杨和意':{D5:[3, 3.0],D6:[1, 2.8],A1:[1],A2:[1, 2.5],D1:[1, 2.7],A3:[2, 2.8],A4:[1, 2.8],D2:[0],A5:[1, 3.0],A6:[1, 2.3],D3:[1, 2.8],A7:[0],A8:[1, 3.0]},
+  '杨孝灿':{D4:[0, 2.0],D5:[2, 3.3],D6:[1, 2.5],A1:[2],A2:[1, 3.0],D1:[1, 3.5],A3:[1, 2.5],A4:[0],D2:[2, 4.0],A5:[1, 3.3],A6:[2, 2.1],D3:[1, 2.8]},
+  '杨孝烯':{A7:[1]},
+  '杨承':{D5:[6, 3.5],D6:[4, 3.2],A1:[5, 2.8],A2:[4, 2.7],D1:[5, 2.9],A3:[5, 3.1],A4:[3, 2.8],D2:[3, 2.9],A5:[6, 2.9],A6:[6, 2.9],D3:[4, 2.9],A7:[3, 3.1],A8:[2, 2.9]},
+  '杨永新':{A1:[1],A2:[2, 3.4],D1:[1, 3.0],A3:[2, 3.5],A4:[1, 2.5],D2:[4, 3.3],A5:[3, 3.1],A6:[2, 2.8],D3:[2, 3.0],A8:[2, 2.7]},
+  '杨熠恒':{A6:[4, 3.0],D3:[4, 2.8],A7:[3, 2.2],A8:[4, 2.1]},
+  '杨皓焱':{D5:[1, 4.0],D6:[0],A1:[0],A2:[1, 4.0],D1:[1, 3.8],A3:[1],A5:[0],A6:[1, 2.8],D3:[1, 3.3],A8:[1, 3.5]},
+  '林一肯':{D5:[2, 3.8],D6:[2, 2.9],A1:[1, 3.0],A2:[1, 3.0],D1:[2, 3.4],A3:[2, 3.8],A4:[1, 3.0],A5:[1, 3.5],A6:[1, 2.8],D3:[2, 3.0],A7:[1, 3.5],A8:[2, 2.3]},
+  '林亿铭':{A1:[0],A3:[1, 2.0],A6:[1, 2.0],D3:[1, 2.0],A8:[1, 3.0]},
+  '林家禾':{D4:[5, 3.3],D5:[0],D6:[2, 3.0],A1:[2],A2:[2, 3.2],A3:[0],D2:[1, 3.0],A5:[2, 2.6],A6:[2, 2.8],A8:[1, 3.0]},
+  '林杰克逊':{A2:[1, 2.3],A3:[1, 2.5],D2:[1, 3.0],A5:[1, 2.0],A6:[1, 2.8],D3:[0]},
+  '林永琰':{D6:[1],D1:[1, 5.0],A3:[1, 3.5],D2:[2, 3.2],A5:[1, 5.0],A6:[1, 3.0],D3:[1, 3.3],A8:[1, 3.0]},
+  '林泓熹':{D4:[5, 4.0],D5:[5, 3.6],D6:[4, 3.1],A1:[2, 3.3],A2:[2, 3.0],D1:[4, 3.5],A3:[4, 2.7],A4:[2, 2.5],D2:[3, 3.3],A5:[4, 3.3],A6:[4, 3.0],D3:[4, 3.3],A8:[5, 3.3]},
+  '林泽旭':{D4:[5, 3.3],D5:[6],D6:[5, 2.5],A1:[0],A2:[5, 2.8],D1:[3, 2.8],A3:[3, 2.4],A4:[2],D2:[2, 2.8],A5:[3, 2.1],A6:[5, 2.5],D3:[3],A7:[4, 3.0],A8:[3, 3.0]},
+  '林泽楷':{D5:[5, 3.1],D6:[4, 3.0],A1:[3, 3.2],A2:[4, 3.0],D1:[5, 3.1],A3:[4, 3.0],A4:[1, 4.3],D2:[2, 3.0],A5:[4, 2.7],A6:[4, 3.1],D3:[6, 3.0],A7:[3, 3.0],A8:[5, 3.1]},
+  '林洛潇':{D4:[5, 3.0],D5:[5, 3.1],D6:[5, 3.6],A2:[4, 3.5],D1:[5, 3.2],A3:[5, 3.8],A4:[4, 2.8],D2:[4, 3.3],A5:[5, 3.3],A6:[5, 3.7],D3:[3],A7:[5, 3.2],A8:[6, 3.0]},
+  '林淑淇':{D5:[5, 3.3],D6:[4, 3.4],A1:[5, 3.0],A2:[4, 3.5],D1:[5, 3.2],A3:[5, 3.5],A4:[3],D2:[3, 3.5],A5:[3, 3.6],A6:[5, 4.1],D3:[5, 3.7],A7:[5, 3.8],A8:[4, 3.7]},
+  '林熙竣':{D5:[1, 3.0],D6:[1, 2.0],A2:[0],D1:[2, 2.0],A3:[1, 2.5],D2:[1, 2.0],A5:[1, 2.0],D3:[1, 2.3],A8:[1, 1.0]},
+  '林睿男':{D5:[6, 3.8],D6:[3, 3.7],A1:[2, 3.3],A2:[3, 3.6],D1:[1],A3:[2, 4.1],A4:[2, 3.3],D2:[2, 3.5],A5:[2, 2.5],A6:[0]},
+  '林若冰':{D4:[5, 3.3],D5:[0],D6:[2],A2:[2, 3.1],D1:[1],A3:[1],D2:[2, 3.5],A5:[2, 3.3],A6:[1, 2.0],D3:[1],A8:[1]},
+  '林鸿创':{A2:[1],D1:[1],A3:[1, 4.0],D2:[1, 2.5],A5:[1, 3.0],A6:[1, 2.5],D3:[1, 2.7],A8:[1]},
+  '格列布':{D1:[1],A3:[2],D2:[3],A6:[1],D3:[1],A8:[1]},
+  '梁江岱':{D4:[5, 4.0],D5:[2, 3.4],D6:[3, 3.6],A1:[2],A2:[2],D1:[2, 3.6],A3:[1, 2.7],A4:[2, 3.1],D2:[3, 2.5],A5:[1],A6:[2, 3.1],D3:[3, 3.4],A8:[1, 3.0]},
+  '樊彦泽':{D5:[1],D6:[1],A2:[1],D1:[1],A3:[0]},
+  '欧泽楷':{D5:[6],D6:[7, 3.4],A1:[5, 2.0],A2:[5, 3.0],D1:[6, 2.7],A3:[5, 3.1],A4:[4, 3.3],D2:[5, 3.5],A5:[6, 3.5],A6:[5, 3.2],D3:[6, 3.3],A7:[6, 3.0],A8:[3, 3.0]},
+  '欧阳志劼':{D6:[5, 2.9],A1:[2, 2.7],A2:[4, 3.0],D1:[5, 2.8],A3:[5, 2.6],A4:[2, 2.7],D2:[3, 2.8],A5:[5, 2.9],A6:[5, 2.9],D3:[5, 3.0],A7:[5, 2.8],A8:[5, 3.1]},
+  '欧阳硕':{D4:[0, 3.3],D6:[2, 3.0],A1:[2, 3.0],A2:[2, 3.3],D1:[2, 3.0],A3:[2, 4.0],D2:[2, 3.0],A5:[3, 3.2],A6:[3, 3.3],D3:[4, 3.8],A7:[3, 3.0],A8:[4, 3.2]},
+  '欧阳铭浩':{D5:[2],A1:[1],A2:[1],A3:[1],A4:[2, 3.4],D2:[1, 3.3],A5:[4, 3.1],A6:[4, 4.0],D3:[4, 3.6],A7:[4, 3.4],A8:[4, 3.9]},
+  '段屹石':{D5:[3],D6:[4, 3.0],A1:[4, 2.0],A2:[1, 3.0],D1:[3, 3.3],A3:[3, 3.1],A4:[2],D2:[4, 3.3],A5:[2, 2.8],A6:[4, 2.8],D3:[3, 3.0],A8:[2, 2.0]},
+  '江柏辰':{D5:[2, 3.3],D6:[4, 2.5],A1:[1],A2:[4, 2.3],D1:[5, 2.4],A3:[4, 2.6],A4:[2, 2.9],D2:[2],A5:[2, 2.0],A6:[5, 2.5],D3:[4, 2.8],A7:[5, 2.8],A8:[4, 2.8]},
+  '江雨霖':{A8:[2, 2.9]},
+  '汤名钧':{D5:[1, 2.3],D6:[2, 2.7],A1:[1],A2:[1, 3.3],D1:[2, 4.0],A3:[2],A4:[2, 2.3],D2:[2, 2.5],A5:[1],A6:[2, 2.6],D3:[1, 3.0],A7:[1, 2.3],A8:[1, 2.8]},
+  '沈昊邦':{D5:[1],D6:[1],A2:[1],D1:[1],A3:[1, 4.0],D2:[1, 3.3],A5:[1],A6:[1, 2.3],D3:[1, 2.5],A8:[1, 2.8]},
+  '洪旖珺':{D5:[5, 3.4],D6:[5, 3.0],A2:[3, 3.3],D1:[4, 3.4],A3:[3, 2.3],A4:[3, 3.0],D2:[2, 3.3],A5:[1, 3.5],A6:[4, 2.9],D3:[2, 3.5],A7:[2, 3.0],A8:[3, 3.3]},
+  '温宗易':{D5:[2],D6:[2],A1:[1],A2:[2],D1:[1],A3:[1],A5:[2],A6:[2],D3:[1],A8:[1]},
+  '温恒熙':{A7:[2, 3.4]},
+  '温恬熙':{D5:[1, 4.0],D6:[2, 2.6],A1:[3],A2:[2, 4.0],D1:[2, 2.3],A3:[1, 4.0],A4:[4, 2.8],D2:[1, 3.0],A5:[2, 2.8],A6:[2, 3.0],D3:[3, 3.3],A8:[3, 3.4]},
+  '温杰睿':{D5:[5, 2.9],D6:[6, 3.1],A1:[3, 2.4],A2:[2, 3.0],D1:[4, 4.5],A3:[4, 3.8],A4:[3, 3.2],D2:[4, 3.9],A5:[5, 3.2],A6:[6, 3.5],D3:[5, 3.8],A7:[4, 3.1],A8:[5, 3.1]},
+  '温沐旭':{D5:[2, 3.0],D6:[2, 3.2],A1:[2, 2.3],A2:[2, 3.0],D1:[2, 3.0],A3:[2, 3.2],A4:[2, 3.0],D2:[2, 3.3],A5:[2, 3.3],A6:[2, 3.0],D3:[2, 3.3],A7:[2, 3.6],A8:[2, 3.6]},
+  '温沐淇':{D5:[2, 3.7],D6:[2, 4.2],A1:[2, 3.3],A2:[2, 3.3],D1:[2, 4.5],A3:[2, 3.0],A4:[2, 3.0],D2:[2, 3.3],A5:[2, 3.3],A6:[3, 3.1],D3:[2, 3.9],A8:[2, 4.0]},
+  '熊歌扬':{D4:[5, 4.0],D5:[2],D6:[2, 2.8],A1:[1],A2:[2, 3.3],D1:[2, 3.8],A3:[1, 4.3],A4:[1],D2:[1, 3.3],A5:[2, 3.1],A6:[2, 2.8],D3:[2, 3.0],A7:[2, 3.0],A8:[1, 2.5]},
+  '王俊煜':{D4:[5, 3.7],D5:[7, 3.7],D6:[7, 3.9],A1:[5, 4.0],A2:[5, 3.4],D1:[6, 4.0],A3:[7, 3.6],A4:[5, 3.5],D2:[5, 4.0],A5:[6, 3.9],A6:[3, 3.5],D3:[5, 3.7],A7:[7, 3.8],A8:[7, 3.4]},
+  '王力行':{A2:[1, 2.8],D1:[2, 3.2],D2:[0],A5:[1, 3.0],D3:[1],A8:[2, 2.7]},
+  '王嫣灵':{D5:[2, 3.7],D6:[2, 3.0],A1:[2],A2:[2, 3.0],D1:[1, 3.0],A3:[1, 2.0],D2:[1, 1.8],A5:[1, 2.0],A6:[1, 1.8],D3:[1, 2.5],A8:[1, 2.8]},
+  '王子熠':{D6:[1, 2.8],A1:[2],A2:[3, 2.8],D1:[2, 3.3],A3:[2, 2.8],A4:[1],D2:[2, 2.6],A5:[3, 2.9],A6:[3, 2.9],D3:[1, 2.8],A7:[2, 3.0],A8:[2, 4.0]},
+  '王子言':{A6:[1, 2.3],D3:[4, 2.4],A7:[3, 2.0],A8:[3, 2.5]},
+  '王学杰':{A7:[2, 3.0]},
+  '王家齐':{D5:[2, 3.0],A1:[2, 2.5],A2:[2, 3.0],D1:[1, 2.0],A3:[1, 2.3],A4:[2, 2.0],D2:[2, 2.4],A6:[3, 1.9],D3:[2, 3.0],A7:[2, 3.2],A8:[2, 3.1]},
+  '王彦杰':{D4:[5, 3.0],D5:[3, 3.0],D1:[2, 3.0],A3:[3, 3.6],A4:[3, 3.3],D2:[2, 3.0],A5:[3, 3.0],A6:[4, 2.8],D3:[2, 3.0],A8:[3, 3.3]},
+  '王文晏':{D5:[4],D6:[3, 3.1],A1:[0],D1:[0],A6:[2, 2.8],D3:[2, 3.0],A7:[2, 3.3],A8:[2]},
+  '王时行':{D4:[5, 3.7],D5:[7, 3.0],D6:[6, 2.6],A1:[5, 2.4],A2:[5, 3.1],D1:[6, 2.8],A3:[6, 2.3],A4:[4, 2.6],D2:[5, 3.0],A5:[6, 2.7],A6:[6, 3.0],D3:[6, 3.1],A7:[7, 3.3],A8:[5, 3.6]},
+  '王易心':{D5:[4, 3.0],D6:[4, 2.6],A1:[2, 2.0],A2:[0],D1:[3, 2.9],A3:[4, 2.3],A4:[0],D2:[2, 2.3],A5:[4, 3.1],A6:[2, 3.0],D3:[3, 3.0],A7:[3, 2.8],A8:[4, 3.4]},
+  '王曼曼':{D5:[2, 3.7],D6:[4, 3.6],A1:[3],A2:[5, 3.1],D1:[5, 3.1],A3:[4, 3.2],A4:[2, 3.8],D2:[1, 3.3],A5:[4, 3.3],A6:[2, 3.0],D3:[2, 2.9],A7:[5, 3.0],A8:[3]},
+  '王朔':{D6:[1],A3:[1],D2:[0]},
+  '王柏杰':{D4:[5, 3.7],D5:[3, 3.6],D6:[3, 3.1],A1:[2, 4.0],A2:[3, 3.7],D1:[3, 3.7],A3:[2, 3.2],A4:[3, 2.8],D2:[2, 3.2],A5:[4, 3.6],A6:[3, 3.7],D3:[1, 2.8],A7:[3, 3.4],A8:[3, 3.5]},
+  '王浩年':{D5:[0]},
+  '王瀚铭':{D5:[4, 3.7],D6:[4, 3.2],A1:[4, 2.8],A2:[3, 3.0],D1:[4, 3.3],A3:[4, 3.0],D2:[2, 2.9],A5:[4, 2.9],A6:[5, 3.2],D3:[4, 3.5],A8:[5, 3.9]},
+  '王炜铮':{D5:[4, 2.8],D6:[3, 2.3],A1:[1, 3.0],A2:[3, 2.2],D1:[2, 1.8],A3:[1, 2.0],A4:[2, 2.4],D2:[3, 2.6],A5:[1, 2.3],A6:[4, 3.3],D3:[4, 3.2],A8:[2, 3.4]},
+  '王璨铮':{A7:[3, 4.0]},
+  '王翰':{D4:[5, 3.3],D5:[6, 3.2],D6:[5, 3.1],A1:[5, 3.1],A2:[4, 2.8],D1:[7, 3.0],A3:[5, 3.3],A4:[4, 3.2],D2:[4, 2.9],A5:[4, 2.8],A6:[5, 3.1],D3:[6, 3.2],A7:[6, 2.8],A8:[3, 2.9]},
+  '王进宁':{D4:[5, 3.0],D5:[4, 3.0],D6:[4, 3.9],A1:[4, 3.0],A2:[3, 3.6],D1:[4, 3.5],A3:[4],A4:[3, 3.0],D2:[3, 3.2],A5:[5, 3.2],A6:[2, 3.2],D3:[5, 4.0],A7:[5, 3.1],A8:[4, 3.7]},
+  '甘宸泽':{D5:[5, 2.4],D6:[5, 3.2],A1:[4],A2:[4, 2.7],D1:[5, 2.8],A3:[5, 2.6],A4:[4, 2.8],D2:[4, 3.4],A5:[5, 3.3],A6:[5, 2.8],D3:[5, 3.5],A8:[5, 3.3]},
+  '田悦然':{D5:[1]},
+  '田骏扬':{D4:[5, 3.0],D5:[4, 3.2],D6:[4, 3.0],A1:[2],A2:[3, 2.6],D1:[3, 3.0],A3:[3, 2.8],A4:[2, 3.7],D2:[3, 3.0],A5:[3, 3.8],A6:[3, 3.0],D3:[2, 2.0],A7:[0]},
+  '盛榕':{D4:[5, 2.0],D5:[2, 3.3],D6:[2, 3.3],A1:[1],A2:[1, 2.0],D1:[1],A3:[1],D2:[1, 2.5],A5:[1, 2.8],A6:[0],D3:[0],A7:[1, 2.3],A8:[1, 2.0]},
+  '石宝晟':{D4:[5, 3.3],D5:[3, 4.0],D6:[5, 4.1],A1:[3],A2:[3, 3.8],D1:[3, 3.7],A4:[0],D2:[0],A5:[2],A6:[4, 2.9],D3:[3, 3.3],A7:[1, 5.0]},
+  '石齐轩':{D1:[5, 3.5],A3:[4, 2.6],A4:[3, 2.4],D2:[4, 3.2],A5:[5, 2.7],A6:[5, 2.9],D3:[5, 3.1],A7:[5, 3.4],A8:[4, 2.9]},
+  '祝启民':{D5:[2],D6:[2],A1:[1],A2:[2],D1:[2],A3:[2],D2:[4],A5:[2],A6:[2],D3:[1],A8:[2]},
+  '祝天泽':{D4:[5, 3.7],D5:[4, 3.4],D6:[5, 3.9],A1:[3, 3.0]},
+  '窦以哲':{D5:[4],D6:[2, 2.5],A1:[3],A2:[2, 2.4],D1:[2, 2.9],A3:[2, 2.3],A4:[1],D2:[0],A5:[2, 2.3],A6:[3, 2.3],D3:[2, 2.8],A7:[2, 2.4],A8:[3, 2.5]},
+  '窦以恒':{D5:[4],D6:[1],A1:[2, 2.0],A2:[3, 3.3],D1:[1, 3.5],A3:[3, 3.4],A4:[1],D2:[1, 4.0],A5:[2, 3.8],A6:[2, 3.9],D3:[1],A7:[2, 2.8],A8:[3, 4.0]},
+  '章岂显':{D6:[4, 2.3],A1:[3],A2:[4, 2.3],D1:[5, 2.8],A3:[4, 2.5],A4:[2, 2.5],D2:[2, 2.5],A5:[4, 2.3],A6:[4, 2.5],D3:[4, 2.4],A7:[2, 2.6],A8:[4, 2.6]},
+  '章涥宇':{A7:[4, 2.8]},
+  '章焕宇':{D5:[4, 2.9],D6:[4, 2.9],A1:[2, 3.0],A2:[3, 2.7],D1:[4, 2.8],A3:[4, 2.7],A4:[2, 3.0],D2:[2, 3.1],A5:[2, 3.0],A6:[4, 3.3],D3:[5, 3.2],A8:[3, 2.7]},
+  '符允瀚':{D4:[5, 3.5],D5:[3, 4.0],D6:[4, 3.7],A1:[3, 3.3],A2:[4, 3.4],D1:[2, 3.3],A3:[2, 3.8],A4:[2, 3.5],D2:[2, 3.8],A5:[4, 3.7],A6:[3, 3.4],D3:[3, 3.0],A7:[3, 2.7],A8:[3, 2.9]},
+  '罗以同':{D5:[2],D6:[2, 3.0],A1:[2],A2:[2, 3.0],D1:[2, 3.5],A3:[2, 3.3],A4:[3],D2:[2, 3.3],A5:[2, 3.5],A6:[2, 3.0],D3:[2],A8:[2, 3.5]},
+  '罗健鑫':{D5:[6, 3.5],D6:[3, 3.5],A1:[4, 3.3],A2:[4, 3.4],D1:[5, 3.9],A3:[4, 3.2],A4:[3, 3.6],D2:[3, 2.8],A5:[5, 2.8],A6:[3, 3.1]},
+  '罗安玄':{D4:[5, 2.3],D5:[2, 2.0],D6:[2, 2.2],A1:[1],A2:[1, 2.3],D1:[2, 2.5],A3:[1, 2.5],A4:[1, 2.0],D2:[2, 2.0],A5:[2, 2.0],A6:[2, 2.3],D3:[2, 2.3],A8:[2, 2.6]},
+  '罗梓睿':{D4:[5, 3.0],D5:[5, 3.2],D6:[6, 3.6],A1:[4, 3.0],A2:[4, 2.8],D1:[6, 3.2],A3:[2, 2.9],A4:[3, 3.5],D2:[3, 3.0],A5:[5, 3.0],A6:[6, 3.0],D3:[4, 3.3],A7:[4, 3.4],A8:[2, 3.3]},
+  '罗海荣':{D6:[1],A1:[1],A2:[1, 2.7],D1:[1],A3:[1, 2.0],A4:[1],D2:[1, 2.5],A5:[1, 2.3],A6:[1, 2.3],A8:[1, 3.0]},
+  '罗骁禹':{A3:[0],A4:[1],D2:[0],A5:[1, 2.5],A6:[1, 3.0],D3:[1, 3.0],A8:[1, 3.3]},
+  '罗骞禹':{A7:[1, 2.7]},
+  '肖沐然':{D5:[3, 2.6],D6:[2, 3.0],A1:[4, 3.0],A2:[2, 3.3],D1:[3, 3.1],A3:[3],A4:[2, 3.8],D2:[4, 3.0],A5:[3, 2.9],A6:[3, 3.2],D3:[3, 3.0],A7:[3, 3.0],A8:[4, 3.6]},
+  '肖陆子谦':{D5:[1],A2:[1],D1:[2],A3:[1],D2:[1, 2.3],A5:[1],A6:[1],D3:[1, 3.0],A8:[1, 2.8]},
+  '胡俩远':{A7:[4, 2.9]},
+  '胡偲远':{D5:[3, 2.8],D6:[4, 2.2],A2:[4, 2.1],D1:[2, 3.0],A3:[5, 2.4],A4:[1, 2.0],D2:[5, 2.5],A5:[5, 3.0],A6:[4, 2.4],D3:[4, 2.6],A8:[4, 2.5]},
+  '胡博超':{D4:[5, 2.0],D5:[1],D6:[1, 3.0],A2:[1, 3.0],D1:[1, 3.0],A3:[1],A5:[1, 3.5],A6:[0],D3:[1, 3.8],A8:[1, 3.3]},
+  '胡宇沛':{D5:[2],D6:[2, 3.0],A1:[1],A2:[1],D1:[1],A3:[2, 3.5],D2:[1],A5:[1],A6:[1],D3:[1],A8:[1, 3.0]},
+  '胡宇灏':{D5:[2, 3.0],D6:[2, 3.3],A1:[1]},
+  '胡岚旗':{A7:[4, 2.9]},
+  '胡岚祺':{D5:[4, 3.0],D6:[7, 3.8],A1:[4],A2:[3, 3.0],D1:[4, 3.2],A3:[4, 3.1],A4:[3, 3.9],D2:[3, 2.8],A5:[3, 4.3],A6:[5, 2.9],D3:[3, 3.7],A8:[5, 3.4]},
+  '胡礼同':{D4:[0, 2.0]},
+  '苏景仪':{D4:[5, 3.0],D5:[4, 2.5],D6:[4, 2.4],A1:[4, 2.0],A2:[3, 2.9],D1:[4, 3.0],A3:[3, 2.3],A4:[2, 2.5],D2:[5, 1.4],A5:[2, 2.0],A6:[5, 2.1],D3:[3, 2.4],A7:[4, 2.9],A8:[4, 2.5]},
+  '苏景煊':{A7:[4, 2.8]},
+  '苏景煦':{D4:[5, 2.3],D5:[4, 2.5],D6:[4, 2.5],A1:[4, 2.0],A2:[3, 2.9],D1:[4, 3.0],A3:[3, 2.3],A4:[2, 2.8],D2:[4, 1.6],A5:[2, 2.0],A6:[5, 1.9],D3:[3, 2.1],A8:[4, 2.7]},
+  '苏杞南':{D5:[4, 2.8],D6:[3, 2.9],A1:[3, 2.3],A2:[3, 2.6],D1:[3, 3.0],A3:[0],A4:[1, 2.0],D2:[4, 2.9],A5:[2, 2.2],A6:[3, 2.8],D3:[2, 2.1],A7:[3, 3.0],A8:[4, 3.4]},
+  '苏菲亚':{D5:[1],D6:[2, 3.6],A1:[1],A2:[3, 3.3],D1:[1, 3.0],A5:[2, 3.5],A6:[1, 3.3],D3:[2, 3.3],A8:[1, 2.8]},
+  '苏锦怀':{D5:[6, 2.9],D6:[4, 2.9],A1:[4, 3.0],A2:[5, 3.5],D1:[6, 2.5],A3:[6, 2.7],A4:[4, 3.8],D2:[5, 2.5],A5:[6, 2.5],A6:[6, 3.1],D3:[6, 2.4],A7:[6, 3.1],A8:[6, 3.4]},
+  '莫云哲':{D4:[5, 3.3],D5:[3, 3.5],D6:[4, 3.5],A1:[4, 3.2],A2:[2, 3.5],D1:[2, 3.5],A3:[3, 3.3],A4:[4, 3.5],D2:[1, 3.0],A5:[5, 2.9],A6:[4, 3.7],D3:[4, 3.8],A7:[6, 3.5],A8:[4, 3.8]},
+  '莫远稷':{D5:[5, 3.2],D6:[4, 2.9],A1:[3, 2.7],A2:[3, 3.0],D1:[5, 2.9],A3:[4, 3.4],A4:[3, 3.0],D2:[3, 2.9],A5:[3, 2.8],A6:[4, 3.3],D3:[4, 3.7],A8:[4, 3.3]},
+  '蔡一洛':{D5:[2, 2.7],D6:[2, 2.8],A1:[1, 3.0],A2:[0],D1:[0],A3:[1],A4:[1, 2.5],D2:[2, 2.7],A5:[1, 2.5],A6:[2, 2.5],D3:[2, 2.5],A8:[1, 2.8]},
+  '蔡佩希':{D5:[2, 3.0],D6:[2, 2.7],A1:[2],A2:[2, 3.0],D1:[2, 3.3],A3:[1, 2.0],A4:[1],D2:[1, 3.0],A5:[2, 2.7],A6:[2, 3.0],D3:[2, 3.0],A8:[2]},
+  '蔡俊华':{D4:[5, 3.0],D5:[5, 2.3],D6:[5, 3.2],A1:[4, 3.1],A2:[4, 3.1],D1:[5, 3.0],A3:[4],A4:[2, 2.5],D2:[6, 3.2],A5:[4, 3.0],A6:[5, 2.9],D3:[5, 2.9],A7:[5, 3.3],A8:[5, 3.2]},
+  '蔡奇原':{D5:[2],D6:[2],A2:[1],D1:[0]},
+  '蔡镐远':{D5:[1, 3.8],D6:[1, 3.3],A1:[0],A2:[2, 3.5],D1:[1],A3:[1],D2:[0],A5:[1, 4.0],A6:[1, 3.5],D3:[1, 2.8],A8:[2, 3.0]},
+  '袁原':{D4:[5, 3.0],D5:[4, 2.5],D6:[4, 2.8],A1:[3, 2.7],A2:[3, 3.3],D1:[1, 2.7],A3:[4, 3.2],A4:[2, 3.0],D2:[3, 2.4],A5:[4, 3.1],A6:[3, 3.4],D3:[2, 3.4],A8:[4, 4.0]},
+  '袁庆松':{D4:[5, 4.0],D5:[3, 4.0],D6:[3, 4.0],A1:[3, 3.2],A2:[2, 3.8],D1:[3],A3:[3, 2.9],A4:[3, 3.0],D2:[3, 3.8],A5:[5, 3.3],A6:[3, 3.1],D3:[3, 3.5],A7:[1, 3.3],A8:[2, 3.8]},
+  '袁瀚李':{D4:[5, 3.7],D5:[2, 4.0],D6:[2, 2.8],A1:[2],A2:[2, 3.4],D1:[2, 3.3],A3:[1],A4:[2],D2:[2, 3.3],A5:[2],A6:[2, 3.5],D3:[1],A7:[2, 3.5],A8:[1, 3.0]},
+  '袁皓宸':{A4:[1],D2:[2, 2.0],A5:[2, 2.0],A6:[1, 1.5],D3:[1, 2.3],A7:[2, 2.8],A8:[2, 2.0]},
+  '袁觉清':{D4:[5, 2.7],D5:[2, 3.8],D6:[2, 2.5],A1:[2],A2:[2, 3.0],D1:[2, 3.1],A3:[1],A4:[2],D2:[2, 2.3],A5:[2],A6:[2, 2.5],D3:[2, 3.3],A7:[2, 2.3],A8:[2, 2.7]},
+  '褚宸睿':{D4:[5, 2.3],D5:[2, 3.0],D6:[2, 3.0],A1:[1],A2:[2, 2.5],D1:[2, 2.9],A3:[2, 2.6],D2:[3, 3.1],A5:[2, 2.9],A6:[2, 3.0],D3:[1, 2.3],A8:[2, 2.3]},
+  '解梓源':{A6:[4, 3.2],D3:[4, 3.4],A8:[4, 3.2]},
+  '解棕源':{A7:[5, 2.9]},
+  '言朝阳':{D5:[1, 2.5],D6:[3, 2.4],A1:[1, 2.5],A2:[2, 2.5],A5:[2, 2.9],A6:[2, 2.4],D3:[1, 2.5],A7:[2, 2.6],A8:[2, 2.5]},
+  '詹家怡':{D5:[5, 3.2],D6:[5, 3.6],A1:[5, 2.6],A2:[2, 2.7],D1:[3, 3.5],A3:[4, 3.4],A4:[4, 3.5],D2:[2, 3.4],A5:[5, 3.3],A6:[4, 3.3],D3:[4, 3.9],A7:[6, 3.5],A8:[5, 3.0]},
+  '许云萱':{D5:[0],A2:[1]},
+  '许智宸':{D5:[6, 3.3],D6:[6, 2.9],A1:[4],A2:[4, 2.8],D1:[5, 2.9],A3:[5, 2.6],A4:[4, 3.2],D2:[4, 2.5],A5:[4, 3.4],A6:[2, 2.9],D3:[2, 3.2],A7:[4, 2.9],A8:[3, 3.1]},
+  '许诺':{D5:[1, 4.0],A2:[1, 3.5],D1:[1],D2:[1, 3.5],A5:[1, 3.0],A6:[1, 3.0],D3:[1, 3.8],A8:[1, 3.7]},
+  '谈亦航':{D4:[5, 3.5],D3:[0],A8:[1]},
+  '谢禹喆':{D5:[5, 3.8],D6:[5, 4.0],A1:[5, 3.9],A2:[3, 3.8],D1:[4, 3.6],A3:[5, 4.0],A4:[6, 4.0],A5:[5, 3.7],A6:[1, 3.8],D3:[5, 4.3],A8:[4, 3.8]},
+  '谭予正':{D5:[3, 2.9],D6:[4, 3.1],A1:[3, 2.0],A2:[5, 2.0],D1:[5, 2.5],A3:[3, 2.4],A4:[3, 2.1],D2:[3, 2.0],A5:[3, 1.7],A6:[4, 2.6],D3:[4, 3.3],A8:[4, 2.9]},
+  '谭以轩':{D5:[3, 2.9],D6:[5, 3.8],A1:[3, 3.7],A2:[4, 3.2],D1:[5, 3.9],A3:[4, 3.9],A4:[3, 3.7],D2:[3, 3.3],A5:[4, 3.7],A6:[4, 3.6],D3:[5, 3.5],A7:[0],A8:[3, 3.1]},
+  '谷知彻':{D5:[3, 2.5],D6:[1, 3.0],A1:[3, 2.7],A2:[3, 2.8],D1:[3, 2.8],A3:[2, 2.5],A4:[2, 2.4],D2:[2, 2.8],A5:[3, 2.6],A6:[4, 2.8],D3:[3, 3.0],A7:[4, 3.1],A8:[4, 3.1]},
+  '贺尔辰':{D4:[5, 3.3],D5:[6, 3.0],D6:[6, 3.0],A1:[4, 3.6],A2:[2],D1:[6, 3.4],A3:[7, 2.9],A4:[2, 3.6],D2:[3, 3.6],A5:[6, 3.3],A6:[5, 3.4],D3:[5, 3.4],A7:[7, 3.6],A8:[5, 3.1]},
+  '贺欣媛':{D5:[3, 3.1],D6:[4, 3.1],A1:[1],A2:[1],D1:[3, 2.9],A3:[4, 2.3],A4:[2, 2.9],D2:[1, 2.8],A5:[3, 3.0],A6:[6, 2.9],D3:[3, 3.3],A7:[2, 2.8],A8:[4, 3.2]},
+  '贺锦喆':{D5:[6, 3.5],D6:[6, 3.6],A1:[6, 3.4],A2:[4, 2.9],D1:[5, 3.6],A3:[5, 3.6],A4:[3, 3.5],D2:[3, 3.6],A5:[2, 3.6],A6:[6, 3.6],D3:[6, 3.6],A7:[5, 3.9],A8:[2, 4.0]},
+  '资镐丞':{D4:[5, 3.7],D5:[3, 3.1],D6:[4, 2.8],A1:[4, 3.0],A2:[2, 2.3],D1:[4, 2.7],A3:[3, 2.1],A4:[1, 3.0],D2:[2, 2.3],A5:[4, 2.4],A6:[2, 2.5],D3:[4, 2.5],A7:[2, 2.8],A8:[3, 3.5]},
+  '赖政君':{D4:[5, 3.3],D5:[2, 4.0],D6:[3, 3.7],A1:[3],A2:[2, 2.8],D1:[3, 3.0],A3:[1, 2.8],A4:[2, 3.7],D2:[1],A5:[2, 3.8],A6:[2, 2.8],D3:[2, 3.5],A8:[1, 3.0]},
+  '赖鹏飞':{D5:[1],D6:[0],A2:[1],D1:[1],A3:[1],D2:[1],A5:[1],A6:[1, 3.8],D3:[1],A8:[0]},
+  '赵奕凯':{D4:[5, 3.3],D5:[6, 2.6],D6:[4, 3.2],A1:[5, 2.8],A2:[5, 3.0],D1:[5, 3.1],A3:[6, 2.9],A4:[4, 2.6],A5:[4, 2.6],A6:[5, 2.9],D3:[3, 2.7],A8:[3, 2.7]},
+  '赵紫昀':{D5:[4, 3.7],D6:[4, 4.0],A1:[4, 3.8],A2:[2, 3.0],D1:[4, 2.3],A3:[1],D2:[3, 2.7],A5:[3, 2.6],A6:[4, 3.0],D3:[4, 3.3],A7:[3, 3.6],A8:[5, 3.3]},
+  '赵紫玥':{D6:[2, 1.0],A2:[2],D1:[2]},
+  '蹇斯年':{D5:[4, 3.3],D6:[4, 3.1],A1:[4, 4.0],A2:[4, 3.2],D1:[4, 3.0],A3:[3, 2.3],D2:[3, 3.4],A5:[4, 2.9],A6:[4, 2.4],D3:[4, 2.6],A7:[4, 3.1],A8:[4, 3.1]},
+  '车启铭':{D4:[5, 4.0],D5:[3],D6:[3, 4.0],A1:[2, 2.8],A2:[2],D1:[2],A3:[2],D2:[3],A5:[2],A6:[2, 4.0],D3:[2],A8:[2]},
+  '邓佑安':{D4:[5, 3.3],D5:[4, 2.7],D6:[4, 2.5],A1:[5, 3.0],A2:[1],D1:[1],A3:[2, 2.0],D2:[2, 2.8],A5:[2],A6:[2, 2.8],D3:[3, 3.2],A8:[1, 4.0]},
+  '邓楷廷':{D5:[2, 3.1],D6:[2, 4.1],A1:[2, 3.0],A2:[1, 3.0],D1:[1, 4.0],A4:[2, 4.0],A5:[1, 3.5],A6:[1, 3.0],D3:[2, 3.5]},
+  '邵尊柏':{D3:[3, 3.3],A7:[3, 3.0],A8:[3, 3.5]},
+  '邹亦轩':{D4:[5, 3.5]},
+  '郑伟铮':{D6:[1, 2.7],A2:[1, 2.3],D1:[1],A3:[1],D2:[1],A5:[2, 2.5],D3:[1],A8:[1]},
+  '郑博涵':{D5:[1, 3.0],D6:[1, 2.8],A2:[2, 2.8],D1:[1, 3.0],A4:[2],D2:[0],A5:[2, 2.6],A6:[3, 2.5],D3:[2, 2.6],A7:[1],A8:[2, 3.0]},
+  '郑斯哲':{D4:[5, 4.0],D5:[2, 3.4],D6:[2, 3.3],A1:[2, 2.7],A2:[4, 3.4],D1:[0],A3:[2, 3.4],A4:[2, 3.3],D2:[2, 3.3],A5:[2, 2.4],A6:[1, 3.5],D3:[2, 2.9],A7:[1],A8:[1, 2.8]},
+  '郝一苇':{D5:[1],D6:[0],A1:[1],A2:[1],D1:[1],A3:[1, 1.0],D2:[1, 2.3],A5:[1],A6:[1],D3:[1, 3.3],A8:[1, 2.5]},
+  '郭义峻':{D5:[4, 3.5]},
+  '郭子伊':{D5:[2, 4.3],D6:[2, 3.2],A1:[3, 4.0],A2:[3, 3.0],D1:[2, 4.0],A3:[1, 3.0],D2:[3, 2.7],A5:[3, 3.2],A6:[3, 3.0],D3:[2, 3.4],A8:[1, 3.5]},
+  '郭宥浠':{D5:[3, 2.1],D6:[4, 3.1],A1:[3, 2.7],A2:[3, 2.8],D1:[0],A3:[3, 3.0],A4:[1],D2:[1, 2.8],A5:[3, 2.5],A6:[3, 2.8],D3:[2, 2.8],A7:[1, 2.5],A8:[1, 2.8]},
+  '郭辰':{D4:[5, 3.7]},
+  '郭锦联':{A8:[1, 2.5]},
+  '郭骏逸':{D5:[4, 3.0],D6:[5, 3.4],A1:[4, 2.8],A2:[3, 2.6],D1:[4, 3.1],A3:[3, 3.7],A4:[2, 3.0],D2:[1, 2.8],A5:[3, 2.8],A6:[3, 3.0],D3:[3, 3.3],A7:[3, 2.9],A8:[2, 3.1]},
+  '金宝':{D5:[2, 3.3],A1:[2],A2:[2, 2.7],D1:[2, 2.5],A3:[2, 2.3],A4:[1],D2:[1, 2.3],A5:[2, 3.0],A6:[3, 2.2],D3:[1, 2.0]},
+  '金穗':{D4:[5, 3.7],D5:[4],D6:[4, 3.3],A1:[2],A2:[4, 3.0],D1:[3],A3:[4, 3.3],A4:[3],D2:[4, 3.6],A5:[2, 3.8],A6:[3, 3.3],D3:[2],A8:[4, 3.0]},
+  '金翊':{D5:[2, 2.0],D6:[2, 3.8],A1:[2, 2.6],A2:[2, 2.7],D1:[2, 3.0],A3:[2, 3.5],A4:[2, 3.3],D2:[2, 2.7],A5:[2, 3.1],A6:[2, 3.3],D3:[2, 3.5],A7:[2, 3.4],A8:[2, 3.5]},
+  '钟泓承':{A7:[4, 3.1]},
+  '钟皓承':{D4:[5, 3.3],D5:[4, 3.4],D6:[5, 3.8],A1:[4],A2:[4, 3.3],D1:[4, 2.9],A3:[4, 3.1],A4:[3, 3.9],D2:[3, 3.8],A5:[4, 3.8],A6:[5, 3.4],D3:[1, 4.0],A8:[3, 3.6]},
+  '闫皓淳':{D5:[5, 2.6]},
+  '陆思睿':{D6:[1],A1:[2],A2:[2, 2.8],D1:[1, 3.5],A3:[2, 2.0],A4:[1],D2:[2, 1.9],A5:[2, 2.7],A6:[2, 2.3],D3:[2, 2.5],A7:[2, 2.3],A8:[2, 2.3]},
+  '陆瑶':{D4:[5, 4.0],D5:[6, 3.0],D6:[4, 3.0],A1:[5, 2.0],A2:[5, 2.7],D1:[6, 3.4],A3:[6, 3.2],A4:[4, 3.1],D2:[5, 2.9],A5:[6, 3.1],A6:[5, 3.3],D3:[5, 3.9],A7:[5, 3.3],A8:[4, 2.7]},
+  '陈云义':{D5:[2, 3.7],D6:[3, 3.0],A1:[1],A2:[3, 2.5],D1:[3, 2.8],A3:[1],A4:[2, 2.0],D2:[2, 2.4],A5:[4, 2.5],A6:[3, 1.6],D3:[3, 3.0],A7:[2, 2.9],A8:[4, 2.6]},
+  '陈云林':{D5:[2, 3.3],D6:[5, 3.1],A1:[3, 2.5],A2:[4, 2.2],D1:[4, 3.2],A3:[3, 4.3],A4:[2, 3.3],D2:[2, 3.3],A5:[4, 3.4],A6:[4, 3.1],D3:[4, 3.1],A7:[3, 3.7],A8:[4, 4.0]},
+  '陈佐':{D4:[5, 4.0],D5:[2],D6:[2],A1:[1],A2:[2],D1:[2, 2.7],A3:[2],A4:[0],D2:[0],A6:[2],D3:[2],A8:[2]},
+  '陈境修':{D4:[5, 3.0],D5:[4, 3.8],D6:[1, 3.0],A1:[1],A2:[4, 3.2],D1:[5, 3.3],A3:[3, 3.9],A4:[3, 4.0],D2:[4, 3.3],A5:[4, 3.2],A6:[4, 3.2],D3:[4, 3.0],A7:[5, 3.0],A8:[4, 3.0]},
+  '陈彦廷':{D5:[1],D6:[1],A1:[1],A2:[4, 2.8],D1:[2, 3.5],A3:[1],A4:[0],D2:[1, 3.0],A5:[1, 2.0],A6:[2, 2.2],D3:[1, 3.0],A8:[2, 3.0]},
+  '陈文伍':{D4:[5, 2.7],D5:[5, 2.3],D6:[5, 2.9],A1:[5, 2.0],A2:[4, 2.1],D1:[4, 2.8],A3:[4, 2.7],A4:[3, 2.8],D2:[4, 3.0],A5:[5, 3.0],A6:[5, 2.7],D3:[6, 3.4],A7:[4, 3.0],A8:[5, 2.9]},
+  '陈星乔':{D5:[1, 3.5],D6:[1, 3.5],A1:[2, 3.0],A2:[1],D1:[2, 3.0],A3:[2, 3.3],A6:[1, 2.8],D3:[3, 3.0],A7:[3, 3.0],A8:[3, 3.4]},
+  '陈星豪':{D4:[5, 3.0],D5:[2, 2.8],D6:[1, 3.0],A1:[2, 2.7],A2:[3, 3.0],D1:[3, 3.1],A3:[3, 3.6],A4:[1, 3.0],D2:[1, 3.0],A5:[3, 2.8],A6:[2, 3.3],D3:[2, 2.8],A7:[3, 3.0],A8:[2, 2.0]},
+  '陈杰妮':{D5:[1, 3.8],D6:[2, 3.5],A1:[2, 3.0],A2:[0]},
+  '陈柏辰':{D4:[0, 2.5]},
+  '陈樵':{D4:[5, 3.5],D5:[1],D6:[1],A1:[1],A2:[2],D1:[2],A3:[1],D2:[3],A5:[2],A6:[2, 3.3],D3:[2],A8:[1]},
+  '陈泽宸':{D6:[1],A2:[1],D1:[1],A3:[1],D2:[1, 2.8],A6:[1],D3:[1, 2.7],A8:[0]},
+  '陈瀚彬':{A8:[0]},
+  '陈羿筱':{D4:[5, 3.7],D5:[1],D6:[1],A2:[1],D1:[1],A3:[1],D2:[1],A5:[1],A6:[1],D3:[1]},
+  '陈翌濠':{D5:[5, 2.8],D6:[0],A1:[1, 2.0],A2:[3, 2.8],D1:[4, 2.8],A3:[4, 2.2],A4:[2, 2.7],D2:[2, 2.6],A5:[5, 2.6],A6:[3, 3.0],D3:[2, 2.4],A7:[4, 2.7],A8:[4, 2.6]},
+  '陈远捷':{D5:[2],D6:[2],A1:[1],A2:[2],D1:[2],A3:[2],D2:[1],A5:[1],A6:[2],D3:[2],A7:[2],A8:[2]},
+  '隆子毅':{D5:[6, 3.3],D6:[4, 3.4],A1:[3, 3.0],A2:[3, 2.5],D1:[3, 3.3],A3:[4, 3.2],A4:[2, 3.4],D2:[3, 3.0],A5:[4, 3.1],A6:[4, 3.3],D3:[4, 3.3],A7:[5, 3.0],A8:[4, 3.5]},
+  '隋智斌':{A1:[1],A2:[1, 2.0],D1:[1],A3:[1, 2.0],A4:[1],D2:[0],A5:[1, 1.8],A6:[1, 1.8],D3:[1, 2.0],A8:[1, 2.0]},
+  '雷泽宣':{D4:[0, 4.0]},
+  '韦权珉':{D5:[4, 3.4],D6:[2, 3.5],A1:[5, 2.8],A2:[1, 3.7],D1:[3, 3.3],A3:[3, 3.1],A4:[3, 3.6],D2:[2, 2.3],A5:[3, 3.4],A6:[2, 3.3],D3:[4, 3.8],A7:[2, 3.3],A8:[3, 3.1]},
+  '韩尚弦':{D5:[4, 2.7],D6:[4, 2.7],A1:[4, 2.0],A2:[6, 2.9],D1:[5, 2.8],A3:[1],D2:[3, 2.7],A5:[3, 2.4],A6:[4, 3.1],D3:[4, 3.3],A8:[3, 2.8]},
+  '韩隽毅':{D5:[1, 3.0],D6:[3, 3.4],A1:[2, 3.5],A2:[2, 2.5],D1:[1, 3.0],A3:[2, 2.7],A4:[1, 2.5],D2:[1, 3.0],A5:[3, 2.3],A6:[3, 2.8],D3:[2, 2.8],A8:[2, 3.1]},
+  '颜铭焘':{D5:[2, 3.0],D6:[1, 2.8],A1:[2, 2.0],A2:[2, 2.0],D1:[2, 2.0],A3:[2, 2.0],A4:[1],A5:[2, 2.0],A6:[2, 3.3],D3:[2, 2.3],A7:[2, 2.0],A8:[2, 2.8]},
+  '马克思':{D1:[4, 3.3],A3:[4, 3.0],A4:[2, 2.8],D2:[3, 3.6],A5:[4, 3.4],A6:[4, 3.0],D3:[4, 3.1],A7:[3, 3.3],A8:[4, 3.4]},
+  '马哲贤':{D4:[5, 2.3],D5:[1, 2.8]},
+  '马梓洵':{D5:[6, 3.0],D6:[3, 3.2],A1:[3, 2.3],A2:[2, 2.9],D1:[3, 3.2],A3:[2, 4.0],A4:[3, 3.5]},
+  '马梓瀚':{A2:[1, 3.0]},
+  '马浩瑞':{D5:[1],D6:[1],A1:[1],A2:[1],D1:[1],A3:[1],D2:[2],A6:[1],D3:[1]},
+  '马菖浦':{D4:[5, 3.7],D5:[4, 3.3],D6:[4, 3.3],A1:[3, 3.0],A2:[5, 3.0],D1:[4, 3.4],A3:[4, 3.2],A4:[3, 3.3],D2:[4, 2.9],A5:[3, 3.5],A6:[0],D3:[3, 4.4],A7:[2, 4.0],A8:[2, 3.3]},
+  '魏璟睿':{D4:[0, 3.3]},
+  '黄元昊':{D5:[2, 3.0],D6:[1, 3.0],A1:[3, 3.0],A2:[2, 3.0],D1:[2, 4.0],A3:[3, 3.0],A4:[1, 3.5],D2:[4, 3.3],A5:[2, 3.0],A6:[2, 2.4],D3:[1, 2.7],A8:[4, 2.9]},
+  '黄宸睿':{D5:[3, 2.8],D6:[4, 2.8],A1:[4, 2.0],A2:[4, 2.6],D1:[4, 3.2],A3:[3, 2.5],A4:[3, 2.7],D2:[3, 2.6],A5:[3, 2.7],A6:[3, 2.4],D3:[4, 2.5],A7:[3, 2.9],A8:[3, 2.8]},
+  '黄柏睿':{D4:[5, 3.3],D5:[4, 2.6],D6:[3, 2.7],A1:[3, 2.7],A2:[4, 2.3],D1:[4, 2.8],A3:[2, 2.1],A4:[3, 2.5],D2:[1, 2.5],A5:[4, 2.4],A6:[0],D3:[0],A7:[3, 2.5],A8:[4, 2.7]},
+  '黄毅':{D2:[1, 3.3],A5:[1],A6:[1],D3:[1, 3.3],A8:[1, 3.8]},
+  '黄焌亮':{D5:[2, 3.0],D6:[2, 3.2],A1:[2, 2.0],A2:[2, 2.0],D1:[2, 4.0],A3:[1, 4.0],A4:[1, 3.0],D2:[4, 3.6],A5:[3, 3.3],A6:[2, 2.5],D3:[1, 3.3],A8:[3, 3.2]},
+  '黄煜亮':{A7:[3, 3.0]},
+  '龙永平':{D5:[1],D6:[1],A2:[1],D1:[1],A3:[1],D2:[1],A5:[1],A6:[1],A8:[1]},
+  '龙远安':{D5:[1],D6:[1],A2:[1],D1:[1],A3:[1],D2:[1],A6:[1],A8:[1]},
+  '龚一乐':{D5:[2, 2.7],D6:[2, 2.4],A1:[2],A2:[2, 3.0],D1:[2, 2.3],A3:[2, 2.0],D2:[4, 2.6],A5:[2, 2.2],A6:[2, 1.3],D3:[2, 2.3],A8:[2, 2.8]},
+};
+
+const BENCHMARKS = {
+  'U15':{'A+B':'Dominant possession & territory control','A-B':'Final third creativity & composure','GI':'Lead by example \u2014 coach on pitch','CO':'Full tactical communication','MI':'Intelligent pressing & recovery runs','PH':'Peak athletic performance'},
+  'U12':{'A+B':'Controlled build-up under pressure','A-B':'Combination play to break lines','GI':'Manage the game tempo','CO':'Organize teammates on the pitch','MI':'Timed runs & defensive recovery','PH':'Strength & repeated sprint ability'},
+  'U11':{'A+B':'Positional play under pressure','A-B':'Break lines with passing combinations','GI':'Game management & tempo control','CO':'Organize press & tactical calls','MI':'Smart runs into space behind','PH':'Endurance & repeated sprint ability'},
+  'U10':{'A+B':'Build through 3rd man runs','A-B':'Penetrate via half-spaces','GI':'Recognize numerical advantages','CO':'Quality under pressure [limited touches]','MI':'Create 2v1s with movement','PH':'Speed endurance & agility'},
+  'U09':{'A+B':'Play out from the back confidently','A-B':'Dribble or pass decisions in 1v1','GI':'Read the game \u2014 when to risk','CO':'Ask for the ball & give info','MI':'Support the ball carrier','PH':'Coordination & balance'},
+  'U08':{'A+B':'Passing accuracy [short range]','A-B':'1v1 courage \u2014 take players on','GI':'Understand simple positions','CO':'Talk to teammates on the ball','MI':'Move to open space','PH':'Fundamental motor skills'},
+  'U07':{'A+B':'Pass and follow','A-B':'Dribble with both feet','GI':'Stay in position','CO':'Call for the ball','MI':'Run into space','PH':'Agility & fun movements'},
+  'U06':{'A+B':'Stop the ball & pass','A-B':'Keep the ball close','GI':'Know your goal','CO':'Use your voice','MI':'Find empty space','PH':'Balance & coordination'},
+  'U05':{'A+B':'Kick the ball to a friend','A-B':'Keep the ball moving','GI':'Follow the ball','CO':'Smile & try again','MI':'Run and explore','PH':'Running & jumping'},
+  'U04':{'A+B':'Kick the ball forward','A-B':'Don\'t stop the ball','GI':'Which goal?','CO':'Have fun together','MI':'Chase the ball','PH':'Move your body'},
+};
+
+// ===================== STATE =====================
+let currentCoach = null, currentTeam = null, selectedCoachName = null;
+let radarChart = null, trendChart = null;
+let sortCol = 'per', sortDir = -1;
+let selectedTopic = 'A1';
+
+// ===================== LOGIN =====================
+function initLogin() {
+  const grid = document.getElementById('coachGrid');
+  COACHES.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'coach-btn';
+    const photo = COACH_PHOTOS[c] || 'roger.jpg';
+    btn.innerHTML = '<img src="img/' + photo + '" alt="' + c + '"><span>' + c + '</span>';
+    btn.onclick = () => selectCoach(c);
+    grid.appendChild(btn);
+  });
+}
+function selectCoach(name) {
+  selectedCoachName = name;
+  document.querySelectorAll('.coach-btn').forEach(b => b.classList.toggle('selected', b.querySelector('span').textContent === name));
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('passwordInput').focus();
+  document.getElementById('loginError').textContent = '';
+}
+document.getElementById('loginBtn').onclick = attemptLogin;
+document.getElementById('passwordInput').onkeydown = e => { if(e.key==='Enter') attemptLogin(); };
+function attemptLogin() {
+  if (!selectedCoachName) { document.getElementById('loginError').textContent = 'Select your name first'; return; }
+  const pw = document.getElementById('passwordInput').value.trim().toLowerCase();
+  if (pw === selectedCoachName.toLowerCase()) {
+    currentCoach = selectedCoachName;
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appScreen').classList.remove('hidden');
+    renderSidebar();
+    const teams = COACH_TEAMS[currentCoach] || [];
+    if (teams.length > 0) { selectTeam(teams[0]); }
+  } else {
+    document.getElementById('loginError').textContent = 'Incorrect password';
+  }
+}
+function renderSidebar() {
+  const sb = document.getElementById('sidebar');
+  const teams = COACH_TEAMS[currentCoach] || [];
+  const photo = COACH_PHOTOS[currentCoach] || 'roger.jpg';
+  let h = '<div class="sidebar-header"><img class="sidebar-avatar" src="img/' + photo + '" alt="' + currentCoach + '"><span class="sidebar-name">' + currentCoach + '</span><button class="logout-btn" onclick="logout()">Sign Out</button></div>';
+  h += '<div class="sidebar-section">Teams</div>';
+  teams.forEach(tid => {
+    const t = TEAMS.find(x => x.name === tid);
+    if (t) {
+      const style = GAMEPLAN_STYLE[t.gameplan] || '?';
+      h += '<div class="team-item' + (currentTeam && currentTeam.name === tid ? ' active' : '') + '" onclick="selectTeam(\'' + tid + '\')"><span>' + t.name + '</span><span class="team-sub">' + style + ' | ' + t.group + '</span></div>';
+    }
+  });
+  sb.innerHTML = h;
+}
+function logout() {
+  currentCoach = null; currentTeam = null;
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginError').textContent = '';
+  selectedCoachName = null;
+  document.querySelectorAll('.coach-btn').forEach(b => b.classList.remove('selected'));
+}
+
+// ===================== TEAM VIEW =====================
+function selectTeam(tid) {
+  currentTeam = TEAMS.find(t => t.name === tid);
+  if (!currentTeam) return;
+  renderSidebar();
+  renderTeamView();
+  closeSidebar();
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobileOverlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('show');
+}
+function renderTeamView() {
+  if (!currentTeam) return;
+  const mc = document.getElementById('mainContent');
+  const t = currentTeam;
+  const style = GAMEPLAN_STYLE[t.gameplan] || '?';
+  const players = getTeamPlayers();
+  const activePlayers = players.filter(p => p.per > 0 && !p.quit);
+  const newPlayers = players.filter(p => p.per === 0 && p.rat === 0 && !p.quit);
+  const quitPlayers = players.filter(p => p.quit);
+  const avgPer = activePlayers.length > 0 ? (activePlayers.reduce((s,p) => s+p.per, 0) / activePlayers.length).toFixed(1) : '\u2014';
+
+  mc.innerHTML = '<div class="page-header"><h1>' + t.name + '</h1><p>' + t.group + ' | ' + t.gameplan + ' | ' + style + ' | Coach: ' + t.headCoach + (t.assistants && t.assistants.length ? ' & ' + t.assistants.join(', ') : '') + '</p></div>' +
+    '<div class="overview-grid">' +
+      '<div class="stat-card"><div class="stat-value">' + activePlayers.length + '</div><div class="stat-label">Players</div></div>' +
+      '<div class="stat-card gold"><div class="stat-value">' + avgPer + '</div><div class="stat-label">Avg PER</div></div>' +
+      '<div class="stat-card"><div class="stat-value">' + style + '</div><div class="stat-label">Format</div></div>' +
+      '<div class="stat-card green"><div class="stat-value">' + newPlayers.length + '</div><div class="stat-label">New</div></div>' +
+      (quitPlayers.length > 0 ? '<div class="stat-card red"><div class="stat-value">' + quitPlayers.length + '</div><div class="stat-label">Inactive</div></div>' : '') +
+    '</div>' +
+    '<div class="card"><div class="card-title"><span class="icon">\uD83D\uDCC5</span> Schedule</div><div class="schedule-list">' + parseSchedule(t.sessions) + '</div></div>' +
+    '<div class="tab-nav">' +
+      '<button class="tab-btn active" onclick="showTab(\'overview\',this)">Overview</button>' +
+      '<button class="tab-btn" onclick="showTab(\'players\',this)">Players</button>' +
+      '<button class="tab-btn" onclick="showTab(\'gameplan\',this)">Gameplan</button>' +
+      '<button class="tab-btn" onclick="showTab(\'drills\',this)">Drills</button>' +
+    '</div>' +
+    '<div id="tabOverview" class="tab-content">' +
+      '<div class="overview-charts">' +
+        '<div class="card chart-card"><div class="card-title"><span class="icon">\uD83D\uDCC8</span> Team Performance Radar</div><div class="radar-container"><canvas id="radarCanvas"></canvas></div><div id="radarInsights" class="radar-insights"></div></div>' +
+        '<div class="card chart-card"><div class="card-title"><span class="icon">\uD83D\uDCCA</span> Season Trends</div><div id="trendsContent"></div></div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="tabPlayers" class="tab-content hidden"><div class="card"><div class="card-title"><span class="icon">\uD83D\uDC65</span> Player Overview</div><div class="player-table-wrap"><table class="player-table" id="playerTable"></table></div></div></div>' +
+    '<div id="tabGameplan" class="tab-content hidden"><div class="card"><div class="card-title"><span class="icon">\uD83C\uDFAF</span> Gameplan</div><div class="topic-pills" id="topicPills"></div><div id="gameplanContent"></div></div></div>' +
+    '<div id="tabDrills" class="tab-content hidden"><div class="card"><div class="card-title"><span class="icon">\u26BD</span> Drills</div><div class="topic-pills" id="drillTopicPills"></div><div id="drillsContent"></div></div></div>';
+  
+  renderRadar();
+  renderTrends();
+  renderPlayerTable();
+  renderTopicPills();
+  renderGameplan();
+  renderDrills();
+}
+function getTeamPlayers() {
+  return currentTeam && PLAYERS[currentTeam.name] ? PLAYERS[currentTeam.name] : [];
+}
+function parseSchedule(sessions) {
+  return sessions.split(',').map(s => {
+    const parts = s.trim().split('-');
+    const day = parts[0], venue = parts[1], time = parts.slice(2).join('-');
+    return '<span class="schedule-tag ' + venue.toLowerCase() + '">' + day + ' ' + venue + ' ' + time + '</span>';
+  }).join('');
+}
+
+// ===================== RADAR =====================
+function radarColor(v) {
+  if (v >= 3.5) return '#0a3d1e';
+  if (v >= 3.0) return '#2d7a4e';
+  if (v >= 2.5) return '#d4a017';
+  return '#c0392b';
+}
+function radarBgColor(v) {
+  if (v >= 3.5) return 'rgba(10,61,30,0.85)';
+  if (v >= 3.0) return 'rgba(45,122,78,0.85)';
+  if (v >= 2.5) return 'rgba(212,160,23,0.85)';
+  return 'rgba(192,57,43,0.85)';
+}
+function compColor(v) {
+  if (v >= 3.5) return 'color:#2d7a4e;font-weight:600';
+  if (v > 3.4) return 'color:#2d7a4e';
+  if (v < 2.5) return 'color:#c0392b;font-weight:600';
+  return '';
+}
+function renderRadar() {
+  const players = getTeamPlayers().filter(p => p.per > 0 && !p.quit);
+  if (players.length === 0) return;
+  const labels = ['A+B','A-B','GI','CO','MI','PH'];
+  const avg = labels.map((_, i) => {
+    const vals = players.map(p => {
+      switch(i) { case 0: return (p.apb + p.amb) / 2; case 1: return p.amb; case 2: return p.gi; case 3: return p.com; case 4: return p.mi; case 5: return p.ph; }
+    });
+    return vals.reduce((a,b)=>a+b,0)/vals.length;
+  });
+  const pointColors = avg.map(v => radarColor(v));
+  const pointBgColors = avg.map(v => radarBgColor(v));
+  const ctx = document.getElementById('radarCanvas');
+  if (!ctx) return;
+  if (radarChart) radarChart.destroy();
+  radarChart = new Chart(ctx, {
+    type:'radar',
+    data:{labels:labels,datasets:[{label:currentTeam.name+' Average',data:avg.map(v=>+v.toFixed(2)),backgroundColor:'rgba(10,61,30,0.08)',borderColor:'#0a3d1e',borderWidth:2,pointBackgroundColor:pointBgColors,pointBorderColor:pointColors,pointRadius:7,pointHoverRadius:9}]},
+    options:{responsive:true,scales:{r:{beginAtZero:true,max:4.5,ticks:{stepSize:1,font:{size:11}},pointLabels:{font:{size:13,weight:'bold'},color:function(ctx){return radarColor(avg[ctx.index]);}},grid:{color:'rgba(0,0,0,0.08)'}}},plugins:{legend:{position:'bottom',labels:{font:{size:13},usePointStyle:true}},tooltip:{callbacks:{label:function(ctx){const v=ctx.raw;let tag=v>=3.5?'\u2605 Strong':v>=3.0?'\u25CF Good':v>=2.5?'\u25CF Average':'\u25BC Needs focus';return ctx.dataset.label+': '+v.toFixed(2)+' '+tag;}}}}}
+  });
+
+  // Insights: Strongest 3 + Working Points 3
+  const ageMatch = currentTeam.name.match(/U(\d+)/);
+  const ageNum = ageMatch ? parseInt(ageMatch[1]) : 8;
+  const ageKey = 'U' + String(ageNum).padStart(2,'0');
+  const benchmarks = BENCHMARKS[ageKey] || BENCHMARKS['U08'];
+  const ranked = labels.map((label,i)=>({label,benchmark:benchmarks[label],avg:avg[i]})).sort((a,b)=>b.avg-a.avg);
+  const insightsDiv = document.getElementById('radarInsights');
+  if (!insightsDiv) return;
+  let topHtml = '<div class="insight-col"><h4>Strongest</h4>';
+  ranked.slice(0,3).forEach(c=>{topHtml+='<div class="insight-item"><span class="insight-label" style="'+compColor(c.avg)+'">'+c.label+'</span><span class="insight-desc">'+c.benchmark+'</span><span class="insight-avg" style="'+compColor(c.avg)+'">'+c.avg.toFixed(1)+'</span></div>';});
+  topHtml+='</div>';
+  let wpHtml='<div class="insight-col"><h4>Working Points</h4>';
+  ranked.slice(-3).forEach(c=>{wpHtml+='<div class="insight-item"><span class="insight-label" style="'+compColor(c.avg)+'">'+c.label+'</span><span class="insight-desc">'+c.benchmark+'</span><span class="insight-avg" style="'+compColor(c.avg)+'">'+c.avg.toFixed(1)+'</span></div>';});
+  wpHtml+='</div>';
+  insightsDiv.innerHTML = topHtml + wpHtml;
+}
+
+// ===================== TRENDS =====================
+function renderTrends() {
+  const container = document.getElementById('trendsContent');
+  if (!container) return;
+  const players = getTeamPlayers().filter(p => p.per > 0 && !p.quit);
+  if (players.length === 0) { container.innerHTML='<p style="color:#888;text-align:center;padding:40px">No trend data available yet for this team.</p>'; return; }
+  const showCount = 6;
+  const startIdx = Math.max(0, CURRENT_WEEK_IDX - showCount + 1);
+  const weeksToShow = SEASON_WEEKS.slice(startIdx, CURRENT_WEEK_IDX + 1);
+  const weekStats = weeksToShow.map(w => {
+    const topicPers=[], topicAtts=[];
+    players.forEach(p => {
+      const cnData = CYCLE_DATA[p.cn];
+      if (cnData && cnData[w.topic] !== undefined) {
+        const entry = cnData[w.topic];
+        if (entry[0] !== undefined && entry[0] > 0) topicAtts.push(entry[0]);
+        if (entry.length > 1 && entry[1] !== undefined) topicPers.push(entry[1]);
+      }
+    });
+    const avgPer = topicPers.length>0?+(topicPers.reduce((s,v)=>s+v,0)/topicPers.length).toFixed(2):0;
+    const avgAtt = topicAtts.length>0?+(topicAtts.reduce((s,v)=>s+v,0)/topicAtts.length).toFixed(1):0;
+    return {week:w.week,label:w.label,code:w.topic,name:TOPIC_NAMES[w.topic]||w.topic,avgPer,avgAtt};
+  });
+  let html='<div style="margin-bottom:12px;color:#666;font-size:12px">Last '+weeksToShow.length+' weeks &mdash; PER trend (solid) vs Avg ATT (dashed gold)</div>';
+  html+='<table class="trends-table" style="margin-bottom:16px"><thead><tr><th>Wk</th><th>Topic</th><th>PER</th><th></th><th>ATT</th></tr></thead><tbody>';
+  weekStats.forEach((w,i)=>{
+    const prev=i>0?weekStats[i-1]:undefined;
+    const perColor=w.avgPer>=3.5?'color:#0a3d1e;font-weight:600':w.avgPer>=3.0?'color:#2d7a4e':w.avgPer<2.5?'color:#c0392b;font-weight:600':'';
+    const isCurrent=i===weekStats.length-1;
+    const perTrend=(prev&&prev.avgPer)?(w.avgPer-prev.avgPer>0.05?'\u25B2':w.avgPer-prev.avgPer<-0.05?'\u25BC':'\u2014'):'\u2014';
+    const perTrendColor=perTrend==='\u25B2'?'#2d7a4e':perTrend==='\u25BC'?'#c0392b':'#999';
+    html+='<tr'+(isCurrent?' style="background:rgba(10,61,30,0.04)"':'')+'><td style="font-weight:600;color:#888">'+w.label+'</td><td style="font-weight:700;'+(w.code.startsWith('A')?'color:var(--green-dark)':'color:#8e44ad')+'">'+w.code+'</td><td style="'+perColor+';font-weight:600">'+(w.avgPer>0?w.avgPer.toFixed(1):'\u2014')+'</td><td style="color:'+perTrendColor+'">'+perTrend+'</td><td style="text-align:center">'+w.avgAtt+'</td></tr>';
+  });
+  html+='</tbody></table><canvas id="trendCanvas" height="200"></canvas>';
+  container.innerHTML=html;
+  const ctx=document.getElementById('trendCanvas');
+  if(ctx){
+    if(trendChart)trendChart.destroy();
+    trendChart=new Chart(ctx,{type:'line',data:{labels:weekStats.map(w=>w.code),datasets:[{label:'Topic PER',data:weekStats.map(w=>w.avgPer),borderColor:'#0a3d1e',backgroundColor:'rgba(10,61,30,0.1)',borderWidth:2,pointBackgroundColor:weekStats.map(w=>radarColor(w.avgPer)),pointBorderColor:weekStats.map(w=>radarColor(w.avgPer)),pointRadius:5,tension:0.3,fill:true},{label:'Avg ATT',data:weekStats.map(w=>w.avgAtt),borderColor:'#d4a017',borderWidth:2,borderDash:[5,5],pointRadius:3,pointBackgroundColor:'#d4a017',tension:0.3,fill:false,yAxisID:'y1'}]},options:{responsive:true,scales:{y:{beginAtZero:true,max:4.5,ticks:{stepSize:1,font:{size:11}},position:'left',title:{display:true,text:'PER',font:{size:11}}},y1:{beginAtZero:true,position:'right',title:{display:true,text:'ATT',font:{size:11}},grid:{drawOnChartArea:false},ticks:{font:{size:11}}}},plugins:{legend:{position:'bottom',labels:{font:{size:11},usePointStyle:true}}}}});
+  }
+}
+
+// ===================== PLAYER TABLE =====================
+function perClass(v){return v>=3.5?'per-high':v>=2.5?'per-mid':'per-low';}
+function renderPlayerTable(){
+  const players=getTeamPlayers();
+  const table=document.getElementById('playerTable');
+  if(!table)return;
+  const maxAtt=Math.max(...players.map(p=>p.att||0),1);
+  const cols=[{key:'name',label:'Name'},{key:'cn',label:'Chinese'},{key:'per',label:'PER',isPer:true},{key:'apb',label:'A+B'},{key:'amb',label:'A-B'},{key:'gi',label:'GI'},{key:'com',label:'CO'},{key:'mi',label:'MI'},{key:'ph',label:'PH'},{key:'att',label:'ATT',isAtt:true},{key:'rat',label:'RAT',isRat:true}];
+  const active=players.filter(p=>!p.quit);
+  const quitList=players.filter(p=>p.quit);
+  const sorted=[...active].sort((a,b)=>{const av=a[sortCol]||0,bv=b[sortCol]||0;return(bv-av)*sortDir;});
+  function sortIcon(col){return sortCol===col?(sortDir===1?' \u25B2':' \u25BC'):'';}
+  function renderCell(p,c){
+    if(c.isAtt){const att=p.att||0;const pct=Math.round((att/maxAtt)*100);const barColor=pct>=70?'#2d7a4e':pct>=40?'#d4a017':'#c0392b';return'<td style="text-align:center"><div class="att-bar-wrap"><div class="att-bar" style="width:'+pct+'%;background:'+barColor+'"></div><span class="att-num">'+(att>0?att:'\u2014')+'</span></div></td>';}
+    else if(c.isPer){return'<td><span class="per-badge '+perClass(p.per)+'">'+(p.per>0?p.per.toFixed(1):'\u2014')+'</span></td>';}
+    else if(c.isRat){const rat=p.rat||0;const att=p.att||0;const ratio=att>0?rat/att:0;const style=(att>0&&ratio<1.5)?'color:#c0392b;font-weight:600':'';return'<td style="text-align:center;'+style+'">'+(rat>0?rat:'\u2014')+'</td>';}
+    else if(typeof p[c.key]==='number'){const v=p[c.key];return'<td style="'+compColor(v)+'">'+(v>0?v.toFixed(1):'\u2014')+'</td>';}
+    else{return'<td>'+p[c.key]+'</td>';}
+  }
+  let html='<thead><tr>';
+  cols.forEach(c=>{html+='<th onclick="sortBy(\''+c.key+'\')">'+c.label+'<span class="sort">'+sortIcon(c.key)+'</span></th>';});
+  html+='</tr></thead><tbody>';
+  sorted.forEach(p=>{html+='<tr onclick="openPlayerModal(\''+p.name+'\',\''+p.cn+'\','+p.per+','+p.att+','+p.rat+','+p.com+','+p.apb+','+p.amb+','+p.gi+','+p.mi+','+p.ph+')">';cols.forEach(c=>{html+=renderCell(p,c);});html+='</tr>';});
+  if(quitList.length>0){html+='<tr class="quit-divider"><td colspan="'+cols.length+'">Inactive (Quit / Give Up / Pause)</td></tr>';quitList.forEach(p=>{html+='<tr style="opacity:0.6">';cols.forEach(c=>{html+=renderCell(p,c);});html+='</tr>';});}
+  html+='</tbody>';
+  table.innerHTML=html;
+}
+function sortBy(col){if(sortCol===col){sortDir*=-1;}else{sortCol=col;sortDir=-1;}renderPlayerTable();}
+
+// ===================== PLAYER MODAL =====================
+function openPlayerModal(name,cn,per,att,rat,com,apb,amb,gi,mi,ph){
+  const overlay=document.getElementById('playerModalOverlay');
+  const modal=document.getElementById('playerModal');
+  modal.innerHTML='<button class="modal-close" onclick="closeModal()">&times;</button><h3>'+name+'</h3><div class="modal-cn">'+cn+'</div>'+
+    '<div class="modal-scores"><div class="modal-score-item"><div class="modal-score-val">'+(per>0?per.toFixed(1):'\u2014')+'</div><div class="modal-score-label">PER</div></div><div class="modal-score-item"><div class="modal-score-val">'+(att>0?att:'\u2014')+'</div><div class="modal-score-label">ATT</div></div><div class="modal-score-item"><div class="modal-score-val">'+(rat>0?rat:'\u2014')+'</div><div class="modal-score-label">RAT</div></div></div>'+
+    '<div class="modal-comps"><div class="modal-comp"><div class="modal-comp-val" style="'+compColor(apb)+'">'+(apb>0?apb.toFixed(1):'\u2014')+'</div><div class="modal-comp-label">A+B</div></div><div class="modal-comp"><div class="modal-comp-val" style="'+compColor(amb)+'">'+(amb>0?amb.toFixed(1):'\u2014')+'</div><div class="modal-comp-label">A-B</div></div><div class="modal-comp"><div class="modal-comp-val" style="'+compColor(gi)+'">'+(gi>0?gi.toFixed(1):'\u2014')+'</div><div class="modal-comp-label">GI</div></div><div class="modal-comp"><div class="modal-comp-val" style="'+compColor(com)+'">'+(com>0?com.toFixed(1):'\u2014')+'</div><div class="modal-comp-label">CO</div></div><div class="modal-comp"><div class="modal-comp-val" style="'+compColor(mi)+'">'+(mi>0?mi.toFixed(1):'\u2014')+'</div><div class="modal-comp-label">MI</div></div><div class="modal-comp"><div class="modal-comp-val" style="'+compColor(ph)+'">'+(ph>0?ph.toFixed(1):'\u2014')+'</div><div class="modal-comp-label">PH</div></div></div>';
+  overlay.classList.add('active');
+}
+function closeModal(){document.getElementById('playerModalOverlay').classList.remove('active');}
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('playerModalOverlay').onclick=e=>{if(e.target===document.getElementById('playerModalOverlay'))closeModal();};});
+
+// ===================== TABS =====================
+function showTab(tab,btn){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const id='tab'+tab.charAt(0).toUpperCase()+tab.slice(1);
+  document.getElementById(id).classList.remove('hidden');
+  btn.classList.add('active');
+  if(tab==='overview'){renderRadar();renderTrends();}
+}
+
+// ===================== TOPIC PILLS =====================
+function renderTopicPills(){
+  const container=document.getElementById('topicPills');
+  if(!container)return;
+  const topics=Object.keys(TOPIC_NAMES);
+  container.innerHTML=topics.map(t=>{const isAttack=t.startsWith('A');const isActive=t===selectedTopic;return'<button class="topic-pill '+(isAttack?'attack':'defend')+' '+(isActive?'active':'')+'" onclick="selectTopic(\''+t+'\')">'+t+'</button>';}).join('');
+}
+function selectTopic(topic){selectedTopic=topic;renderTopicPills();renderGameplan();renderDrills();}
+
+// ===================== GAMEPLAN =====================
+function renderGameplan(){
+  const container=document.getElementById('gameplanContent');
+  if(!container)return;
+  const style=GAMEPLAN_STYLE[currentTeam.gameplan]||'?';
+  const topicName=TOPIC_NAMES[selectedTopic]||selectedTopic;
+  const key=selectedTopic+'-'+style;
+  const gp=GAMEPLANS[key];
+  const level=gameplanToLevel(currentTeam.gameplan);
+  const skills=TOPIC_SKILLS[selectedTopic]||[];
+  let html='';
+  
+  // Focus points — 4 colored cards in 2x2 grid (ABOVE image)
+  if(skills.length>0){
+    html+='<div style="padding:14px 16px;border-bottom:1px solid #eee;">';
+    html+='<div style="font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Focus Points (Level: '+level+')</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+    skills.forEach(function(skill){
+      var comp=SKILL_COMPONENT[skill]||{color:'#999',icon:'\u25CF',group:''};
+      var matrix=GAMEPLAN_MATRIX[skill];
+      var desc=matrix?(matrix[level]||matrix["U5"]||"\u2014"):"\u2014";
+      html+='<div style="background:#fafafa;border-left:3px solid '+comp.color+';border-radius:6px;padding:8px 10px;">';
+      html+='<div style="display:flex;align-items:center;gap:4px;margin-bottom:3px;">';
+      html+='<span style="font-size:11px;">'+comp.icon+'</span>';
+      html+='<span style="font-size:11px;font-weight:700;color:'+comp.color+';">'+skill+'</span>';
+      html+='</div>';
+      html+='<div style="font-size:10px;color:var(--text-light);line-height:1.4;">'+desc+'</div>';
+      html+='</div>';
+    });
+    html+='</div></div>';
+  }
+  
+  // Image — click to view full-size
+  html+='<a href="img/'+key+'.png" target="_blank" style="display:block;text-align:center;padding:10px 12px;" title="Click to view full-size"><img src="img/'+key+'.png" alt="'+selectedTopic+' gameplan" onerror="this.style.display=\'none\';this.parentElement.style.display=\'none\'"></a>';
+  
+  // Tactical "how" text (only show if non-empty)
+  if(gp && gp.how && gp.how.trim()){
+    html+='<div style="padding:14px 16px;font-size:12px;line-height:1.7;color:var(--text-light);"><div style="font-size:11px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Tactical Setup</div>'+gp.how.replace(/\n/g,'<br>')+'</div>';
+  }
+  
+  html+='</div>';
+  container.innerHTML=html;
+}
+
+// ===================== DRILLS =====================
+function normalizeGameplanAge(age){if(!age)return'';return age.replace(/^U0/,'U');}
+function findDrillData(){var age=normalizeGameplanAge(currentTeam.gameplan);return DRILLS_DATA[selectedTopic+' | '+age]||null;}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderDrillCard(label,data,isLast){
+  if(!data||!data.title)return'';
+  var imgPath=(data.image||'').replace(/^https?:\/\/docimg\d+\.docs\.qq\.com\/image\/.*$/,'');
+  var hasImg=imgPath&&imgPath.length>0;
+  var hasVideo=!!data.video;
+  var cardId='drill-'+label.replace(/\s/g,'')+'-'+Math.random().toString(36).slice(2,7);
+  var html='<div class="drill-card"'+(isLast?'':' style="margin-bottom:16px"')+'>';
+  // Header
+  html+='<div class="drill-card-header"><span class="drill-phase">'+label+'</span><h4>'+escHtml(data.title)+'</h4></div>';
+  // Body: media + content
+  html+='<div class="drill-card-body">';
+  // Media box
+  html+='<div class="drill-media-box">';
+  if(hasImg||hasVideo){
+    // Tabs if both image and video exist
+    if(hasImg&&hasVideo){
+      html+='<div class="drill-media-tabs"><button class="drill-media-tab active" onclick="switchDrillMedia(\''+cardId+'\',\'img\')">📷 Diagram</button><button class="drill-media-tab" onclick="switchDrillMedia(\''+cardId+'\',\'vid\')">🎬 Video</button></div>';
+    }
+    // Image panel
+    if(hasImg){
+      html+='<div class="drill-media-panel" id="'+cardId+'-img" style="display:block">';
+      html+='<a href="'+escHtml(imgPath)+'" target="_blank" title="Click to view full-size"><img src="'+escHtml(imgPath)+'" alt="'+escHtml(data.title)+'" onerror="this.parentElement.innerHTML=\'<div class=no-image>📷 Image not available</div>\'"></a>';
+      html+='</div>';
+    }
+    // Video panel
+    if(hasVideo){
+      html+='<div class="drill-media-panel drill-video-panel" id="'+cardId+'-vid" style="display:'+(hasImg?'none':'block')+'">';
+      html+='<a href="'+escHtml(data.video)+'" target="_blank" class="drill-video-play-btn">';
+      html+='<span class="drill-video-play-icon">▶</span>';
+      html+='<span>Watch Demo</span>';
+      html+='</a>';
+      html+='<span style="font-size:10px;color:var(--text-light);margin-top:4px;">Opens in CapCut</span>';
+      html+='</div>';
+    }
+  } else {
+    html+='<div class="no-image">📷 No media yet</div>';
+  }
+  html+='</div>';
+  // Content boxes
+  html+='<div class="drill-card-content">';
+  // Methodology box
+  if(data.desc){
+    html+='<div class="drill-box methodology"><div class="drill-box-label">⚙️ Methodology</div>'+escHtml(data.desc).replace(/\n/g,'<br>')+'</div>';
+  }
+  // Success box
+  if(data.success){
+    html+='<div class="drill-box success"><div class="drill-box-label">🎯 Success Criteria</div>'+escHtml(data.success)+'</div>';
+  }
+  html+='</div></div></div>';
+  return html;
+}
+
+function renderDrills(){
+  var pillsContainer=document.getElementById('drillTopicPills');
+  var contentContainer=document.getElementById('drillsContent');
+  if(!pillsContainer||!contentContainer)return;
+  var topics=Object.keys(TOPIC_NAMES);
+  pillsContainer.innerHTML=topics.map(function(t){var isAttack=t.startsWith('A');var isActive=t===selectedTopic;return'<button class="topic-pill '+(isAttack?'attack':'defend')+' '+(isActive?'active':'')+'" onclick="selectDrillTopic(\''+t+'\')">'+t+'</button>';}).join('');
+
+  var drillData=findDrillData();
+  if(!drillData){contentContainer.innerHTML='<div style="text-align:center;padding:40px;color:#999;">No drill data available for '+selectedTopic+' at '+normalizeGameplanAge(currentTeam.gameplan)+' level.<br><br>Check back when drills are added to the Drills sheet.</div>';return;}
+
+  var html='';
+  html+=renderDrillCard('Activation',drillData.activation,false);
+  html+=renderDrillCard('Drill 1',drillData.drill1,false);
+  html+=renderDrillCard('Drill 2',drillData.drill2,false);
+  html+=renderDrillCard('Drill 3',drillData.drill3,true);
+  contentContainer.innerHTML=html;
+}
+function selectDrillTopic(topic){selectedTopic=topic;renderTopicPills();renderDrills();}
+function switchDrillMedia(cardId,type){
+  var imgPanel=document.getElementById(cardId+'-img');
+  var vidPanel=document.getElementById(cardId+'-vid');
+  var tabs=document.querySelectorAll('[onclick*="'+cardId+'"]');
+  if(type==='img'){if(imgPanel)imgPanel.style.display='block';if(vidPanel)vidPanel.style.display='none';tabs.forEach(function(t){t.classList.toggle('active',t.textContent.indexOf('Diagram')>=0);});}
+  else{if(imgPanel)imgPanel.style.display='none';if(vidPanel)vidPanel.style.display='block';tabs.forEach(function(t){t.classList.toggle('active',t.textContent.indexOf('Video')>=0);});}
+}
+
+// ===================== INIT =====================
+const DRILL_IMG = {
+  'U4': {
+    'activation': 'img/drills/A1_0.png',
+    'drill1': 'img/drills/A1_1.png',
+    'drill2': 'img/drills/A1_2.png',
+    'drill3': 'img/drills/A1_3.png',
+  },
+  'U5': {
+    'activation': 'img/drills/A1_4.png',
+    'drill1': 'img/drills/A1_5.png',
+    'drill2': 'img/drills/A1_6.png',
+    'drill3': 'img/drills/A1_7.png',
+  },
+  'U6': {
+    'activation': 'img/drills/A1_8.png',
+    'drill1': 'img/drills/A1_9.png',
+    'drill2': 'img/drills/A1_10.png',
+    'drill3': 'img/drills/A1_11.png',
+  },
+  'U7': {
+    'activation': 'img/drills/A1_12.png',
+    'drill1': 'img/drills/A1_13.png',
+    'drill2': 'img/drills/A1_14.png',
+    'drill3': 'img/drills/A1_15.png',
+  },
+  'U8': {
+    'activation': 'img/drills/A1_16.png',
+    'drill1': 'img/drills/A1_17.png',
+    'drill2': 'img/drills/A1_18.png',
+    'drill3': 'img/drills/A1_19.png',
+  },
+  'U9': {
+    'activation': 'img/drills/A1_20.png',
+    'drill1': 'img/drills/A1_21.png',
+    'drill2': 'img/drills/A1_22.png',
+    'drill3': 'img/drills/A1_23.png',
+  },
+  'U10': {
+    'activation': 'img/drills/A1_24.png',
+    'drill1': 'img/drills/A1_25.png',
+    'drill2': 'img/drills/A1_26.png',
+    'drill3': 'img/drills/A1_27.png',
+  },
+  'U11': {
+    'activation': 'img/drills/A1_28.png',
+    'drill1': 'img/drills/A1_29.png',
+    'drill2': 'img/drills/A1_30.png',
+    'drill3': 'img/drills/A1_31.png',
+  },
+  'U12': {
+    'activation': 'img/drills/A1_28.png',
+    'drill1': 'img/drills/A1_29.png',
+    'drill2': 'img/drills/A1_30.png',
+    'drill3': 'img/drills/A1_31.png',
+  },
+};
+const DRILLS_DATA = {"A1 | U4":{"age":"U4","topic":"A1","coach":"Easy","activation":{"title":"Kick the cone","desc":"Players trying to kick the cone or pass to a teammate, focussing on:\nBig step, inside foot, balance.","image":"img/drills/A1_0.png","success":"All players can play a technical correct inside pass"},"drill1":{"title":"Great Wall","desc":"🟢 1 starts with the ball [feet or hand]. 🔴 9 defends the two goals from behind the wall. 🟢 1 tries to beat 🔴 9 by faking [and using the MOTW].\n\nGoal = 1 point.\nSwitch positions.\nVary width/length.","image":"img/drills/A1_1.png","success":"🟢 wins 9 out of 10 times."},"drill2":{"title":"1V1 GK escaping pressure","desc":"🔴 9 rolls the ball to 🟢 1. 🔴 9 runs around the cone and presses the goalkeeper. 🟢 1. Can score on the small goals, [try to] use fakes 🔴 9 can score on the big goal.","image":"img/drills/A1_2.png","success":"5 out of 10 can use fakes"},"drill3":{"title":"Pull open/V's","desc":"We start in the hospital and who can do the moves are going to try doing sets of 3-5-10.","image":"img/drills/A1_3.png","success":"All players with interest know the 2 moves."}},"A1 | U5":{"age":"U5","topic":"A1","coach":"Mia,Easy","activation":{"title":"Passing Gates","desc":"Players trying to pass through Passing Gates, focussing on:\nBig step, inside foot, balance.","image":"img/drills/A1_4.png","success":"All players can play a technical correct inside pass with an angle"},"drill1":{"title":"1V1 GK vs Striker","desc":"🟢 1 starts with the ball. 🔴 9 defends the two goals. 🟢 1 tries to beat 🔴 9 by faking [and using the MOTW].\n\nGoal = 1 point.\nSwitch positions.\nVary width/length.\nKeep intensity high.","image":"img/drills/A1_5.png","success":"🟢 wins 8 out of 10 times.","video":"https://www.capcut.cn/share/7647067494599120190"},"drill2":{"title":"2V1 escaping pressure","desc":"🟢 1 receives the pass from 🔴 and rolls to 🟢 4, or dribbles to score on the small goals, 🔴 9 can score on the big goal.","image":"img/drills/A1_6.png","success":"5 out of 10 can apply the steering wheel"},"drill3":{"title":"Pull open/V's","desc":"1. Set of 60 sec\n2. Set of 45 sec\n3. Set of 30 sec\n\nPlayers are allowed to do the moves slowly, but can't make a mistake.","image":"img/drills/A1_7.png","success":"Most players can keep doing the sets"}},"A1 | U6":{"age":"U6","topic":"A1","coach":"Mia,Relax","activation":{"title":"Passing Gates competition [7-8M]","desc":"Players trying to pass through Passing Gates, focussing on:\nBig step, inside foot, balance.\nCompetition/tournament should results in direction and speed.\nWinners up, loosers down.","image":"img/drills/A1_8.png","success":"All players can pass technical correct, inside foot with angle and intensity"},"drill1":{"title":"2V1 GK+1 vs Striker","desc":"🟢 1 starts with the ball. Together with 🟢 3, they try to beat 🔴 9, who defends the two goals. 🟢 score by passing or dribbling through the small goal/gates. 🔴 9 can score on the big goal.\n\nGoal = 1 point.\nSwitch positions.\nVary width/length.\nKeep intensity high.","image":"img/drills/A1_9.png","success":"🟢 wins 7 out of 10 times."},"drill2":{"title":"3v1 from GK > 3V2 SSG","desc":"🟢 1 starts the 3v1. 🔴 Players may only steal the ball after crossing line. 🟢 can score on the small goal, 🔴 9 can score on the big goal. When the ball is out of play, 🔴 3 starts the 2nd ball [3V2 SSG]","image":"img/drills/A1_10.png","success":"All can apply the steering wheel, 5 out of 10 really understand it"},"drill3":{"title":"Pull open/V's","desc":"2 Set of 40 sec\n2 Set of 30 sec\n2 Set of 20 sec\n\nPlayers are allowed to do the moves slowly, but can't make a mistake.","image":"img/drills/A1_11.png","success":"All players can do sets with move combinations"}},"A1 | U7":{"age":"U7","topic":"A1","coach":"Mia,Relax","activation":{"title":"Passing Gates 7-8M","desc":"Players trying to play clean passes through Passing Gates, focussing on:\nBig step, inside foot, balance.\nNo bouncing balls\nCompetition/tournament should results in direction and speed.\nWinners up, loosers down.","image":"img/drills/A1_12.png","success":"All players can pass technical correct, inside foot with angle and intensity"},"drill1":{"title":"2V1 GK+1 vs Striker","desc":"🟢 1 starts with the ball. Together with 🟢 3, they try to beat 🔴 9, who defends the two goals. 🟢 score by passing or dribbling through the small goal/gates. 🔴 9 can score on the big goal.\n\nGoal = 1 point.\nSwitch positions.\nVary width/length.\nKeep intensity high.","image":"img/drills/A1_13.png","success":"🟢 wins 7 out of 10 times."},"drill2":{"title":"3v2 from GK > 3V3 SSG","desc":"🟢 1 starts the 3v2. 🔴 Players may only steal the ball after crossing line. 🟢 can score on the big goal, 🔴 can score on the big goal. When the ball is out of play, 🔴 3 starts the 2nd ball [3V3 SSG]","image":"img/drills/A1_14.png","success":"The steering wheel is very active all the time."},"drill3":{"title":"Pull open/V's","desc":"2 Set of 40 sec\n2 Set of 30 sec\n2 Set of 20 sec","image":"img/drills/A1_15.png","success":"All players can do sets with move combinations"}},"A1 | U8":{"age":"U8","topic":"A1","coach":"Roger,Rico","activation":{"title":"Passing Gates 8-10M","desc":"Players trying to play clean passes through Passing Gates, focussing on:\nBig step, inside foot, balance.\nNo bouncing balls\nCompetition/tournament should results in direction and speed.\nWinners up, loosers down.","image":"img/drills/A1_16.png","success":"All players can pass technical correct, inside foot with angle and intensity"},"drill1":{"title":"3v2 from GK","desc":"🟢 1 starts with the ball. Together with 🟢 3, they try to beat 🔴 who defends the two goals. 🟢 can score on the big goal or by dribbling through the gates. 🔴 9 can score on the big goal.\n\nGoal = 1 point.\nSwitch positions.\nVary width/length.\nKeep intensity high.","image":"img/drills/A1_17.png","success":"🟢 wins 5 out of 10 times."},"drill2":{"title":"3v3 from GK > 3V4 SSG","desc":"🟢 1 starts the 3v3 under full pressure from 🔴 9. 🔴 7 can only defend on their own half. When the ball is out of play, 🔴 3 starts the 2nd ball [3V4 SSG]","image":"img/drills/A1_18.png","success":"🟢Can enter their half"},"drill3":{"title":"Pull open/V's","desc":"5 Set of 30 sec\non high intensity move combinations","image":"img/drills/A1_19.png","success":"All players can do sets with move combinations"}},"A1 | U10":{"age":"U10","topic":"A1","coach":"Nikola,Lance","activation":{"title":"Passing Gates","desc":"Players trying to play clean passes through Passing Gates, focussing on:\nBig step, inside foot, balance.\nNo bouncing balls\nCompetition/tournament should results in direction and speed.\nWinners up, loosers down.","image":"img/drills/A1_24.png","success":"All players can pass technical correct, inside foot with angle and intensity"},"drill1":{"title":"5v3 SSG","desc":"A small-sided game designed to improve building out from the goalkeeper under pressure. The possession team (5 players) aims to complete a set number of passes to score, while the defending team (3 players) tries to win the ball and score in the goal. Focus is on positioning, creating passing angles, body shape, and decision-making in the build-up phase.","image":"img/drills/A1_25.png","success":"Crossing the middle (green zone) line and start from (GK) again"},"drill2":{"title":"8v6 SSG","desc":"An 8v6 game focused on building possession from the goalkeeper and progressing the ball through the thirds. The team in possession must create passing angles, maintain width and depth, and find opportunities to play forward beyond the opposition's pressure. Defenders aim to win the ball and transition quickly to goal. The exercise develops positioning, decision-making, communication, and confidence when building out from the back under realistic match pressure.","image":"img/drills/A1_26.png","success":"Crossing the middle (green zone) is a priority and if the green team score a goal is a extra point"},"drill3":{"title":"Pull open/V's","desc":"High intensity move combinations","image":"img/drills/A1_27.png","success":"All players can do sets with move combinations"}},"A1 | U11":{"age":"U11","topic":"A1","coach":"Ti,Rash,Relax","activation":{"title":"Passing Gates","desc":"Players trying to play clean passes through Passing Gates, focussing on:\nBig step, inside foot, balance.\nNo bouncing balls\nCompetition/tournament should results in direction and speed.\nWinners up, loosers down.","image":"img/drills/A1_28.png","success":"All players can pass technical correct, inside foot with angle and intensity"},"drill1":{"title":"1v1 for CD","desc":"🟢 Centre-defenders learns to get out of pressure. Improve individual dribbling, scanning, and decision-making under pressure in a 1v1. If 🟢 loses the ball, 🔴 earns a point. If 🟢 dribbles 🔴 successfully, 🟢 earns a point.","image":"img/drills/A1_29.png","success":"CD get out of pressure 6 out of 10 times"},"drill2":{"title":"6v5 SSG","desc":"🟢 Builds up from the goalkeeper and must cross the marked zone to score. 🔴 tries to win the ball and score.\nMethodology:\nincrease/decrease field size;\nadd/remove a player","image":"img/drills/A1_30.png","success":"🟢 Can enter their half by finding +1"},"drill3":{"title":"3v3 + N","desc":"3v3 with neutral player. Both teams always start from their GK. Learn how to build-up and get out of the initial pressure to score goal.\nModifications: Increase/decrease space. Limit the Neutral player or GK touches.","image":"img/drills/A1_31.png","success":"Players are confident in the small side game situations to find passing angles or dribbling spaces to build-up and initiate attacks most of the time."}},"A1 | U12":{"age":"U12","topic":"A1","coach":"","activation":{"title":"Passing Gates","desc":"Players trying to play clean passes through Passing Gates, focussing on:\nBig step, inside foot, balance.\nNo bouncing balls\nCompetition/tournament should results in direction and speed.\nWinners up, loosers down.","image":"img/drills/A1_28.png","success":"All players can pass technical correct, inside foot with angle and intensity"},"drill1":{"title":"1v1 for CD","desc":"🟢 Centre-defenders learns to get out of pressure. Improve individual dribbling, scanning, and decision-making under pressure in a 1v1. If 🟢 loses the ball, 🔴 earns a point. If 🟢 dribbles 🔴 successfully, 🟢 earns a point.","image":"img/drills/A1_29.png","success":"CD get out of pressure 6 out of 10 times"},"drill2":{"title":"6v5 SSG","desc":"🟢 Builds up from the goalkeeper and must cross the marked zone to score. 🔴 tries to win the ball and score.\nMethodology:\nincrease/decrease field size;\nadd/remove a player","image":"img/drills/A1_30.png","success":"🟢 Can enter their half by finding +1"},"drill3":{"title":"3v3 + N","desc":"3v3 with neutral player. Both teams always start from their GK. Learn how to build-up and get out of the initial pressure to score goal.\nModifications: Increase/decrease space. Limit the Neutral player or GK touches.","image":"img/drills/A1_31.png","success":"Players are confident in the small side game situations to find passing angles or dribbling spaces to build-up and initiate attacks most of the time."}}};;initLogin();
+</script>
+</body>
+</html>

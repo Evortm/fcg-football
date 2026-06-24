@@ -1,0 +1,540 @@
+{
+  "meta": {
+    "generatedAt": "2026-06-20T22:16:03.937462",
+    "source": "fcg-data.json",
+    "seasons": {
+      "1-2023-S": "Spring 2023",
+      "2-2023-F": "Fall 2023",
+      "3-2024-S": "Spring 2024",
+      "4-2024-F": "Fall 2024",
+      "5-2025-S": "Spring 2025",
+      "6-2025-F": "Fall 2025",
+      "7-2026-S": "Spring 2026"
+    }
+  },
+  "transitions": [
+    {
+      "from": "1-2023-S",
+      "to": "2-2023-F",
+      "fromLabel": "Spring 2023",
+      "toLabel": "Fall 2023",
+      "overall": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "filtered": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "perTeam": {},
+      "perAge": {},
+      "perColor": {}
+    },
+    {
+      "from": "2-2023-F",
+      "to": "3-2024-S",
+      "fromLabel": "Fall 2023",
+      "toLabel": "Spring 2024",
+      "overall": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "filtered": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "perTeam": {},
+      "perAge": {},
+      "perColor": {}
+    },
+    {
+      "from": "3-2024-S",
+      "to": "4-2024-F",
+      "fromLabel": "Spring 2024",
+      "toLabel": "Fall 2024",
+      "overall": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "filtered": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "perTeam": {},
+      "perAge": {},
+      "perColor": {}
+    },
+    {
+      "from": "4-2024-F",
+      "to": "5-2025-S",
+      "fromLabel": "Fall 2024",
+      "toLabel": "Spring 2025",
+      "overall": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "filtered": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "perTeam": {},
+      "perAge": {},
+      "perColor": {}
+    },
+    {
+      "from": "5-2025-S",
+      "to": "6-2025-F",
+      "fromLabel": "Spring 2025",
+      "toLabel": "Fall 2025",
+      "overall": {
+        "advised": 330,
+        "retained": 234,
+        "pct": 70.9
+      },
+      "filtered": {
+        "advised": 276,
+        "retained": 202,
+        "pct": 73.2
+      },
+      "perTeam": {
+        "U10-B": {
+          "advised": 24,
+          "retained": 16,
+          "pct": 66.7
+        },
+        "U10-G": {
+          "advised": 15,
+          "retained": 12,
+          "pct": 80.0
+        },
+        "U10-W": {
+          "advised": 8,
+          "retained": 7,
+          "pct": 87.5
+        },
+        "U11-B": {
+          "advised": 27,
+          "retained": 12,
+          "pct": 44.4
+        },
+        "U11-G": {
+          "advised": 14,
+          "retained": 12,
+          "pct": 85.7
+        },
+        "U11-W": {
+          "advised": 16,
+          "retained": 13,
+          "pct": 81.2
+        },
+        "U15-G": {
+          "advised": 52,
+          "retained": 32,
+          "pct": 61.5
+        },
+        "U5-G": {
+          "advised": 11,
+          "retained": 8,
+          "pct": 72.7
+        },
+        "U5-W": {
+          "advised": 5,
+          "retained": 3,
+          "pct": 60.0
+        },
+        "U6-G": {
+          "advised": 15,
+          "retained": 15,
+          "pct": 100.0
+        },
+        "U6-W": {
+          "advised": 23,
+          "retained": 12,
+          "pct": 52.2
+        },
+        "U7-B": {
+          "advised": 19,
+          "retained": 9,
+          "pct": 47.4
+        },
+        "U7-G": {
+          "advised": 13,
+          "retained": 13,
+          "pct": 100.0
+        },
+        "U7-W": {
+          "advised": 5,
+          "retained": 5,
+          "pct": 100.0
+        },
+        "U8-B": {
+          "advised": 23,
+          "retained": 15,
+          "pct": 65.2
+        },
+        "U8-G": {
+          "advised": 10,
+          "retained": 8,
+          "pct": 80.0
+        },
+        "U8-W": {
+          "advised": 9,
+          "retained": 6,
+          "pct": 66.7
+        },
+        "U9-B": {
+          "advised": 22,
+          "retained": 18,
+          "pct": 81.8
+        },
+        "U9-G": {
+          "advised": 12,
+          "retained": 11,
+          "pct": 91.7
+        },
+        "U9-W": {
+          "advised": 7,
+          "retained": 7,
+          "pct": 100.0
+        }
+      },
+      "perAge": {
+        "U5": {
+          "advised": 18,
+          "retained": 14,
+          "pct": 77.8
+        },
+        "U6": {
+          "advised": 32,
+          "retained": 25,
+          "pct": 78.1
+        },
+        "U7": {
+          "advised": 44,
+          "retained": 27,
+          "pct": 61.4
+        },
+        "U8": {
+          "advised": 39,
+          "retained": 29,
+          "pct": 74.4
+        },
+        "U9": {
+          "advised": 41,
+          "retained": 36,
+          "pct": 87.8
+        },
+        "U10": {
+          "advised": 45,
+          "retained": 33,
+          "pct": 73.3
+        },
+        "U11": {
+          "advised": 57,
+          "retained": 38,
+          "pct": 66.7
+        }
+      },
+      "perColor": {
+        "Blue": {
+          "advised": 93,
+          "retained": 55,
+          "pct": 59.1
+        },
+        "Green": {
+          "advised": 103,
+          "retained": 90,
+          "pct": 87.4
+        },
+        "White": {
+          "advised": 79,
+          "retained": 57,
+          "pct": 72.2
+        }
+      }
+    },
+    {
+      "from": "6-2025-F",
+      "to": "7-2026-S",
+      "fromLabel": "Fall 2025",
+      "toLabel": "Spring 2026",
+      "overall": {
+        "advised": 304,
+        "retained": 215,
+        "pct": 70.7
+      },
+      "filtered": {
+        "advised": 250,
+        "retained": 185,
+        "pct": 74.0
+      },
+      "perTeam": {
+        "U10-G": {
+          "advised": 19,
+          "retained": 17,
+          "pct": 89.5
+        },
+        "U10-W": {
+          "advised": 9,
+          "retained": 5,
+          "pct": 55.6
+        },
+        "U11-G": {
+          "advised": 12,
+          "retained": 12,
+          "pct": 100.0
+        },
+        "U11-W": {
+          "advised": 20,
+          "retained": 14,
+          "pct": 70.0
+        },
+        "U12-G": {
+          "advised": 24,
+          "retained": 19,
+          "pct": 79.2
+        },
+        "U12-W": {
+          "advised": 32,
+          "retained": 18,
+          "pct": 56.2
+        },
+        "U15-G": {
+          "advised": 35,
+          "retained": 17,
+          "pct": 48.6
+        },
+        "U5-G": {
+          "advised": 7,
+          "retained": 6,
+          "pct": 85.7
+        },
+        "U5-W": {
+          "advised": 9,
+          "retained": 5,
+          "pct": 55.6
+        },
+        "U6-G": {
+          "advised": 7,
+          "retained": 5,
+          "pct": 71.4
+        },
+        "U6-W": {
+          "advised": 13,
+          "retained": 8,
+          "pct": 61.5
+        },
+        "U7-B": {
+          "advised": 7,
+          "retained": 5,
+          "pct": 71.4
+        },
+        "U7-G": {
+          "advised": 12,
+          "retained": 10,
+          "pct": 83.3
+        },
+        "U7-W": {
+          "advised": 25,
+          "retained": 15,
+          "pct": 60.0
+        },
+        "U8-G": {
+          "advised": 19,
+          "retained": 17,
+          "pct": 89.5
+        },
+        "U8-W": {
+          "advised": 9,
+          "retained": 7,
+          "pct": 77.8
+        },
+        "U9-B": {
+          "advised": 18,
+          "retained": 13,
+          "pct": 72.2
+        },
+        "U9-G": {
+          "advised": 20,
+          "retained": 16,
+          "pct": 80.0
+        },
+        "U9-W": {
+          "advised": 7,
+          "retained": 6,
+          "pct": 85.7
+        }
+      },
+      "perAge": {
+        "U5": {
+          "advised": 13,
+          "retained": 8,
+          "pct": 61.5
+        },
+        "U6": {
+          "advised": 44,
+          "retained": 32,
+          "pct": 72.7
+        },
+        "U7": {
+          "advised": 37,
+          "retained": 30,
+          "pct": 81.1
+        },
+        "U8": {
+          "advised": 34,
+          "retained": 27,
+          "pct": 79.4
+        },
+        "U9": {
+          "advised": 41,
+          "retained": 29,
+          "pct": 70.7
+        },
+        "U10": {
+          "advised": 33,
+          "retained": 26,
+          "pct": 78.8
+        },
+        "U11": {
+          "advised": 48,
+          "retained": 33,
+          "pct": 68.8
+        }
+      },
+      "perColor": {
+        "Blue": {
+          "advised": 74,
+          "retained": 48,
+          "pct": 64.9
+        },
+        "Green": {
+          "advised": 96,
+          "retained": 76,
+          "pct": 79.2
+        },
+        "White": {
+          "advised": 80,
+          "retained": 61,
+          "pct": 76.2
+        }
+      }
+    }
+  ],
+  "yearOverYear": [
+    {
+      "from": "1-2023-S",
+      "to": "3-2024-S",
+      "fromLabel": "Spring 2023",
+      "toLabel": "Spring 2024",
+      "overall": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "filtered": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      }
+    },
+    {
+      "from": "3-2024-S",
+      "to": "5-2025-S",
+      "fromLabel": "Spring 2024",
+      "toLabel": "Spring 2025",
+      "overall": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      },
+      "filtered": {
+        "advised": 0,
+        "retained": 0,
+        "pct": 0
+      }
+    },
+    {
+      "from": "5-2025-S",
+      "to": "7-2026-S",
+      "fromLabel": "Spring 2025",
+      "toLabel": "Spring 2026",
+      "overall": {
+        "advised": 330,
+        "retained": 173,
+        "pct": 52.4
+      },
+      "filtered": {
+        "advised": 276,
+        "retained": 154,
+        "pct": 55.8
+      }
+    }
+  ],
+  "growth": [
+    {
+      "season": "1-2023-S",
+      "label": "Spring 2023",
+      "total": 377,
+      "newJoins": 377,
+      "departed": 0,
+      "netChange": 377
+    },
+    {
+      "season": "2-2023-F",
+      "label": "Fall 2023",
+      "total": 396,
+      "newJoins": 150,
+      "departed": 131,
+      "netChange": 19
+    },
+    {
+      "season": "3-2024-S",
+      "label": "Spring 2024",
+      "total": 368,
+      "newJoins": 108,
+      "departed": 136,
+      "netChange": -28
+    },
+    {
+      "season": "4-2024-F",
+      "label": "Fall 2024",
+      "total": 352,
+      "newJoins": 118,
+      "departed": 134,
+      "netChange": -16
+    },
+    {
+      "season": "5-2025-S",
+      "label": "Spring 2025",
+      "total": 358,
+      "newJoins": 111,
+      "departed": 105,
+      "netChange": 6
+    },
+    {
+      "season": "6-2025-F",
+      "label": "Fall 2025",
+      "total": 345,
+      "newJoins": 109,
+      "departed": 122,
+      "netChange": -13
+    },
+    {
+      "season": "7-2026-S",
+      "label": "Spring 2026",
+      "total": 335,
+      "newJoins": 115,
+      "departed": 125,
+      "netChange": -10
+    }
+  ]
+}

@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCG Portal — Player | Coach | Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f5f3ef;
+  color: #1a1a1a;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+.login-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a3d1e 0%, #0d4f26 100%);
+  padding: 20px;
+}
+.login-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 48px 40px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.login-logo { width: 80px; height: 80px; object-fit: contain; display: block; margin: 0 auto 20px; }
+.login-title { font-size: 1.6rem; font-weight: 800; color: #0a3d1e; text-align: center; margin-bottom: 6px; }
+.login-subtitle { font-size: .92rem; color: #888; text-align: center; margin-bottom: 32px; }
+.login-tabs { display: flex; gap: 8px; margin-bottom: 28px; }
+.login-tab {
+  flex: 1; padding: 10px; border: 2px solid #e0e0e0; background: #f9f9f9;
+  border-radius: 10px; font-size: .88rem; font-weight: 700; color: #666;
+  cursor: pointer; transition: all .2s; text-align: center;
+}
+.login-tab.active { border-color: #d4a017; background: #fef8ed; color: #0a3d1e; }
+.login-field { margin-bottom: 18px; }
+.login-field label { display: block; font-size: .85rem; font-weight: 600; color: #555; margin-bottom: 6px; }
+.login-field select, .login-field input {
+  width: 100%; padding: 12px 14px; border: 2px solid #e0e0e0;
+  border-radius: 10px; font-size: .95rem; color: #333; background: #fff;
+  transition: border-color .2s;
+}
+.login-field select:focus, .login-field input:focus { outline: none; border-color: #d4a017; }
+.login-btn {
+  width: 100%; padding: 14px; background: #0a3d1e; color: #fff;
+  border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+}
+.login-btn:hover { background: #0d4f26; }
+.login-error { color: #d32f2f; font-size: .85rem; margin-top: 12px; text-align: center; display: none; }
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #0a3d1e; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 24px; height: 58px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.nav-left { display: flex; align-items: center; gap: 12px; }
+.nav-logo { width: 32px; height: 32px; object-fit: contain; }
+.nav-brand { color: #fff; font-weight: 800; font-size: 1rem; letter-spacing: -.3px; }
+.nav-user { color: rgba(255,255,255,0.7); font-size: .85rem; margin-left: 16px; }
+.nav-logout {
+  color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.1);
+  border: none; padding: 8px 14px; border-radius: 8px; font-size: .88rem;
+  font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.nav-logout:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.main-content { display: none; padding-top: 58px; min-height: 100vh; }
+.portal-section { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+.portal-section.active { display: block; }
+.page-header {
+  background: #fff; border-radius: 16px; padding: 28px 32px;
+  margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.page-header h1 { font-size: 1.5rem; font-weight: 800; color: #0a3d1e; margin-bottom: 4px; }
+.page-header p { font-size: .92rem; color: #888; }
+.card {
+  background: #fff; border-radius: 16px; padding: 24px; margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05);
+}
+.card-title {
+  font-size: 1.1rem; font-weight: 800; color: #0a3d1e;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #f0ede8;
+}
+.info-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-bottom: 24px;
+}
+.info-item { background: #f9f9f7; border-radius: 12px; padding: 16px; }
+.info-label { font-size: .8rem; color: #888; font-weight: 600; margin-bottom: 4px; }
+.info-value { font-size: 1.2rem; font-weight: 800; color: #0a3d1e; }
+.info-value.per { color: #d4a017; }
+.info-value.rat { color: #2d8a47; }
+.chart-container { position: relative; width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.data-table th {
+  background: #0a3d1e; color: #fff; font-weight: 700; padding: 12px 14px;
+  text-align: left; font-size: .85rem; position: sticky; top: 0; z-index: 1;
+}
+.data-table td { padding: 10px 14px; border-bottom: 1px solid #f0ede8; color: #444; }
+.data-table tr:hover td { background: #fafaf7; }
+.data-table .num { text-align: center; }
+.positive { color: #2e7d32; font-weight: 700; }
+.negative { color: #d32f2f; font-weight: 700; }
+.badge {
+  display: inline-block; padding: 4px 10px; border-radius: 6px;
+  font-size: .8rem; font-weight: 700;
+}
+.badge-gold { background: #fef8ed; color: #b8860b; }
+.badge-green { background: #eef6ee; color: #2d8a47; }
+.badge-blue { background: #eef3fa; color: #2a6db5; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+  border-radius: 10px; font-size: .9rem; font-weight: 700; cursor: pointer;
+  transition: all .2s; border: none;
+}
+.btn-primary { background: #0a3d1e; color: #fff; }
+.btn-primary:hover { background: #0d4f26; }
+.btn-gold { background: #d4a017; color: #0a3d1e; }
+.btn-gold:hover { background: #e8b826; }
+.btn-outline { background: transparent; color: #0a3d1e; border: 2px solid #0a3d1e; }
+.btn-outline:hover { background: #0a3d1e; color: #fff; }
+.btn-danger { background: #d32f2f; color: #fff; }
+.btn-danger:hover { background: #b71c1c; }
+.filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+.filter-bar select {
+  padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 8px;
+  font-size: .9rem; color: #333; background: #fff;
+}
+.import-zone {
+  border: 3px dashed #d4a017; border-radius: 16px; padding: 40px;
+  text-align: center; background: #fefcf5; cursor: pointer; transition: all .2s;
+}
+.import-zone:hover { background: #fef8ed; border-color: #e8b826; }
+.import-zone.dragover { background: #fef8ed; border-color: #0a3d1e; }
+.import-icon { font-size: 3rem; margin-bottom: 12px; }
+.import-text { font-size: 1rem; color: #666; }
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: #fff; border-radius: 20px; padding: 32px; max-width: 600px;
+  width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.modal h2 { font-size: 1.3rem; font-weight: 800; color: #0a3d1e; margin-bottom: 20px; }
+.modal-close {
+  float: right; background: none; border: none; font-size: 1.5rem;
+  cursor: pointer; color: #999;
+}
+.modal-close:hover { color: #333; }
+.table-scroll { overflow-x: auto; max-height: 600px; overflow-y: auto; }
+.development-blocks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.dev-block {
+  padding: 8px 14px; border-radius: 8px; font-size: .85rem; font-weight: 600;
+  background: #eef6ee; color: #2d8a47; border: 1px solid #c8e6c8;
+}
+.attendance-dots { display: flex; gap: 4px; flex-wrap: wrap; }
+.att-dot {
+  width: 14px; height: 14px; border-radius: 50%; display: inline-block;
+}
+.att-dot.present { background: #2d8a47; }
+.att-dot.absent { background: #e0e0e0; }
+@media (max-width: 768px) {
+  .login-box { padding: 32px 24px; }
+  .page-header { padding: 20px; }
+  .card { padding: 16px; }
+  .info-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ----- Development Blocks — FCG component layout ----- */
+.dev-layout { display:grid; grid-template-columns:280px 1fr; gap:20px; margin-top:12px; }
+.dev-left { display:flex; flex-direction:column; gap:10px; }
+.dev-left-title { font-size:.75rem; font-weight:800; color:#0a3d1e; text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px; }
+.dev-comp-card {
+  background:#fafafa; border:1.5px solid #eee; border-radius:8px; padding:12px;
+  display:flex; align-items:center; gap:10px; transition:border-color .15s;
+}
+.dev-comp-card:hover { border-color:#d0d0d0; }
+.dev-comp-icon { width:32px; height:32px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:.85rem; color:#fff; flex-shrink:0; }
+.dev-comp-body { flex:1; min-width:0; }
+.dev-comp-name { font-size:.75rem; font-weight:700; color:#333; line-height:1.3; }
+.dev-comp-meta { font-size:.65rem; color:#999; }
+.dev-comp-right { text-align:right; flex-shrink:0; }
+.dev-comp-rating { font-size:1rem; font-weight:800; }
+.dev-comp-count { font-size:.62rem; color:#999; }
+.dev-right { display:flex; flex-direction:column; gap:16px; }
+.dev-highlights { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.dev-hl-card { background:#fafafa; border:1px solid #eee; border-radius:8px; padding:12px; }
+.dev-hl-title { font-size:.7rem; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
+.dev-hl-row { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #f5f5f5; }
+.dev-hl-rank { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:800; flex-shrink:0; }
+.dev-hl-rank.top { background:#e8f5e9; color:#2e7d32; }
+.dev-hl-rank.weak { background:#ffebee; color:#c62828; }
+.dev-hl-name { flex:1; font-size:.75rem; font-weight:600; color:#333; }
+.dev-hl-stars { font-size:.65rem; }
+.dev-hl-val { font-size:.78rem; font-weight:700; min-width:50px; text-align:right; white-space:nowrap; }
+.dev-group-header { font-size:.65rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; margin:8px 0 2px; }
+@media (max-width:800px) {
+  .dev-layout { grid-template-columns:1fr; }
+  .dev-highlights { grid-template-columns:1fr; }
+}
+@media (max-width: 480px) {
+  .login-tabs { flex-direction: column; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <img src="fcg-logo.png" class="login-logo" onerror="this.style.display='none'" alt="FCG Logo">
+    <h1 class="login-title">FCG Private Portal</h1>
+    <p class="login-subtitle">Football Club Shenzhen Greenfield — Player Portal</p>
+    <div id="loginPlayer">
+      <div class="login-field">
+        <label>Select Your Name</label>
+        <select id="playerSelect"><option value="">-- Choose Player --</option></select>
+      </div>
+      <button class="login-btn" onclick="login('player')">Enter Player Portal</button>
+    </div>
+    
+    
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<nav class="navbar" id="navbar" style="display:none">
+  <div class="nav-left">
+    <img src="fcg-logo.png" class="nav-logo" onerror="this.style.display='none'" alt="FCG">
+    <span class="nav-brand">FCG Portal</span>
+    <span class="nav-user" id="navUser"></span>
+  </div>
+  <button class="nav-logout" onclick="logout()">Logout</button>
+  <a href="index.html" style="color:rgba(255,255,255,0.6);text-decoration:none;font-size:.82rem;margin-left:12px;font-weight:600;">← Back to FCG</a>
+</nav>
+
+<div class="main-content" id="mainContent">
+  <!-- PLAYER PORTAL -->
+  <div class="portal-section" id="playerPortal">
+    <div class="page-header">
+      <h1 id="pName">Player Dashboard</h1>
+      <p id="pTeam">Team · Age Group</p>
+    </div>
+    <div class="info-grid" id="pStats"></div>
+    <div class="card">
+      <div class="card-title">Cycle Ratings</div>
+      <div style="display:flex; gap:24px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:300px;">
+          <div style="font-weight:700; color:#0a3d1e; margin-bottom:6px; font-size:.93rem; text-align:center;">Attacking Cycles</div>
+          <div class="chart-container"><canvas id="pRadarAttack"></canvas></div>
+        </div>
+        <div style="flex:1; min-width:300px;">
+          <div style="font-weight:700; color:#0a3d1e; margin-bottom:6px; font-size:.93rem; text-align:center;">Defending Cycles</div>
+          <div class="chart-container"><canvas id="pRadarDefend"></canvas></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:16px; margin-top:10px; font-size:.78rem; color:#777; justify-content:center; flex-wrap:wrap;">
+        <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#d32f2f;vertical-align:middle;margin-right:4px"></span>Below 2.5</span>
+        <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#999;vertical-align:middle;margin-right:4px"></span>2.5&ndash;3.5</span>
+        <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#2e7d32;vertical-align:middle;margin-right:4px"></span>Above 3.5</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Development Blocks</div>
+      <p style="font-size:.78rem;color:#888;margin:-6px 0 0">Training sessions focused on each skill area, organised by FCG methodology components.</p>
+      <div class="dev-layout">
+        <div class="dev-left">
+          <div class="dev-left-title">Component Groups</div>
+          <div id="pDevGroups"></div>
+        </div>
+        <div class="dev-right">
+          <div class="dev-highlights" id="pDevHighlights"></div>
+          <div class="dev-hl-card" id="pDevComments" style="margin-top:12px"><div class="dev-hl-title" style="color:#1565c0">Coach Comments</div><div style="font-size:.72rem;color:#999">No comments recorded yet</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Consistency Tracker</div>
+      <div class="table-scroll">
+        <table class="data-table" id="pAttTable">
+          <thead><tr><th>Season</th><th>Team</th><th>Attendance</th><th>Att%</th><th>PER</th><th>RAT</th><th>Rating/Att</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Growth — Ratings/Att & Performance</div>
+      <div class="chart-container"><canvas id="pGrowth"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Training Videos</div>
+      <p style="font-size:.82rem;color:#888;margin-bottom:12px;">Your personal training footage and match highlights.</p>
+      <div id="pVideoLinks" style="display:flex;flex-wrap:wrap;gap:10px;">
+        <span style="color:#999;font-size:.85rem;">No videos uploaded yet. Check back soon.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+// ===== EMBEDDED DATA =====
+
+// ===== LOAD DATA FROM fcg-data.json =====
+let EMBEDDED_DATA = null;
+async function loadDataFile() {
+  try {
+    const resp = await fetch("fcg-data.json");
+    if (!resp.ok) throw new Error("Could not load fcg-data.json");
+    EMBEDDED_DATA = await resp.json();
+    onDataReady();
+  } catch(e) {
+    console.error("Failed to load data:", e);
+    document.getElementById("loginError").textContent = "Failed to load player data. Make sure fcg-data.json is in the same folder.";
+    document.getElementById("loginError").style.display = "block";
+  }
+}
+
+function onDataReady() {
+  S.data = EMBEDDED_DATA;
+  (S.data.players || []).forEach(p => {
+    p.displayName = [p.english, p.chinese].filter(Boolean).join(" ");
+    p.ageGroup = p.group || "";
+  });
+  console.log("FCG Data loaded:", S.data.meta);
+  console.log("Players:", S.data.players.length);
+  initDropdowns();
+  document.getElementById("loginScreen").style.display = "flex";
+}
+
+loadDataFile();
+
+
+// ===== APP STATE =====
+const S = { data: null, user: null, role: null, charts: {} };
+
+// ===== INIT =====
+
+function initDropdowns() {
+  const ps = document.getElementById('playerSelect');
+  // Clear existing options except the first
+  while (ps.options.length > 1) ps.remove(1);
+  // Filter out quit players, sort by displayName
+  (S.data.players || [])
+    .filter(p => p.status === 'active' || !p.status)
+    .sort((a, b) => (a.displayName || '').localeCompare(b.displayName || ''))
+    .forEach(p => {
+      const o = document.createElement('option');
+      o.value = p.id;
+      o.textContent = (p.displayName || p.id) + ' (' + (p.team || '—') + ')';
+      ps.appendChild(o);
+    });
+
+}
+
+function showErr(msg) {
+  const e = document.getElementById('loginError');
+  e.textContent = msg;
+  e.style.display = 'block';
+  setTimeout(() => { e.style.display = 'none'; }, 3000);
+}
+
+function login(role) {
+  const id = document.getElementById('playerSelect').value;
+  if (!id) return showErr('Please select your name');
+  S.user = S.data.players.find(p => p.id === id);
+  if (!S.user) return showErr('Player not found');
+  S.role = 'player';
+  enterPortal();
+}
+
+function enterPortal() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('navbar').style.display = 'flex';
+  document.getElementById('mainContent').style.display = 'block';
+  document.querySelectorAll('.portal-section').forEach(p => p.classList.remove('active'));
+  document.getElementById('playerPortal').classList.add('active');
+  document.getElementById('navUser').textContent = 'PLAYER: ' + (S.user.displayName || S.user.name || S.user.chinese || S.user.id);
+  renderPlayerPortal();
+}
+
+function logout() {
+  S.user = null;
+  S.role = null;
+  // Destroy charts
+  Object.values(S.charts).forEach(c => { try { c.destroy(); } catch(e) {} });
+  S.charts = {};
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('navbar').style.display = 'none';
+  document.getElementById('mainContent').style.display = 'none';
+
+}
+
+// ===== PLAYER PORTAL =====
+function getCurrentCoach(p) {
+  // First try: history data for current season (most reliable now)
+  if (p.history) {
+    for (var i = p.history.length - 1; i >= 0; i--) {
+      var h = p.history[i];
+      if (h.coach && h.coach.trim() && h.coach !== '0') return h.coach.trim();
+    }
+  }
+  // Fallback: difficultyRatings
+  if (p.difficultyRatings) {
+    for (var k in p.difficultyRatings) {
+      var val = p.difficultyRatings[k];
+      if (val && typeof val === 'string') {
+        var m = val.match(/^(\w+)/);
+        if (m) return m[1];
+      }
+    }
+  }
+  // Fallback: devComments
+  if (p.devComments) {
+    var m = p.devComments.match(/- (\w+) /);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function renderPlayerPortal() {
+  const p = S.user;
+  document.getElementById('pName').textContent = p.displayName || p.chinese || p.id;
+  var coachInfo = getCurrentCoach(p);
+  // Convert Excel serial date to readable date
+  function excelToDate(serial) {
+    if (!serial || isNaN(serial)) return null;
+    var d = new Date(Date.UTC(1899, 11, 30) + serial * 86400000);
+    return d.toISOString().slice(0, 10);
+  }
+  var birthDate = excelToDate(p.birthYear);
+  document.getElementById('pTeam').textContent = (p.team || '—') + ' · ' + (p.ageGroup || '—') + (birthDate ? ' · Born ' + birthDate : '') + (coachInfo ? ' · Coach: ' + coachInfo : '');
+
+  var totalRating = 0, totalAttendance = 0;
+  var hasCurrentCycleData = false;
+  (p.history || []).forEach(function(h) {
+    var rat = h.rating, att = h.attendance;
+    if (rat != null) totalRating += rat;
+    if (att != null) totalAttendance += att;
+    if (rat == null && att == null && p.cycleAvgShowup != null) hasCurrentCycleData = true;
+  });
+  var ratAttDisplay = '—';
+  if (totalAttendance > 0) {
+    ratAttDisplay = '<span style="font-weight:700">' + totalRating + '</span> / ' + totalAttendance;
+  } else if (hasCurrentCycleData) {
+    ratAttDisplay = '<span style="font-size:.85rem;color:#888;">Cycle: ' + (p.cycleAvgShowup||0).toFixed(1) + ' avg</span>';
+  }
+  var ratAttDisplay = '—';
+  if (totalAttendance > 0) {
+    ratAttDisplay = '<span style="font-weight:700">' + totalRating + '</span> / ' + totalAttendance;
+  }
+
+  document.getElementById('pStats').innerHTML =
+    '<div class="info-item"><div class="info-label">PER Rating</div><div class="info-value per">' + (p.PER != null ? p.PER.toFixed(1) + ' / 5' : '—') + '</div></div>' +
+    '<div class="info-item"><div class="info-label">Ratings / Attendance</div><div class="info-value rat">' + ratAttDisplay + '</div></div>' +
+    '<div class="info-item"><div class="info-label">Cycle Avg PER</div><div class="info-value">' + (p.cycleAvgPer != null ? p.cycleAvgPer.toFixed(1) : '—') + '</div></div>' +
+    '<div class="info-item"><div class="info-label">Avg Attendance</div><div class="info-value">' + (p.cycleAvgShowup != null ? p.cycleAvgShowup.toFixed(1) : '—') + '</div></div>' +
+    '<div class="info-item"><div class="info-label">Member Since</div><div class="info-value" style="font-size:1rem">' + formatSeason((p.history || [])[0] && (p.history || [])[0].season) + '</div></div>' +
+    '<div class="info-item"><div class="info-label">Team</div><div class="info-value" style="font-size:1rem"><span class="badge badge-green">' + (p.team || '—') + '</span></div></div>';
+
+  renderRadar(p);
+  renderDevGroups(p);
+  renderDevHighlights(p);
+  renderDevComments(p);
+  renderAttTable(p);
+  renderGrowthChart(p);
+}
+
+function getRadarPointColor(val) {
+  if (val > 3.5) return '#2e7d32';      // green — above threshold
+  if (val >= 2.5) return '#999999';     // grey — between 2.5–3.5
+  if (val > 0) return '#d32f2f';        // red — below 2.5
+  return 'rgba(180,180,180,0.25)';      // transparent grey — unrated
+}
+
+function renderRadar(p) {
+  // Destroy previous charts
+  ['pRadarAttack', 'pRadarDefend'].forEach(id => {
+    if (S.charts[id]) { S.charts[id].destroy(); S.charts[id] = null; }
+  });
+
+  const topics = S.data.cycleTopics || {};
+  if (Object.keys(topics).length === 0) return;
+
+  // Split topics into attacking (A*) and defending (D*)
+  const attKeys = []; const defKeys = [];
+  Object.keys(topics).forEach(k => {
+    if (k.startsWith('A')) attKeys.push(k);
+    else if (k.startsWith('D')) defKeys.push(k);
+  });
+
+  function makeRadarData(keys) {
+    const labels = keys.map(k => (topics[k] && topics[k].name) || k);
+    const values = keys.map(k => {
+      const v = (p.cycleData || {})[k];
+      return v != null ? Number(v) : 0;
+    });
+    const pointColors = values.map(v => getRadarPointColor(v));
+    const pointBorders = values.map(v => {
+      if (v === 0) return 'rgba(180,180,180,0.4)';
+      if (v > 3.5) return '#1b5e20';
+      if (v >= 2.5) return '#777';
+      return '#b71c1c';
+    });
+    return { labels, values, pointColors, pointBorders };
+  }
+
+  function buildChart(canvasId, keys) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    const d = makeRadarData(keys);
+    if (d.labels.length === 0) return;
+
+    // Plugin that draws red/grey/green performance zones as background fills
+    var zonePlugin = {
+      id: 'radarZones_' + canvasId,
+      beforeDraw: function(chart) {
+        var scale = chart.scales.r;
+        if (!scale) return;
+        var c = chart.ctx;
+        var cx = scale.xCenter;
+        var cy = scale.yCenter;
+        var maxR = scale.drawingArea;
+        if (!maxR || maxR <= 0) return;
+        var labels = chart.data.labels || [];
+        if (labels.length < 3) return;
+
+        // Precompute polygon vertex positions for each label (top-start angle convention)
+        var vertices = [];
+        for (var i = 0; i < labels.length; i++) {
+          var angle = scale.getIndexAngle(i) - Math.PI / 2;
+          vertices.push({ sin: Math.sin(angle), cos: Math.cos(angle) });
+        }
+
+        // Build a polygon path for a given radius fraction (0.0–1.0)
+        function zonePath(frac) {
+          c.beginPath();
+          for (var i = 0; i < vertices.length; i++) {
+            var r = maxR * frac;
+            var x = cx + r * vertices[i].cos;
+            var y = cy + r * vertices[i].sin;
+            if (i === 0) c.moveTo(x, y);
+            else c.lineTo(x, y);
+          }
+          c.closePath();
+        }
+
+        // Draw from outside in: green → grey → red (stacking via fill)
+        c.save();
+        // Green zone  (3.5 → 5.0  = 70% → 100%)
+        zonePath(1.0);
+        c.fillStyle = 'rgba(46,125,50,0.18)';
+        c.fill();
+        // Neutral zone (2.5 → 3.5  = 50% →  70%)
+        zonePath(0.7);
+        c.fillStyle = 'rgba(140,140,140,0.08)';
+        c.fill();
+        // Red zone     (0   → 2.5  =  0% →  50%)
+        zonePath(0.5);
+        c.fillStyle = 'rgba(198,40,40,0.16)';
+        c.fill();
+        c.restore();
+      }
+    };
+
+    S.charts[canvasId] = new Chart(ctx, {
+      type: 'radar',
+      plugins: [zonePlugin],
+      data: {
+        labels: d.labels,
+        datasets: [{
+          label: (p.displayName || 'Player'),
+          data: d.values,
+          backgroundColor: 'rgba(255,255,255,0.0)',
+          borderColor: 'rgba(60,60,60,0.6)',
+          borderWidth: 2,
+          pointBackgroundColor: d.pointColors,
+          pointBorderColor: d.pointBorders,
+          pointBorderWidth: 2.5,
+          pointRadius: 6,
+          pointHoverRadius: 8
+        }]
+      },
+      options: {
+        scales: {
+          r: {
+            beginAtZero: true,
+            min: 0,
+            max: 5,
+            ticks: { stepSize: 1, font: { size: 9 }, backdropColor: 'transparent' },
+            pointLabels: { font: { size: 9, weight: '600' } },
+            grid: { color: 'rgba(0,0,0,0.08)' },
+            angleLines: { color: 'rgba(0,0,0,0.08)' }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const v = ctx.raw;
+                let tag = '';
+                if (v > 3.5) tag = ' (above threshold)';
+                else if (v >= 2.5) tag = ' (mid-range)';
+                else if (v > 0) tag = ' (needs work)';
+                else tag = ' (unrated)';
+                return ' ' + v + tag;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  buildChart('pRadarAttack', attKeys);
+  buildChart('pRadarDefend', defKeys);
+}
+
+// ----- Development category metadata -----
+// Maps raw keys → human-readable labels, FCG component groups, and short descriptions
+const DEV_META = {
+  "Passing":              { label:"Passing",             group:"Actions with ball",       desc:"Weight & variety of pass" },
+  "Receiving":            { label:"Receiving",           group:"Actions with ball",       desc:"First touch & control" },
+  "Dribbling 1v1":        { label:"1v1 Dribbling",       group:"Actions with ball",       desc:"Beating opponents" },
+  "Finishing":            { label:"Finishing",           group:"Actions with ball",       desc:"Shot accuracy & power" },
+  "Technical":            { label:"Ball Control",        group:"Communication",           desc:"All-round technique" },
+  "Actions -":            { label:"Pressing & Tackling", group:"Actions without ball",    desc:"Defensive pressure" },
+  "Actions +":            { label:"Attacking Runs",      group:"Actions without ball",    desc:"Off-ball movement" },
+  "Insights -":           { label:"Defensive Reading",   group:"Game insight",            desc:"Anticipating opponents" },
+  "Insights +":           { label:"Creative Vision",     group:"Game insight",            desc:"Finding space & lanes" },
+  "Agility / Endurance":  { label:"Agility & Endurance", group:"Athletic Development",      desc:"Speed, stamina, mobility" },
+  "Strength / Reaction":  { label:"Strength & Reaction", group:"Athletic Development",      desc:"Duels & explosiveness" },
+  "Social":               { label:"Social",              group:"Communication",           desc:"Team vibe & communication" },
+  "Motivation":           { label:"Motivation",          group:"Mindset",                 desc:"Drive & engagement" },
+  "Teamwork":             { label:"Teamwork",            group:"Mindset",                 desc:"On-field cooperation" },
+  "Goalkeeper":           { label:"Goalkeeping",         group:"Athletic Development",      desc:"GK fundamentals" },
+  "GK Advanced":          { label:"GK Advanced",         group:"Athletic Development",      desc:"Advanced GK" }
+};
+const DEV_GROUPS = ["Actions with ball","Actions without ball","Game insight","Communication","Mindset","Athletic Development"];
+const DEV_GROUP_COLORS = { "Actions with ball":"#1565c0", "Actions without ball":"#6a1b9a", "Game insight":"#0d47a1", "Communication":"#2e7d32", "Mindset":"#c62828", "Athletic Development":"#f9a825" };
+
+// ===== GAMEPLAN MATRIX — Age-appropriate skill descriptions =====
+// Key: skill key → { ageLevel: description }
+const GAMEPLAN = {
+  "Passing":              { "U4-U5":"Inside pass and kick", "U6":"Stationary pass", "U7":"Pass while dribbling", "U8":"One-touches", "U9":"Pass under pressure", "U10":"Different distances", "U11-U12":"Combo and crosses" },
+  "Receiving":            { "U4-U5":"Stop and adjust", "U6":"Receiving", "U7":"Open-body positioning", "U8":"Receive while moving", "U9":"First touch", "U10":"First touch with feint", "U11-U12":"Lay-offs & aerial" },
+  "Dribbling 1v1":        { "U4-U5":"Ball control", "U6":"Direction changes", "U7":"Changing speeds", "U8":"Speed dribbling", "U9":"1v1 without pressure", "U10":"1v1 under pressure", "U11-U12":"Dominate 1v1" },
+  "Finishing":            { "U4-U5":"Hit a target", "U6":"Get the ball up", "U7":"Accuracy", "U8":"Quick finish", "U9":"Angles shooting", "U10":"Distance finish", "U11-U12":"Aerial finish" },
+  "Actions -":            { "U4-U5":"Intention to steal", "U6":"Mark the opponent", "U7":"1v1 Defending", "U8":"Shadow and cover", "U9":"Push outside", "U10":"Stay compact", "U11-U12":"Stay compact as a team" },
+  "Actions +":            { "U4-U5":"Go open", "U6":"Create receiving lines", "U7":"Show up", "U8":"Check in/out", "U9":"Check in/out full pressure", "U10":"Create spaces", "U11-U12":"Create overloads" },
+  "Insights -":           { "U4-U5":"Press the opponent", "U6":"Protect the goal", "U7":"When/how to press", "U8":"Close the middle", "U9":"Delay and guide", "U10":"Rest attack", "U11-U12":"Adapting formations" },
+  "Insights +":           { "U4-U5":"Dribble or pass", "U6":"Find spaces", "U7":"Know your position", "U8":"Third man play", "U9":"Timing", "U10":"Rest defence", "U11-U12":"Adapting formations" },
+  "Technical":            { "U5":"Encouraging", "U6":"Asking balls", "U7":"Messaging", "U8":"Coach without ball", "U9":"Receptive", "U10":"Motivating", "U11":"Tactical communication" },
+  "Social":               { "U5":"Manners", "U6":"English and Chinese", "U7":"Follow instructions", "U8":"Social and tactical", "U9":"Active discussing", "U10":"Positive team impact", "U11":"Leading team communication" },
+  "Motivation":           { "U5":"Enjoy to play", "U6":"Energy and effort", "U7":"Wants to improve", "U8":"Task discipline", "U9":"Self control", "U10":"Competitive drive", "U11":"Intrinsic motivation" },
+  "Teamwork":             { "U5":"Plays together", "U6":"Support and courage", "U7":"Team work", "U8":"Team discipline", "U9":"Reliable player", "U10":"Improves cohesion", "U11":"Leads the team" },
+  "Agility / Endurance":  { "ALL":"Agility / Endurance" },
+  "Strength / Reaction":  { "ALL":"Strength / Reaction" },
+  "Goalkeeper":           { "ALL":"Goalkeeper" },
+  "GK Advanced":          { "ALL":"GK Advanced" }
+};
+
+// Map team name (U10-G, U8-W) to gameplan age level
+function getGameplanLevel(team) {
+  if (!team) return null;
+  var m = team.match(/U(\d+)/);
+  if (!m) return null;
+  var age = parseInt(m[1]);
+  if (age <= 5) return "U4-U5";
+  if (age === 6) return "U6";
+  if (age === 7) return "U7";
+  if (age === 8) return "U8";
+  if (age === 9) return "U9";
+  if (age === 10) return "U10";
+  if (age >= 11) return "U11-U12";
+  return null;
+}
+
+// Get age-appropriate gameplan description for a skill
+function getGameplanDesc(skillKey, team) {
+  var level = getGameplanLevel(team);
+  if (!level) return null;
+  var skillData = GAMEPLAN[skillKey];
+  if (!skillData) return null;
+  // Try specific level first, then ALL, then broader range
+  return skillData[level] || skillData["ALL"] || null;
+}
+
+// 20 display items for Top 3 / Working Points: 6 group-level + 14 individual skills
+const ALL_DISPLAY_ITEMS = [
+  // Group-level items (from devGroupRatios)
+  { label:"Actions + Ball",       type:"group", groupKey:"Actions with ball",       color:"#1565c0" },
+  { label:"Actions - Ball",       type:"group", groupKey:"Actions without ball",     color:"#6a1b9a" },
+  { label:"Game insight",         type:"group", groupKey:"Game insight",             color:"#0d47a1" },
+  { label:"Communication",        type:"group", groupKey:"Communication",            color:"#2e7d32" },
+  { label:"Mindset",              type:"group", groupKey:"Mindset",                  color:"#c62828" },
+  { label:"Physical + GK",        type:"group", groupKey:"Athletic Development",     color:"#f9a825" },
+  // Individual skill items (ratio = development[skill] / developmentDenom[skill])
+  { label:"Passing",              type:"skill", skillKey:"Passing",              color:"#1565c0" },
+  { label:"Receiving",            type:"skill", skillKey:"Receiving",            color:"#1565c0" },
+  { label:"Dribbling 1v1",        type:"skill", skillKey:"Dribbling 1v1",        color:"#1565c0" },
+  { label:"Finishing",            type:"skill", skillKey:"Finishing",            color:"#1565c0" },
+  { label:"Actions -",            type:"skill", skillKey:"Actions -",            color:"#6a1b9a" },
+  { label:"Actions +",            type:"skill", skillKey:"Actions +",            color:"#6a1b9a" },
+  { label:"Insights -",           type:"skill", skillKey:"Insights -",           color:"#0d47a1" },
+  { label:"Insights +",           type:"skill", skillKey:"Insights +",           color:"#0d47a1" },
+  { label:"Technical",            type:"skill", skillKey:"Technical",            color:"#2e7d32" },
+  { label:"Social",               type:"skill", skillKey:"Social",               color:"#2e7d32" },
+  { label:"Motivation",           type:"skill", skillKey:"Motivation",           color:"#c62828" },
+  { label:"Teamwork",             type:"skill", skillKey:"Teamwork",             color:"#c62828" },
+  { label:"Agility / Endurance",  type:"skill", skillKey:"Agility / Endurance",  color:"#f9a825" },
+  { label:"Strength / Reaction",  type:"skill", skillKey:"Strength / Reaction",  color:"#f9a825" }
+];
+
+// Mapping from devSummary keys to FCG component groups
+var DEV_SUMMARY_MAP = {
+  actionsPlusBall: 'Actions with ball',
+  actionsMinusBall: 'Actions without ball',
+  gameInsight: 'Game insight',
+  communication: 'Communication',
+  mindset: 'Mindset',
+  physicalGK: 'Athletic Development'
+};
+
+function renderDevGroups(p) {
+  var container = document.getElementById('pDevGroups');
+  if (!container) return;
+  var blocks = p.development || {};
+  var ratios = p.devGroupRatios || {};
+  var numers = p.devGroupNumerators || {};
+  var denoms = p.devGroupDenominators || {};
+
+  // Count skills per component from development
+  var groupSkillCounts = {};
+  DEV_GROUPS.forEach(function(g){ groupSkillCounts[g] = 0; });
+  Object.keys(blocks).forEach(function(k){
+    if (blocks[k] <= 0) return;
+    var meta = DEV_META[k] || {};
+    var grp = meta.group;
+    if (grp && groupSkillCounts.hasOwnProperty(grp)) groupSkillCounts[grp]++;
+  });
+
+  var groupIcons = { "Actions with ball":'⚽', "Actions without ball":'🏃', "Game insight":'🧠', "Communication":'💬', "Mindset":'🔥', "Athletic Development":'💪' };
+
+  // Build yearly trend data from history
+  // Component mapping: A+B→Actions with ball, A-B→Actions without ball, GI→Game insight, CO→Communication, MI→Mindset, PD-GK→Athletic Development
+  var compMap = {
+    'Actions with ball': 'A+B',
+    'Actions without ball': 'A-B',
+    'Game insight': 'GI',
+    'Communication': 'CO',
+    'Mindset': 'MI',
+    'Athletic Development': 'PD-GK'
+  };
+  var seasonLabels = {'1-2023-S':'23S','2-2023-F':'23F','3-2024-S':'24S','4-2024-F':'24F','5-2025-S':'25S','6-2025-F':'25F','7-2026-S':'26S'};
+  var seasonOrder = ['1-2023-S','2-2023-F','3-2024-S','4-2024-F','5-2025-S','6-2025-F','7-2026-S'];
+
+  function getTrendData(grpName) {
+    var key = compMap[grpName];
+    if (!key) return [];
+    var trend = [];
+    (p.history || []).forEach(function(h) {
+      var val = h[key];
+      if (val != null) {
+        trend.push({ season: h.season, label: seasonLabels[h.season] || h.season, value: val });
+      }
+    });
+    return trend;
+  }
+
+  function trendColor(v) {
+    if (v >= 3.5) return '#2e7d32';
+    if (v >= 2.5) return '#d4a017';
+    return '#d32f2f';
+  }
+
+  function renderTrendBars(trend) {
+    if (!trend.length) return '<span style="font-size:.65rem;color:#bbb;">No history</span>';
+    if (trend.length === 1) {
+      // Single season: show just the value
+      var t = trend[0];
+      var color = trendColor(t.value);
+      return '<div style="font-size:.65rem;color:'+color+';font-weight:700;">'+t.label+': '+t.value.toFixed(1)+' ★</div>';
+    }
+    var maxH = 24;
+    var html = '<div style="display:flex;align-items:flex-end;gap:3px;height:'+(maxH+14)+'px;padding-top:2px;">';
+    trend.forEach(function(t) {
+      var h = Math.max(4, (t.value / 5) * maxH);
+      var color = trendColor(t.value);
+      html += '<div style="display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;">'+
+        '<span style="font-size:.55rem;font-weight:700;color:'+color+';margin-bottom:2px;">'+t.value.toFixed(1)+'</span>'+
+        '<div style="width:100%;max-width:28px;height:'+h+'px;background:'+color+';border-radius:2px 2px 0 0;opacity:0.8;" title="'+t.label+': '+t.value.toFixed(2)+'"></div>'+
+        '<span style="font-size:.48rem;color:#999;margin-top:2px;">'+t.label+'</span>'+
+      '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  var html = '';
+  DEV_GROUPS.forEach(function(grpName){
+    var gColor = DEV_GROUP_COLORS[grpName] || '#555';
+    var ratio = ratios[grpName] != null ? ratios[grpName] : null;
+    var numer = numers[grpName] || 0;
+    var denom = denoms[grpName] || 0;
+    var skills = groupSkillCounts[grpName] || 0;
+    var trend = getTrendData(grpName);
+    var bgTint = gColor + '0D';
+
+    var ratioDisplay = ratio != null ? (ratio.toFixed(1)+' ★') : '—';
+    var bbLabel = skills === 1 ? '1 building block' : skills+' building blocks';
+    var fractionLine = bbLabel + (denom > 0 ? ' · '+numer+' stars in '+denom+' rating' : (numer > 0 ? ' · '+numer+' sessions' : ''));
+
+    html += '<div class="dev-comp-card" style="border-left:3px solid '+gColor+';background:'+bgTint+';flex-direction:column;align-items:stretch;padding:12px 14px;">'+
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'+
+        '<div class="dev-comp-icon" style="background:'+gColor+';flex-shrink:0;">'+(groupIcons[grpName]||'●')+'</div>'+
+        '<div class="dev-comp-body">'+
+          '<div class="dev-comp-name">'+grpName+'</div>'+
+          '<div class="dev-comp-meta">'+fractionLine+'</div>'+
+        '</div>'+
+        '<div class="dev-comp-right">'+
+          '<div class="dev-comp-rating" style="color:'+(ratio!=null?(ratio>3?'#2e7d32':ratio>=2?'#d4a017':'#d32f2f'):'#999')+'">'+ratioDisplay+'</div>'+
+        '</div>'+
+      '</div>'+
+      renderTrendBars(trend)+
+    '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function renderDevHighlights(p) {
+  var container = document.getElementById('pDevHighlights');
+  if (!container) return;
+  var groupRatios = p.devGroupRatios || {};
+  var devCounts = p.development || {};
+  var devDenoms = p.developmentDenom || {};
+  var playerTeam = p.team || '';
+
+  // Compute ratio for each of the 20 display items
+  var items = ALL_DISPLAY_ITEMS.map(function(def){
+    var ratio = null;
+    if (def.type === 'group') {
+      ratio = groupRatios[def.groupKey] != null ? groupRatios[def.groupKey] : null;
+    } else {
+      var numer = devCounts[def.skillKey] || 0;
+      var denom = devDenoms[def.skillKey] || 0;
+      ratio = denom > 0 ? parseFloat((numer / denom).toFixed(2)) : null;
+    }
+    // Get gameplan description for skills
+    var gpDesc = null;
+    if (def.type === 'skill') {
+      gpDesc = getGameplanDesc(def.skillKey, playerTeam);
+    }
+    return { label: def.label, ratio: ratio, color: def.color, gpDesc: gpDesc, type: def.type, skillKey: def.skillKey };
+  });
+
+  var rated = items.filter(function(it){ return it.ratio != null && it.ratio > 0; });
+  // Weapons = highest ratios
+  var top3 = rated.slice().sort(function(a,b){ return b.ratio - a.ratio; }).slice(0,3);
+  // Points to Improve = lowest ratios
+  var weak3 = rated.slice().sort(function(a,b){ return a.ratio - b.ratio; }).slice(0,3);
+
+  function ratioStars(r){ var sc=r>4?5:r>3?4:r>2?3:r>1?2:1,s=''; for(var i=0;i<5;i++) s+=(i<sc?'★':'☆'); return s; }
+  function rColor(r){ return r>3?'#2e7d32':r>=2?'#888':'#d32f2f'; }
+
+  var level = getGameplanLevel(playerTeam);
+  var levelLabel = level ? ' (Level: ' + level + ')' : '';
+
+  var html = '';
+  // Weapons
+  html += '<div class="dev-hl-card"><div class="dev-hl-title" style="color:#2e7d32">⚔️ Weapons' + levelLabel + '</div>';
+  if (top3.length === 0) {
+    html += '<div style="color:#999;font-size:.72rem">No ratings yet</div>';
+  } else {
+    top3.forEach(function(it,idx){
+      var descLine = it.gpDesc ? '<span style="color:#888;font-size:.65rem;">' + it.gpDesc + '</span>' : '';
+      html += '<div class="dev-hl-row" style="align-items:flex-start;padding:6px 0;">'+
+        '<div class="dev-hl-rank top">'+(idx+1)+'</div>'+
+        '<div style="flex:1;min-width:0;"><div class="dev-hl-name" style="color:'+it.color+'">'+it.label+'</div>'+descLine+'</div>'+
+        '<div class="dev-hl-stars" style="color:'+rColor(it.ratio)+'">'+ratioStars(it.ratio)+'</div>'+
+        '<div class="dev-hl-val" style="color:'+rColor(it.ratio)+'">'+it.ratio.toFixed(1)+' ★</div>'+
+      '</div>';
+    });
+  }
+  html += '</div>';
+
+  // Points to Improve
+  html += '<div class="dev-hl-card"><div class="dev-hl-title" style="color:#c62828">🎯 Points to Improve' + levelLabel + '</div>';
+  if (weak3.length === 0) {
+    html += '<div style="color:#999;font-size:.72rem">No ratings yet</div>';
+  } else {
+    weak3.forEach(function(it,idx){
+      var descLine = it.gpDesc ? '<span style="color:#888;font-size:.65rem;">' + it.gpDesc + '</span>' : '';
+      html += '<div class="dev-hl-row" style="align-items:flex-start;padding:6px 0;">'+
+        '<div class="dev-hl-rank weak">'+(idx+1)+'</div>'+
+        '<div style="flex:1;min-width:0;"><div class="dev-hl-name" style="color:'+it.color+'">'+it.label+'</div>'+descLine+'</div>'+
+        '<div class="dev-hl-stars" style="color:'+rColor(it.ratio)+'">'+ratioStars(it.ratio)+'</div>'+
+        '<div class="dev-hl-val" style="color:'+rColor(it.ratio)+'">'+it.ratio.toFixed(1)+' ★</div>'+
+      '</div>';
+    });
+  }
+  html += '</div>';
+
+  container.innerHTML = html;
+}
+
+function renderDevComments(p) {
+  var container = document.getElementById('pDevComments');
+  if (!container) return;
+
+  var comment = p.devComments;
+  var titleHtml = '<div class="dev-hl-title" style="color:#1565c0">💬 Coach Comments</div>';
+  
+  if (!comment || comment.trim() === '') {
+    container.innerHTML = titleHtml + '<div style="font-size:.72rem;color:#999">No comments recorded yet</div>';
+    return;
+  }
+
+  // Parse comments by season
+  // Current season: 26春-W, 26秋-W
+  // Older seasons: 23春, 23秋, 24春, 24秋, 25春, 25秋, 23春季
+  var lines = comment.split('\n');
+  var currentComments = [];
+  var olderComments = [];
+  var currentPattern = /^26[春秋]/;
+  
+  lines.forEach(function(line) {
+    var trimmed = line.trim();
+    if (!trimmed) return;
+    if (currentPattern.test(trimmed)) {
+      currentComments.push(trimmed);
+    } else {
+      olderComments.push(trimmed);
+    }
+  });
+
+  // If no current season comments but we have comments, show all as current
+  if (currentComments.length === 0 && olderComments.length > 0) {
+    currentComments = olderComments;
+    olderComments = [];
+  }
+
+  var html = titleHtml;
+  
+  // Current season comments (always visible)
+  if (currentComments.length > 0) {
+    html += '<div style="padding:8px 0;font-size:.72rem;line-height:1.6;color:#444;">';
+    html += '<div style="font-weight:700;color:#0a3d1e;margin-bottom:6px;font-size:.75rem;">Spring 2026</div>';
+    currentComments.forEach(function(c) {
+      html += '<div style="margin-bottom:6px;padding:6px 8px;background:#f9f9f7;border-radius:6px;border-left:3px solid #d4a017;">' + c.replace(/\n/g,'<br>') + '</div>';
+    });
+    html += '</div>';
+  }
+  
+  // Older seasons (toggle)
+  if (olderComments.length > 0) {
+    var uniqueId = 'olderComments_' + (p.id || 'player').replace(/[^a-zA-Z0-9]/g,'_');
+    html += '<div style="margin-top:8px;border-top:1px solid #eee;padding-top:8px;">';
+    html += '<button onclick=\"var el=document.getElementById(\''+uniqueId+'\');if(el.style.display===\'none\'){el.style.display=\'block\';this.textContent=\'▲ Hide earlier seasons\';}else{el.style.display=\'none\';this.textContent=\'▼ Show earlier seasons (\'+'+olderComments.length+'+\' comments)\';}\" style=\"background:none;border:none;color:#1565c0;font-size:.7rem;font-weight:600;cursor:pointer;padding:4px 0;\">▼ Show earlier seasons ('+olderComments.length+' comments)</button>';
+    html += '<div id=\"'+uniqueId+'\" style=\"display:none;padding-top:6px;font-size:.7rem;line-height:1.5;color:#666;\">';
+    olderComments.forEach(function(c) {
+      html += '<div style=\"margin-bottom:4px;padding:4px 8px;background:#f5f5f5;border-radius:4px;\">' + c.replace(/\n/g,'<br>') + '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function getPlayerTier(p) {
+  var suffix = (p.team || '').slice(-1).toUpperCase();
+  if (suffix === 'W') return { max: 60, label: 'White' };
+  if (suffix === 'B') return { max: 40, label: 'Blue' };
+  return { max: 80, label: 'Green' }; // default
+}
+
+// Format season label: 7-2026-S → Spring 2026, 6-2025-F → Fall 2025
+function formatSeason(seasonStr) {
+  if (!seasonStr) return '—';
+  // Try to match pattern like 7-2026-S or 6-2025-F
+  var m = seasonStr.match(/^(\d+)-(\d{4})-([SF])$/);
+  if (m) {
+    var sem = m[3] === 'S' ? 'Spring' : 'Fall';
+    return sem + ' ' + m[2];
+  }
+  // Try partial match like 2026-S or 2025-F
+  m = seasonStr.match(/(\d{4})-([SF])$/);
+  if (m) {
+    var sem2 = m[2] === 'S' ? 'Spring' : 'Fall';
+    return sem2 + ' ' + m[1];
+  }
+  return seasonStr;
+}
+
+function renderAttTable(p) {
+  const tbody = document.querySelector('#pAttTable tbody');
+  tbody.innerHTML = '';
+  const hist = p.history || [];
+  var tier = getPlayerTier(p);
+  if (hist.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999">No attendance history yet</td></tr>';
+    return;
+  }
+  hist.forEach(h => {
+    const tr = document.createElement('tr');
+    var attendance = h.attendance;
+    var rating = h.rating;
+    var per = h.PER;
+    var isCurrentSeason = false;
+    // If history row is empty (current season in progress), use cycle data
+    if (attendance == null && rating == null && per == null && p.cycleAvgShowup != null) {
+      attendance = p.cycleAvgShowup;
+      rating = p.RAT;
+      per = p.PER;
+      isCurrentSeason = true;
+    }
+    var ratioStr = '—';
+    if (attendance && rating && attendance > 0) {
+      const ratio = rating / attendance;
+      const cls = ratio >= 1.5 ? 'positive' : 'negative';
+      ratioStr = '<span class="' + cls + '">' + ratio.toFixed(2) + '</span>';
+    }
+    var attPctStr = '—';
+    if (attendance != null) {
+      if (isCurrentSeason) {
+        // For current season, show cycle average directly (not percentage of max)
+        attPctStr = '<span style="color:#888;font-size:.85rem;">avg ' + attendance.toFixed(1) + '</span>';
+      } else {
+        var pct = Math.round(attendance / tier.max * 100);
+        attPctStr = '<span class="' + (pct >= 80 ? 'positive' : pct >= 50 ? '' : 'negative') + '">' + pct + '%</span>';
+      }
+    }
+    var seasonLabel = formatSeason(h.season);
+    if (isCurrentSeason) seasonLabel += ' <span style=\"font-size:.7rem;color:#888;\">(in progress)</span>';
+    var teamDisplay = (h.team || p.team || '—').replace(/^\d+-\d{4}-[SF]-/, '');
+    if (isCurrentSeason && coachInfo) teamDisplay += ' · ' + coachInfo;
+    tr.innerHTML =
+      '<td>' + seasonLabel + '</td>' +
+      '<td>' + teamDisplay + '</td>' +
+      '<td class="num">' + (attendance != null ? (isCurrentSeason ? attendance.toFixed(1) : attendance) : '—') + '</td>' +
+      '<td class="num">' + attPctStr + '</td>' +
+      '<td class="num">' + (per != null ? per.toFixed(1) : '—') + '</td>' +
+      '<td class="num rat-cell">' + (rating != null ? rating : '—') + '</td>' +
+      '<td class="num">' + ratioStr + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function renderGrowthChart(p) {
+  const canvas = document.getElementById('pGrowth');
+  if (!canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext('2d');
+  if (S.charts.pGrowth) S.charts.pGrowth.destroy();
+
+  const hist = p.history || [];
+  if (hist.length === 0) {
+    ctx.font = '14px sans-serif';
+    ctx.fillStyle = '#999';
+    ctx.textAlign = 'center';
+    ctx.fillText('No history data for growth chart', canvas.width / 2, canvas.height / 2);
+    return;
+  }
+
+  // Determine player's color tier from team suffix (G=Green, W=White, B=Blue)
+  var tier = getPlayerTier(p);
+  var MAX_ATT = tier.max;
+  var colorLabel = tier.label;
+
+  // Ratings per attendance: rating / attendance
+  const THRESHOLD = 1.5;
+  const labels = hist.map(h => formatSeason(h.season));
+  const ratios = hist.map(h => {
+    var att = h.attendance;
+    var rat = h.rating;
+    if (att && rat && att > 0) return parseFloat((rat / att).toFixed(2));
+    return null;
+  });
+  // PER values — use player PER for current season if history is null
+  const perValues = hist.map(h => {
+    var per = h.PER;
+    if (per == null && h.attendance == null && h.rating == null) per = p.PER;
+    return per != null ? per : undefined;
+  });
+  // Attendance % (capped at 100) — skip current season if no history data
+  const attPcts = hist.map(h => {
+    if (h.attendance != null) return Math.min(100, Math.round(h.attendance / MAX_ATT * 100));
+    return undefined;
+  });
+
+  // Ratio point colors
+  const chartData = ratios.map(r => r !== null ? r : undefined);
+  const ratioColors = ratios.map(r => {
+    if (r === null) return 'rgba(0,0,0,0)';
+    return r >= THRESHOLD ? '#2e7d32' : '#d32f2f';
+  });
+  const ratioBorders = ratios.map(r => {
+    if (r === null) return 'rgba(0,0,0,0)';
+    return r >= THRESHOLD ? '#1b5e20' : '#b71c1c';
+  });
+
+  // PER point colors: green ≥ 3.5, grey 2.5-3.5, red < 2.5
+  const perPointColors = perValues.map(v => {
+    if (v === undefined) return 'rgba(0,0,0,0)';
+    if (v >= 3.5) return '#2e7d32';
+    if (v >= 2.5) return '#888888';
+    return '#d32f2f';
+  });
+
+  // Reference line at 1.5
+  const refLine = new Array(labels.length).fill(THRESHOLD);
+
+  S.charts.pGrowth = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Ratings / Attendance',
+          data: chartData,
+          borderColor: '#d4a017',
+          backgroundColor: 'rgba(212,160,23,0.08)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 7,
+          pointHoverRadius: 9,
+          pointBackgroundColor: ratioColors,
+          pointBorderColor: ratioBorders,
+          pointBorderWidth: 2,
+          borderWidth: 2,
+          spanGaps: false,
+          yAxisID: 'y',
+          order: 4
+        },
+        {
+          label: 'PER (Performance)',
+          data: perValues,
+          borderColor: '#0a3d1e',
+          backgroundColor: 'rgba(10,61,30,0.08)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 6,
+          pointHoverRadius: 9,
+          pointBackgroundColor: perPointColors,
+          pointBorderColor: perPointColors.map(c => c === '#2e7d32' ? '#1b5e20' : c === '#d32f2f' ? '#b71c1c' : '#555'),
+          pointBorderWidth: 2,
+          borderWidth: 2,
+          borderDash: [4, 2],
+          spanGaps: false,
+          yAxisID: 'y',
+          order: 3
+        },
+        {
+          label: 'Attendance %',
+          data: attPcts,
+          borderColor: '#1565c0',
+          backgroundColor: 'rgba(21,101,192,0.06)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          pointBackgroundColor: '#1565c0',
+          pointBorderColor: '#0d47a1',
+          pointBorderWidth: 2,
+          borderWidth: 2,
+          spanGaps: false,
+          yAxisID: 'y1',
+          order: 2
+        },
+        {
+          label: 'Positive threshold (1.5)',
+          data: refLine,
+          borderColor: 'rgba(46,125,50,0.45)',
+          borderDash: [6, 4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false,
+          tension: 0,
+          yAxisID: 'y',
+          order: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          beginAtZero: true,
+          title: { display: true, text: 'Score', font: { size: 11 } },
+          ticks: { font: { size: 10 } }
+        },
+        y1: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          beginAtZero: true,
+          max: 110,
+          title: { display: true, text: 'Attendance % (' + colorLabel + ' tier, max ' + MAX_ATT + ')', font: { size: 10 } },
+          ticks: { font: { size: 10 }, callback: function(v) { return v + '%'; } },
+          grid: { drawOnChartArea: false }
+        },
+        x: { ticks: { font: { size: 9 } } }
+      },
+      plugins: {
+        legend: {
+          labels: { usePointStyle: true, boxWidth: 8, font: { size: 10 }, padding: 16,
+            generateLabels: function(chart) {
+              return [
+                { text: 'Ratings / Att', fillStyle: '#d4a017', strokeStyle: '#d4a017', lineWidth: 2, hidden: false, index: 0, pointStyle: 'circle', datasetIndex: 0 },
+                { text: 'PER', fillStyle: '#0a3d1e', strokeStyle: '#0a3d1e', lineWidth: 2, hidden: false, index: 1, pointStyle: 'circle', datasetIndex: 1 },
+                { text: 'Attendance %', fillStyle: '#1565c0', strokeStyle: '#1565c0', lineWidth: 2, hidden: false, index: 2, pointStyle: 'circle', datasetIndex: 2 },
+                { text: 'Threshold 1.5', fillStyle: 'rgba(46,125,50,0.45)', strokeStyle: 'rgba(46,125,50,0.45)', lineWidth: 1.5, hidden: false, index: 3, pointStyle: 'dash', datasetIndex: 3 }
+              ];
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.datasetIndex === 3) return 'Threshold: ' + THRESHOLD;
+              if (ctx.datasetIndex === 2) {
+                const v = attPcts[ctx.dataIndex];
+                if (v === undefined) return 'Attendance %: no data';
+                return 'Attendance: ' + (hist[ctx.dataIndex].attendance || 0) + '/' + MAX_ATT + ' = ' + v + '%';
+              }
+              if (ctx.datasetIndex === 1) {
+                const v = perValues[ctx.dataIndex];
+                if (v === undefined) return 'PER: no data';
+                var tag = v >= 3.5 ? ' (strong)' : v >= 2.5 ? ' (mid)' : ' (needs work)';
+                return 'PER: ' + v.toFixed(1) + tag;
+              }
+              const r = ratios[ctx.dataIndex];
+              if (r === null) return 'Rating/Att: no data';
+              var tag = r >= THRESHOLD ? ' (positive)' : ' (below threshold)';
+              return 'Rating/Att: ' + r.toFixed(2) + tag;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// ===== MODAL =====
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ===== IMPORT / EXPORT =====
+
+async 
+// ===== STARTUP =====
+loadData();
+</script>
+</body>
+</html>

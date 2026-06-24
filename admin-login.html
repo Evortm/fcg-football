@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCG Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f5f3ef;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+/* Login */
+.login-screen {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0a3d1e 0%, #0d4f26 100%);
+  padding: 20px;
+}
+.login-box {
+  background: #fff; border-radius: 20px; padding: 48px 40px;
+  max-width: 440px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.login-logo { width: 80px; height: 80px; object-fit: contain; display: block; margin: 0 auto 20px; }
+.login-title { font-size: 1.6rem; font-weight: 800; color: #0a3d1e; text-align: center; margin-bottom: 6px; }
+.login-subtitle { font-size: .92rem; color: #888; text-align: center; margin-bottom: 32px; }
+.login-field { margin-bottom: 18px; }
+.login-field label { display: block; font-size: .85rem; font-weight: 600; color: #555; margin-bottom: 6px; }
+.login-field input {
+  width: 100%; padding: 12px 14px; border: 2px solid #e0e0e0;
+  border-radius: 10px; font-size: .95rem; color: #333; background: #fff;
+  transition: border-color .2s;
+}
+.login-field input:focus { outline: none; border-color: #d4a017; }
+.login-btn {
+  width: 100%; padding: 14px; background: #0a3d1e; color: #fff;
+  border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+}
+.login-btn:hover { background: #0d4f26; }
+.login-error { color: #d32f2f; font-size: .85rem; margin-top: 12px; text-align: center; display: none; }
+.back-link { display: block; text-align: center; margin-top: 20px; color: rgba(255,255,255,0.6); text-decoration: none; font-size: .85rem; font-weight: 600; }
+.back-link:hover { color: #fff; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #0a3d1e 0%, #0d4f26 100%);
+  color: #fff; padding: 14px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+  position: sticky; top: 0; z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.header-logo {
+  width: 48px; height: 48px;
+  background: #d4a017;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 900; color: #0a3d1e;
+}
+.header-title { font-size: 22px; font-weight: 700; }
+.header-sub  { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+.header-right { display: flex; gap: 12px; align-items: center; }
+.header-badge {
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; color: rgba(255,255,255,0.7);
+}
+.header-badge b { color: #d4a017; }
+.btn-logout {
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.15); padding: 6px 14px;
+  border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+  text-decoration: none; transition: all .2s;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.2); color: #fff; }
+
+/* KPI Row */
+.kpi-row {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 16px; padding: 24px 32px 8px;
+}
+.kpi-card {
+  background: #fff; border-radius: 12px; padding: 20px 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  position: relative; overflow: hidden; transition: transform .15s;
+}
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+.kpi-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 4px; height: 100%; border-radius: 4px 0 0 4px;
+}
+.kpi-card.gold::before { background: #d4a017; }
+.kpi-card.green::before { background: #2d8a47; }
+.kpi-card.blue::before  { background: #2980B9; }
+.kpi-card.orange::before{ background: #E67E22; }
+.kpi-card.purple::before{ background: #8E44AD; }
+.kpi-label { font-size: 12px; color: #7F8C8D; font-weight: 500; margin-bottom: 6px; }
+.kpi-value { font-size: 32px; font-weight: 800; line-height: 1; }
+.kpi-card.gold .kpi-value { color: #d4a017; }
+.kpi-card.green .kpi-value { color: #2d8a47; }
+.kpi-card.blue .kpi-value { color: #2980B9; }
+.kpi-card.orange .kpi-value { color: #E67E22; }
+.kpi-card.purple .kpi-value { color: #8E44AD; }
+.kpi-delta { font-size: 12px; margin-top: 6px; font-weight: 600; }
+.kpi-delta.up { color: #d4a017; }
+.kpi-sub { font-size: 11px; color: #BDC3C7; margin-top: 2px; }
+
+/* Charts */
+.chart-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 16px; padding: 16px 32px;
+}
+.chart-grid.three { grid-template-columns: repeat(3, 1fr); }
+.chart-box {
+  background: #fff; border-radius: 12px; padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.chart-box.full { grid-column: 1 / -1; }
+.chart-title {
+  font-size: 14px; font-weight: 700; color: #0a3d1e;
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px solid #ECF0F1;
+  display: flex; align-items: center; gap: 8px;
+}
+.chart-title .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.chart-box .chart { width: 100%; height: 320px; }
+
+/* Pillars */
+.pillar-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 12px; padding: 0 32px 16px;
+}
+.pillar-card {
+  background: #fff; border-radius: 12px; padding: 16px;
+  text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  border-top: 3px solid;
+}
+.pillar-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.pillar-card .score { font-size: 28px; font-weight: 800; }
+.pillar-card .status { font-size: 11px; margin-top: 4px; font-weight: 600; }
+.pillar-card.green { border-color: #2d8a47; }
+.pillar-card.green .score { color: #2d8a47; }
+.pillar-card.amber { border-color: #d4a017; }
+.pillar-card.amber .score { color: #d4a017; }
+.pillar-card.red   { border-color: #c0392b; }
+.pillar-card.red .score { color: #c0392b; }
+
+/* Tables */
+.table-wrap {
+  background: #fff; border-radius: 12px; padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  margin: 0 32px 24px; overflow-x: auto;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  background: #0a3d1e; color: #fff; padding: 10px 12px;
+  font-weight: 600; text-align: left; position: sticky; top: 0;
+}
+th:first-child { border-radius: 8px 0 0 0; }
+th:last-child  { border-radius: 0 8px 0 0; }
+td { padding: 9px 12px; border-bottom: 1px solid #ECF0F1; }
+tr:hover td { background: #F8F9FD; }
+.tag {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 11px; font-weight: 600;
+}
+.tag-green  { background: #D5F5E3; color: #1E8449; }
+.tag-amber  { background: #FEF9E7; color: #B7950B; }
+.tag-red    { background: #FADBD8; color: #C0392B; }
+.tag-blue   { background: #D6EAF8; color: #2471A3; }
+
+.footer {
+  text-align: center; padding: 20px; font-size: 11px;
+  color: #BDC3C7; border-top: 1px solid #ECF0F1; margin: 0 32px;
+}
+
+.dashboard-wrap { display: none; }
+
+@media (max-width: 1100px) {
+  .kpi-row { grid-template-columns: repeat(3, 1fr); }
+  .chart-grid { grid-template-columns: 1fr; }
+  .pillar-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 700px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .pillar-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <img src="fcg-logo.png" class="login-logo" onerror="this.style.display='none'" alt="FCG Logo">
+    <h1 class="login-title">Admin Dashboard</h1>
+    <p class="login-subtitle">FCG Greenfield — Academy Management</p>
+    <div class="login-field">
+      <label>Admin PIN</label>
+      <input type="password" id="adminPin" placeholder="Enter Admin PIN">
+    </div>
+    <button class="login-btn" onclick="adminLogin()">Enter Dashboard</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+  <a href="index.html" class="back-link">← Back to FCG Website</a>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="dashboard-wrap" id="dashboardWrap">
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">FCG</div>
+    <div>
+      <div class="header-title">FCG Greenfield Academy</div>
+      <div class="header-sub">Admin Dashboard · Spring 2023 – 2026 · 5 Pillars</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="header-badge">👥 Players: <b>316</b></span>
+    <span class="header-badge">📅 2025-2026</span>
+    <a href="index.html" class="btn-logout">← FCG Site</a>
+    <button class="btn-logout" onclick="adminLogout()">Logout</button>
+  </div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card gold">
+    <div class="kpi-label">球员总数 Players Active</div>
+    <div class="kpi-value">316</div>
+    <div class="kpi-delta up">▲ 12% vs last season</div>
+    <div class="kpi-sub">Target: 350</div>
+  </div>
+  <div class="kpi-card green">
+    <div class="kpi-label">平均评分 Avg Rating</div>
+    <div class="kpi-value">3.3 <span style="font-size:14px;color:#7F8C8D">/ 4.0</span></div>
+    <div class="kpi-delta up">▲ 0.3 vs 2023</div>
+    <div class="kpi-sub">Out of 4.0 scale</div>
+  </div>
+  <div class="kpi-card blue">
+    <div class="kpi-label">留存率 Retention</div>
+    <div class="kpi-value">85%</div>
+    <div class="kpi-delta up">▲ 5pp vs 2023</div>
+    <div class="kpi-sub">Target: 90%</div>
+  </div>
+  <div class="kpi-card orange">
+    <div class="kpi-label">出勤率 Attendance</div>
+    <div class="kpi-value">87%</div>
+    <div class="kpi-delta up">▲ 7pp vs 2023</div>
+    <div class="kpi-sub">Avg across all groups</div>
+  </div>
+  <div class="kpi-card purple">
+    <div class="kpi-label">教练评分 Coach Score</div>
+    <div class="kpi-value">3.3 <span style="font-size:14px;color:#7F8C8D">/ 5.0</span></div>
+    <div class="kpi-delta up">— Stable</div>
+    <div class="kpi-sub">3 competencies</div>
+  </div>
+</div>
+
+<div class="pillar-grid">
+  <div class="pillar-card green"><h4>🔄 Retention</h4><div class="score">85%</div><div class="status tag tag-green">● Green</div></div>
+  <div class="pillar-card green"><h4>⚽ Performance</h4><div class="score">3.3</div><div class="status tag tag-green">● Green</div></div>
+  <div class="pillar-card green"><h4>📈 Development</h4><div class="score">87%</div><div class="status tag tag-green">● Green</div></div>
+  <div class="pillar-card green"><h4>🏆 Win / Success</h4><div class="score">62%</div><div class="status tag tag-green">● Green</div></div>
+  <div class="pillar-card amber"><h4>💡 Inspire (Coach)</h4><div class="score">3.3</div><div class="status tag tag-amber">● Amber</div></div>
+</div>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#d4a017"></span>球员数 & 留存率趋势 Players & Retention Trend</div>
+    <div class="chart" id="chartTrend"></div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#2980B9"></span>各年龄组球员分布 Players by Age Group</div>
+    <div class="chart" id="chartAgeGroup"></div>
+  </div>
+</div>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#2d8a47"></span>各维度评分表现 Performance by Dimension</div>
+    <div class="chart" id="chartPerLine"></div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#E67E22"></span>评分分布 Rating Distribution</div>
+    <div class="chart" id="chartRatingDist"></div>
+  </div>
+</div>
+
+<div class="chart-grid three">
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#8E44AD"></span>出勤率 Attendance by Group</div>
+    <div class="chart" id="chartAttendance"></div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#d4a017"></span>发展路径 Player Development Stage</div>
+    <div class="chart" id="chartDevStage"></div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#2980B9"></span>比赛胜率 Win Rate by Age Group</div>
+    <div class="chart" id="chartWinRate"></div>
+  </div>
+</div>
+
+<div class="chart-grid">
+  <div class="chart-box full" style="padding:16px 20px">
+    <div class="chart-title" style="margin-bottom:0;border:none">
+      <span class="dot" style="background:#8E44AD"></span>
+      💡 INSPIRE — 教练能力评估系统 Coach Competency System · 4-Quadrant Model
+    </div>
+  </div>
+</div>
+
+<div class="kpi-row" style="padding-top:0">
+  <div class="kpi-card purple">
+    <div class="kpi-label">总教练数 Total Coaches</div>
+    <div class="kpi-value">10</div>
+    <div class="kpi-sub">9 Foreign / 1 Local</div>
+  </div>
+  <div class="kpi-card blue">
+    <div class="kpi-label">训练质量 Quality</div>
+    <div class="kpi-value">3.3 <span style="font-size:14px;color:#7F8C8D">/ 5.0</span></div>
+    <div class="kpi-delta up">⭐ Football Coaching</div>
+    <div class="kpi-sub">Team average</div>
+  </div>
+  <div class="kpi-card green">
+    <div class="kpi-label">职业素养 Professional</div>
+    <div class="kpi-value">3.8 <span style="font-size:14px;color:#7F8C8D">/ 5.0</span></div>
+    <div class="kpi-delta up">🟦 Conduct</div>
+    <div class="kpi-sub">Team average</div>
+  </div>
+  <div class="kpi-card orange">
+    <div class="kpi-label">管理能力 Admin</div>
+    <div class="kpi-value">3.5 <span style="font-size:14px;color:#7F8C8D">/ 5.0</span></div>
+    <div class="kpi-delta up">🟧 Planning</div>
+    <div class="kpi-sub">Team average</div>
+  </div>
+  <div class="kpi-card gold">
+    <div class="kpi-label">后勤组织 Logistics</div>
+    <div class="kpi-value">3.6 <span style="font-size:14px;color:#7F8C8D">/ 5.0</span></div>
+    <div class="kpi-delta up">🟩 Organization</div>
+    <div class="kpi-sub">Team average</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <div class="chart-title" style="border:none;padding:0;margin-bottom:14px">
+    <span class="dot" style="background:#8E44AD"></span>
+    教练综合评估 Coach Comprehensive Assessment · Scale 1–5
+  </div>
+  <table>
+    <thead>
+      <tr><th>Coach</th><th>Role</th><th>Team</th><th>⭐ Football<br>Coaching</th><th>🟦 Professional<br>Conduct</th><th>🟧 Admin &<br>Planning</th><th>🟩 Logistics &<br>Organization</th><th>Overall</th><th>Attendance</th><th>Ratings</th><th>Status</th></tr>
+    </thead>
+    <tbody id="coachTableBody"></tbody>
+  </table>
+</div>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#8E44AD"></span>教练能力雷达 Coach Competency Radar</div>
+    <div class="chart" id="chartCoachRadar"></div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#2980B9"></span>教练对比 — 四象限能力 Coach Comparison</div>
+    <div class="chart" id="chartCoachQuadrant"></div>
+  </div>
+</div>
+
+<div class="chart-grid">
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#2d8a47"></span>评分完成率 & 出勤率</div>
+    <div class="chart" id="chartCoachAttend"></div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-title"><span class="dot" style="background:#E67E22"></span>各年龄组平均评分</div>
+    <div class="chart" id="chartGroupRating"></div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <div class="chart-title" style="border:none;padding:0;margin-bottom:14px">
+    <span class="dot" style="background:#d4a017"></span>近期球员评分 Recent Player Ratings
+  </div>
+  <table>
+    <thead><tr><th>Season</th><th>Name</th><th>Age Group</th><th>Att</th><th>Rating</th><th>PER</th><th>COM</th><th>GI</th><th>MI</th><th>Status</th></tr></thead>
+    <tbody id="playerTableBody"></tbody>
+  </table>
+</div>
+
+<div class="table-wrap">
+  <div class="chart-title" style="border:none;padding:0;margin-bottom:14px">
+    <span class="dot" style="background:#2980B9"></span>赛季留存详情 Retention by Season
+  </div>
+  <table>
+    <thead><tr><th>Season</th><th>Start</th><th>New Joins</th><th>Drop-offs</th><th>End Count</th><th>Retention</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>2023-Spring</td><td>200</td><td>89</td><td>—</td><td>289</td><td style="color:#c0392b;font-weight:700">80%</td><td><span class="tag tag-green">Baseline</span></td></tr>
+      <tr><td>2024-Spring</td><td>289</td><td>—</td><td>—</td><td>289</td><td style="color:#c0392b;font-weight:700">81%</td><td><span class="tag tag-green">Stable</span></td></tr>
+      <tr><td>2025-Spring</td><td>289</td><td>27</td><td>—</td><td>316</td><td style="color:#c0392b;font-weight:700">85%</td><td><span class="tag tag-green">● Target</span></td></tr>
+      <tr><td>2026-Spring</td><td>316</td><td>—</td><td>—</td><td>—</td><td style="color:#d4a017;font-weight:700">90% (target)</td><td><span class="tag tag-amber">In Progress</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  FCG Greenfield Academy Dashboard · Generated: 2026-06-10 · Data: 2026PHIS & Coach Dashboard
+</div>
+
+</div><!-- /dashboard-wrap -->
+
+<script>
+// ===== AUTH =====
+const ADMIN_PIN = 'admin2026';
+let FCG_DATA = null;
+let RETENTION_DATA = null;
+
+async function adminLogin() {
+  const pin = document.getElementById('adminPin').value;
+  if (pin !== ADMIN_PIN) {
+    const e = document.getElementById('loginError');
+    e.textContent = 'Incorrect PIN';
+    e.style.display = 'block';
+    setTimeout(() => { e.style.display = 'none'; }, 3000);
+    return;
+  }
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboardWrap').style.display = 'block';
+  
+  // Load live data
+  try {
+    const [fcgRes, retRes] = await Promise.all([
+      fetch('fcg-data.json'),
+      fetch('retention-data.json')
+    ]);
+    FCG_DATA = await fcgRes.json();
+    RETENTION_DATA = await retRes.json();
+  } catch(e) {
+    console.error('Failed to load data, using fallback:', e);
+  }
+  initCharts();
+}
+
+function adminLogout() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('dashboardWrap').style.display = 'none';
+  document.getElementById('adminPin').value = '';
+}
+
+// ===== ECHARTS =====
+const RED = '#c0392b', GREEN = '#2d8a47', BLUE = '#2980B9', ORANGE = '#E67E22', PURPLE = '#8E44AD', GOLD = '#d4a017';
+
+const axisStyle = {
+  axisLine: { lineStyle: { color: '#D5D8DC' } },
+  axisTick: { show: false },
+  axisLabel: { color: '#7F8C8D', fontSize: 11 },
+  splitLine: { lineStyle: { color: '#ECF0F1', type: 'dashed' } }
+};
+
+function initCharts() {
+  // === UPDATE KPIs WITH LIVE DATA ===
+  if (FCG_DATA) {
+    var activePlayers = FCG_DATA.players.filter(function(p) { return p.status === 'active'; });
+    var perVals = activePlayers.filter(function(p) { return p.PER != null; }).map(function(p) { return p.PER; });
+    var avgPer = perVals.length ? (perVals.reduce(function(a,b){return a+b;},0) / perVals.length).toFixed(1) : '—';
+    var newCount = activePlayers.filter(function(p) { return p.isNew; }).length;
+    var coachCount = (FCG_DATA.coaches || []).length;
+    
+    var kpiValues = document.querySelectorAll('.kpi-value');
+    if (kpiValues.length >= 5) {
+      kpiValues[0].innerHTML = activePlayers.length;
+      kpiValues[1].innerHTML = avgPer + ' <span style="font-size:14px;color:#7F8C8D">/ 5.0</span>';
+      if (RETENTION_DATA && RETENTION_DATA.transitions && RETENTION_DATA.transitions.length > 0) {
+        var lastTrans = RETENTION_DATA.transitions[RETENTION_DATA.transitions.length - 1];
+        kpiValues[2].innerHTML = lastTrans.filtered.pct + '%';
+      }
+      kpiValues[3].innerHTML = newCount;
+      kpiValues[4].innerHTML = coachCount;
+    }
+    var badge = document.querySelector('.header-badge b');
+    if (badge) badge.textContent = activePlayers.length;
+  }
+  
+  // === UPDATE RETENTION TABLE ===
+  if (RETENTION_DATA && RETENTION_DATA.growth) {
+    var tables = document.querySelectorAll('table');
+    for (var ti = tables.length - 1; ti >= 0; ti--) {
+      var firstTh = tables[ti].querySelector('th');
+      if (firstTh && firstTh.textContent.indexOf('Season') >= 0) {
+        var tbody = tables[ti].querySelector('tbody');
+        if (tbody) {
+          tbody.innerHTML = RETENTION_DATA.growth.map(function(g) {
+            var trans = RETENTION_DATA.transitions.find(function(t){return t.from===g.season;});
+            return '<tr><td>' + g.label + '</td>' +
+              '<td>' + (g.total - g.newJoins) + '</td>' +
+              '<td>+' + g.newJoins + '</td>' +
+              '<td>' + (g.departed > 0 ? '-' + g.departed : '—') + '</td>' +
+              '<td>' + g.total + '</td>' +
+              '<td style="font-weight:700;color:' + (g.netChange >= 0 ? '#2d8a47' : '#d4a017') + '">' + 
+              (trans ? trans.filtered.pct + '%' : '—') + '</td>' +
+              '<td><span class="tag ' + (g.netChange >= 0 ? 'tag-green' : 'tag-amber') + '">' + 
+              (g.netChange >= 0 ? 'Growing' : 'Declining') + '</span></td></tr>';
+          }).join('');
+        }
+        break;
+      }
+    }
+  }
+
+  // 1. Trend — use live data if available
+  const c1 = echarts.init(document.getElementById('chartTrend'));
+  var trendLabels = ['Spring 2023','Fall 2023','Spring 2024','Fall 2024','Spring 2025','Fall 2025','Spring 2026'];
+  var trendPlayers = [377,396,368,352,358,345,335];
+  var trendRetention = [0,0,0,0,73.2,74.0,0];
+  if (RETENTION_DATA && RETENTION_DATA.growth) {
+    var sg = RETENTION_DATA.growth;
+    trendLabels = sg.map(function(g) { return g.label; });
+    trendPlayers = sg.map(function(g) { return g.total; });
+    trendRetention = sg.map(function(g) {
+      var t = RETENTION_DATA.transitions.find(function(tr) { return tr.from === g.season; });
+      return t ? t.filtered.pct : 0;
+    });
+  }
+  c1.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['Players','Retention %'], top: 8, textStyle: { fontSize: 11 } },
+    grid: { left: 50, right: 50, top: 50, bottom: 60 },
+    xAxis: { type: 'category', data: trendLabels, ...axisStyle, axisLabel: { ...axisStyle.axisLabel, rotate: 30 } },
+    yAxis: [
+      { type: 'value', name: 'Players', ...axisStyle },
+      { type: 'value', name: '%', min: 0, max: 100, ...axisStyle }
+    ],
+    series: [
+      { name:'Players', type:'bar', data:trendPlayers, itemStyle:{ color: BLUE, borderRadius:[4,4,0,0] }, barWidth:'30%', yAxisIndex:0 },
+      { name:'Retention %', type:'line', data:trendRetention, lineStyle:{ color: GOLD, width:3 }, itemStyle:{ color: GOLD }, symbol:'circle', symbolSize:8, yAxisIndex:1, areaStyle:{ color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(212,160,23,.15)'},{offset:1,color:'rgba(212,160,23,0)'}]) }}
+    ]
+  });
+
+  // 2. Age Group
+  const c2 = echarts.init(document.getElementById('chartAgeGroup'));
+  c2.setOption({
+    tooltip: { trigger: 'axis' },
+    grid: { left: 50, right: 20, top: 40, bottom: 40 },
+    xAxis: { type:'category', data: ['U05','U06','U07','U08','U09','U10','U11','U12','U13','U15'], ...axisStyle },
+    yAxis: { type:'value', name:'Players', ...axisStyle },
+    series: [{ type:'bar', barWidth:'45%', itemStyle:{ borderRadius:[6,6,0,0] },
+      data: [8,18,42,56,62,55,48,32,25,11].map((v,i) => ({ value:v, itemStyle:{ color:['#A8E6CF','#88D8B0','#5DC8E6',BLUE,'#3D5A80',GOLD,ORANGE,PURPLE,'#d4a017','#0a3d1e'][i] }})),
+      label:{ show:true, position:'top', fontSize:11, fontWeight:600, color:'#1A1A2E' }
+    }]
+  });
+
+  // 3. Perf Line
+  const c3 = echarts.init(document.getElementById('chartPerLine'));
+  c3.setOption({
+    tooltip: { trigger:'axis' },
+    legend: { data:['PER','COM','GI','MI'], top:8, textStyle:{fontSize:11} },
+    grid: { left:45, right:20, top:50, bottom:40 },
+    xAxis: { type:'category', data:['U07','U08','U09','U10','U11','U12','U13','U15'], ...axisStyle },
+    yAxis: { type:'value', min:1.5, max:4.0, ...axisStyle },
+    series: [
+      { name:'PER', type:'line', data:[2.8,3.0,3.2,2.9,3.1,3.3,3.4,3.4], lineStyle:{color:GOLD,width:3}, itemStyle:{color:GOLD}, smooth:true, symbol:'circle', symbolSize:7 },
+      { name:'COM', type:'line', data:[2.5,2.7,3.0,2.8,3.0,3.2,3.3,3.2], lineStyle:{color:BLUE,width:3}, itemStyle:{color:BLUE}, smooth:true, symbol:'circle', symbolSize:7 },
+      { name:'GI',  type:'line', data:[2.7,2.9,3.1,2.8,3.0,3.2,3.3,3.4], lineStyle:{color:GREEN,width:3}, itemStyle:{color:GREEN}, smooth:true, symbol:'circle', symbolSize:7 },
+      { name:'MI',  type:'line', data:[2.6,2.8,3.0,2.7,3.0,3.1,3.3,3.2], lineStyle:{color:ORANGE,width:3}, itemStyle:{color:ORANGE}, smooth:true, symbol:'circle', symbolSize:7 }
+    ]
+  });
+
+  // 4. Rating Dist
+  const c4 = echarts.init(document.getElementById('chartRatingDist'));
+  c4.setOption({
+    tooltip: { trigger:'item', formatter:'{b}: {c} players ({d}%)' },
+    series: [{ type:'pie', radius:['35%','65%'], center:['50%','55%'], itemStyle:{ borderRadius:6, borderColor:'#fff', borderWidth:2 }, label:{ formatter:'{b}\n{c}', fontSize:11, fontWeight:600 },
+      data: [
+        { value:18, name:'≤2.4', itemStyle:{ color:'#FADBD8' }},
+        { value:52, name:'2.5–2.9', itemStyle:{ color:'#FDEBD0' }},
+        { value:98, name:'3.0–3.4', itemStyle:{ color:'#D5F5E3' }},
+        { value:41, name:'3.5–4.0', itemStyle:{ color: GOLD }},
+        { value:7,  name:'N/A', itemStyle:{ color:'#D5D8DC' }}
+      ]
+    }]
+  });
+
+  // 5. Attendance
+  const c5 = echarts.init(document.getElementById('chartAttendance'));
+  c5.setOption({
+    tooltip: { trigger:'axis', formatter:'{b}: {c}%' },
+    grid: { left:60, right:20, top:30, bottom:50 },
+    xAxis: { type:'category', data:['U07','U08','U09','U10','U11','U12','U13','U15'], ...axisStyle, axisLabel:{ rotate:30 } },
+    yAxis: { type:'value', min:70, max:100, ...axisStyle },
+    series: [{ type:'bar', barWidth:'40%', itemStyle:{ borderRadius:[6,6,0,0] },
+      data: [82,85,87,86,89,87,90,92].map((v,i) => ({ value:v, itemStyle:{ color:['#A8E6CF','#5DC8E6',BLUE,ORANGE,GOLD,PURPLE,GREEN,'#0a3d1e'][i] }})),
+      label:{ show:true, position:'top', formatter:'{c}%', fontSize:11, fontWeight:600 }
+    }]
+  });
+
+  // 6. Dev Stage
+  const c6 = echarts.init(document.getElementById('chartDevStage'));
+  c6.setOption({
+    tooltip: { trigger:'item', formatter:'{b}: {c} ({d}%)' },
+    legend: { orient:'vertical', right:10, top:'center', textStyle:{fontSize:11} },
+    series: [{ type:'pie', radius:['0%','60%'], center:['35%','50%'], itemStyle:{ borderRadius:4, borderColor:'#fff', borderWidth:2 }, label:{ formatter:'{b}\n{c}', fontSize:10, fontWeight:600 },
+      data: [
+        { value:85, name:'Foundation', itemStyle:{ color:'#E74C3C' }},
+        { value:72, name:'Core', itemStyle:{ color: ORANGE }},
+        { value:58, name:'Advanced', itemStyle:{ color: GOLD }},
+        { value:42, name:'Elite', itemStyle:{ color: GREEN }},
+        { value:30, name:'Pro-Ready', itemStyle:{ color: BLUE }}
+      ]
+    }]
+  });
+
+  // 7. Win Rate
+  const c7 = echarts.init(document.getElementById('chartWinRate'));
+  c7.setOption({
+    tooltip: { trigger:'axis' },
+    grid: { left:45, right:20, top:30, bottom:40 },
+    xAxis: { type:'category', data:['U09','U10','U11','U12','U13','U15'], ...axisStyle },
+    yAxis: { type:'value', min:0, max:100, ...axisStyle },
+    series: [{ type:'bar', barWidth:'35%', itemStyle:{ borderRadius:[6,6,0,0] },
+      data: [55,62,68,58,72,75].map((v,i) => ({ value:v, itemStyle:{ color:['#D6EAF8',BLUE,GOLD,ORANGE,GREEN,'#0a3d1e'][i] }})),
+      label:{ show:true, position:'top', formatter:'{c}%', fontSize:11, fontWeight:600 },
+      markLine: { data:[{ yAxis:62, name:'Academy Avg' }], lineStyle:{ color: GOLD, type:'dashed', width:2 }, label:{ formatter:'Avg {c}%', color: GOLD, fontSize:11 } }
+    }]
+  });
+
+  // Coach data & table — use live data if available
+  var coaches = [
+    { name:'Jordi', role:'Head Coach', team:'U15', fc:3.0, pc:2.8, ad:2.7, lo:2.6, att:90, rat:85, evaluated:true },
+    { name:'Roger', role:'Head Coach', team:'U07', fc:4.0, pc:2.0, ad:5.0, lo:5.0, att:75, rat:80, evaluated:true },
+    { name:'Mia', role:'Head Coach', team:'U11', fc:4.0, pc:2.0, ad:5.0, lo:5.0, att:88, rat:82, evaluated:true },
+    { name:'Diego', role:'Head Coach', team:'U11', fc:3.2, pc:3.3, ad:2.5, lo:3.0, att:87, rat:80, evaluated:true },
+  ];
+  if (FCG_DATA && FCG_DATA.coaches) {
+    coaches = FCG_DATA.coaches.map(function(c) {
+      return {
+        name: c.name, role: 'Head Coach',
+        team: (c.teams || []).join(', '),
+        fc: 0, pc: 0, ad: 0, lo: 0, att: 0, rat: 0, evaluated: false
+      };
+    });
+  }
+
+  const ctb = document.getElementById('coachTableBody');
+  coaches.forEach(c => {
+    const evaluated = c.evaluated === true;
+    const ovr = evaluated ? ((c.fc + c.pc + c.ad + c.lo) / 4).toFixed(1) : '—';
+    let stTag, stText;
+    if(!evaluated) { stTag='tag-amber'; stText='Pending eval'; }
+    else if(ovr < 3.3) { stTag='tag-red'; stText='▼ Monitor'; }
+    else if(ovr < 3.7) { stTag='tag-amber'; stText='▲ Average'; }
+    else { stTag='tag-green'; stText='● Good'; }
+    const val = (v) => evaluated ? v.toFixed(1) : '—';
+    const cColor = (v) => !evaluated ? '#BDC3C7' : (v>=4?GOLD:v>=3.5?BLUE:GREEN);
+    ctb.innerHTML += `<tr>
+      <td><b>${c.name}</b>${evaluated ? ' ✓' : ''}</td><td>${c.role}</td><td>${c.team}</td>
+      <td style="font-weight:700;color:${cColor(c.fc)}">${val(c.fc)}</td>
+      <td style="font-weight:700;color:${cColor(c.pc)}">${val(c.pc)}</td>
+      <td style="font-weight:700;color:${cColor(c.ad)}">${val(c.ad)}</td>
+      <td style="font-weight:700;color:${cColor(c.lo)}">${val(c.lo)}</td>
+      <td style="font-weight:800;font-size:14px;color:${!evaluated?'#BDC3C7':(ovr>=4?GOLD:ovr>=3.5?BLUE:GREEN)}">${ovr}</td>
+      <td>${evaluated?c.att+'%':'—'}</td><td>${evaluated?c.rat+'%':'—'}</td>
+      <td><span class="tag ${stTag}">${stText}</span></td></tr>`;
+  });
+
+  // 8. Coach Radar
+  const c8 = echarts.init(document.getElementById('chartCoachRadar'));
+  const evalC = coaches.filter(c => c.evaluated === true);
+  if (evalC.length === 0) {
+    // No evaluation data — show placeholder
+    document.getElementById('chartCoachRadar').innerHTML = '<div style="text-align:center;padding:120px 20px;color:#999;font-size:14px;">No coach evaluation data available</div>';
+    document.getElementById('chartCoachQuadrant').innerHTML = '<div style="text-align:center;padding:120px 20px;color:#999;font-size:14px;">No coach evaluation data available</div>';
+    document.getElementById('chartCoachAttend').innerHTML = '<div style="text-align:center;padding:120px 20px;color:#999;font-size:14px;">No coach evaluation data available</div>';
+  } else {
+  const avgFC = evalC.reduce((s,c)=>s+c.fc,0)/evalC.length;
+  const avgPC = evalC.reduce((s,c)=>s+c.pc,0)/evalC.length;
+  const avgAD = evalC.reduce((s,c)=>s+c.ad,0)/evalC.length;
+  const avgLO = evalC.reduce((s,c)=>s+c.lo,0)/evalC.length;
+  c8.setOption({
+    tooltip: {},
+    legend: { data:['Team Average','Target'], bottom:0, textStyle:{fontSize:11} },
+    radar: {
+      indicator: [
+        { name:'⭐ Football Coaching', max:5 },
+        { name:'🟦 Professional\nConduct', max:5 },
+        { name:'🟧 Admin &\nPlanning', max:5 },
+        { name:'🟩 Logistics &\nOrganization', max:5 }
+      ],
+      shape:'polygon', splitNumber:5, center:['50%','55%'], radius:'65%',
+      axisName:{ color:'#1A1A2E', fontSize:11, fontWeight:600 },
+      splitArea:{ areaStyle:{ color:['#fff','#F8F9FD'] } },
+      splitLine:{ lineStyle:{ color:'#D5D8DC' } },
+      axisLine:{ lineStyle:{ color:'#D5D8DC' } }
+    },
+    series: [{
+      type:'radar',
+      data: [
+        { value:[+avgFC.toFixed(1), +avgPC.toFixed(1), +avgAD.toFixed(1), +avgLO.toFixed(1)], name:'Team Average',
+          lineStyle:{ color: BLUE, width:3 }, itemStyle:{ color: BLUE },
+          areaStyle:{ color: new echarts.graphic.LinearGradient(0,0,0,1,[{offset:0,color:'rgba(41,128,185,.25)'},{offset:1,color:'rgba(41,128,185,0)'}]) }},
+        { value:[4.5, 4.5, 4.5, 4.5], name:'Target',
+          lineStyle:{ color:'#D5D8DC', width:2, type:'dashed' }, itemStyle:{ color:'#D5D8DC' }, areaStyle:{ color:'rgba(213,216,220,.1)' }}
+      ]
+    }]
+  });
+
+  // 10. Coach Quadrant
+  const c10 = echarts.init(document.getElementById('chartCoachQuadrant'));
+  c10.setOption({
+    tooltip: { trigger:'axis' },
+    legend: { data:['⭐ Coaching','🟦 Professional','🟧 Admin','🟩 Logistics'], top:8, textStyle:{fontSize:10} },
+    grid: { left:55, right:25, top:55, bottom:50 },
+    xAxis: { type:'category', data:evalC.map(c=>c.name), ...axisStyle, axisLabel:{ rotate:35, fontSize:10 } },
+    yAxis: { type:'value', min:1, max:5.5, ...axisStyle },
+    series: [
+      { name:'⭐ Coaching', type:'bar', data:evalC.map(c=>c.fc), itemStyle:{ color: GOLD, borderRadius:[4,4,0,0] }, barWidth:'14%', barGap:'5%' },
+      { name:'🟦 Professional', type:'bar', data:evalC.map(c=>c.pc), itemStyle:{ color: BLUE, borderRadius:[4,4,0,0] }, barWidth:'14%' },
+      { name:'🟧 Admin', type:'bar', data:evalC.map(c=>c.ad), itemStyle:{ color: ORANGE, borderRadius:[4,4,0,0] }, barWidth:'14%' },
+      { name:'🟩 Logistics', type:'bar', data:evalC.map(c=>c.lo), itemStyle:{ color: GREEN, borderRadius:[4,4,0,0] }, barWidth:'14%' }
+    ]
+  });
+
+  // 11. Coach Attend
+  const c11 = echarts.init(document.getElementById('chartCoachAttend'));
+  c11.setOption({
+    tooltip: { trigger:'axis' },
+    legend: { data:['Attendance %','Ratings %'], top:8, textStyle:{fontSize:11} },
+    grid: { left:55, right:25, top:55, bottom:50 },
+    xAxis: { type:'category', data:evalC.map(c=>c.name), ...axisStyle, axisLabel:{ rotate:35, fontSize:10 } },
+    yAxis: { type:'value', min:50, max:100, ...axisStyle },
+    series: [
+      { name:'Attendance %', type:'bar', data:evalC.map(c=>c.att), itemStyle:{ color: BLUE, borderRadius:[4,4,0,0] }, barWidth:'30%', barGap:'10%', label:{ show:true, position:'top', fontSize:10, formatter:'{c}%' } },
+      { name:'Ratings %', type:'bar', data:evalC.map(c=>c.rat), itemStyle:{ color: ORANGE, borderRadius:[4,4,0,0] }, barWidth:'30%', label:{ show:true, position:'top', fontSize:10, formatter:'{c}%' } }
+    ]
+  });
+  } // end else (coach eval data available)
+
+  // 9. Group Rating
+  const c9 = echarts.init(document.getElementById('chartGroupRating'));
+  c9.setOption({
+    tooltip: { trigger:'axis' },
+    grid: { left:55, right:25, top:30, bottom:50 },
+    xAxis: { type:'category', data:['U07','U08','U09','U10','U11','U12','U13','U15'], ...axisStyle, axisLabel:{ rotate:30 } },
+    yAxis: { type:'value', min:1.5, max:4.0, ...axisStyle },
+    series: [{ type:'bar', barWidth:'40%', itemStyle:{ borderRadius:[6,6,0,0] },
+      data: [2.8,3.0,3.2,2.9,3.1,3.3,3.4,3.4].map((v,i) => ({ value:v, itemStyle:{ color:['#A8E6CF','#5DC8E6',BLUE,ORANGE,GOLD,PURPLE,GREEN,'#0a3d1e'][i] }})),
+      label:{ show:true, position:'top', formatter:'{c}', fontSize:11, fontWeight:600 }
+    }]
+  });
+
+  // Player table — use live data if available
+  var players = [
+    ['2026-S','Nemo 郭辰','U09','84','2.8','2.3','3.0','3.0','3.0','tag-green','Good'],
+    ['2026-S','Matt 杨臻泓','U10','82','3.6','3.3','4.0','3.3','3.6','tag-green','Excellent'],
+    ['2026-S','Rain 何雨泽','U10','91','3.6','3.6','4.0','3.6','4.0','tag-green','MVP'],
+  ];
+  if (FCG_DATA) {
+    players = FCG_DATA.players
+      .filter(function(p) { return p.status === 'active' && p.PER != null; })
+      .sort(function(a,b) { return (b.PER||0) - (a.PER||0); })
+      .slice(0, 15)
+      .map(function(p) {
+        var ds = p.devSummary || {};
+        var per = p.PER ? p.PER.toFixed(1) : '—';
+        var com = ds.communication ? ds.communication.toFixed(1) : '—';
+        var gi = ds.gameInsight ? ds.gameInsight.toFixed(1) : '—';
+        var mi = ds.mindset ? ds.mindset.toFixed(1) : '—';
+        var att = p.cycleAvgShowup ? p.cycleAvgShowup.toFixed(0) : '—';
+        var status = p.PER >= 3.5 ? 'Excellent' : p.PER >= 3.0 ? 'Good' : p.PER >= 2.5 ? 'Avg' : 'Needs work';
+        return ['2026-S', (p.english + ' ' + (p.chinese||'')).trim(), p.team||'—', att, per, per, com, gi, mi, 
+                p.PER >= 3.3 ? 'tag-green' : p.PER >= 2.7 ? 'tag-amber' : 'tag-red', status];
+      });
+  }
+  var playerTbody = document.getElementById('playerTableBody');
+  playerTbody.innerHTML = '';
+  players.forEach(p => {
+    const rating = parseFloat(p[4]);
+    playerTbody.innerHTML += `<tr>
+      <td>${p[0]}</td><td><b>${p[1]}</b></td><td>${p[2]}</td><td>${p[3]}</td>
+      <td style="font-weight:700;color:${rating>=3.3?GOLD:GREEN}">${p[4]}</td>
+      <td>${p[5]}</td><td>${p[6]}</td><td>${p[7]}</td><td>${p[8]}</td>
+      <td><span class="tag ${p[9]}">${p[10]}</span></td></tr>`;
+  });
+
+  window.addEventListener('resize', () => {
+    [c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11].forEach(c => { try { c.resize(); } catch(e) {} });
+  });
+}
+</script>
+</body>
+</html>

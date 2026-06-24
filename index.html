@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FC Greenfield — Building Champions</title>
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f5f3ef;
+  color: #1a1a1a;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ========== NAVBAR ========== */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: #0a3d1e;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 58px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
+}
+.nav-left {
+  display: flex; align-items: center; gap: 12px;
+}
+.nav-logo {
+  width: 32px; height: 32px; object-fit: contain;
+}
+.nav-brand {
+  color: #fff; font-weight: 800; font-size: 1rem; letter-spacing: -.3px;
+}
+.nav-links {
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-link {
+  color: rgba(255,255,255,.75); text-decoration: none;
+  font-size: .88rem; font-weight: 600;
+  padding: 8px 14px; border-radius: 8px;
+  transition: all .2s ease;
+}
+.nav-link:hover, .nav-link.active {
+  color: #fff; background: rgba(255,255,255,.1);
+}
+.nav-link.gold {
+  background: #d4a017; color: #0a3d1e;
+}
+.nav-link.gold:hover {
+  background: #e8b826;
+}
+.nav-toggle {
+  display: none; background: none; border: none;
+  color: #fff; font-size: 1.5rem; cursor: pointer;
+  padding: 4px;
+}
+
+/* ========== HERO SECTION ========== */
+.hero {
+  background: #0a3d1e;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 100px 20px 50px;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(212,160,23,.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(255,255,255,.03) 0%, transparent 50%);
+}
+.hero > * { position: relative; z-index: 1; }
+
+.hero-logo {
+  width: 140px; height: 140px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 20px rgba(0,0,0,.3));
+  margin-bottom: 16px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: #d4a017;
+  color: #0a3d1e;
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 10px 28px;
+  border-radius: 30px;
+  margin-bottom: 36px;
+}
+
+.hero-title-white {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 0;
+}
+.hero-title-gold {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 800;
+  color: #d4a017;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-top: 4px;
+  margin-bottom: 24px;
+}
+
+.hero-desc {
+  max-width: 600px;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,.75);
+  line-height: 1.7;
+  margin-bottom: 44px;
+  padding: 0 16px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #d4a017;
+  color: #0a3d1e;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all .25s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #e8b826;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212,160,23,.35);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 2px solid rgba(255,255,255,.3);
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.btn-outline:hover {
+  border-color: rgba(255,255,255,.65);
+  background: rgba(255,255,255,.06);
+  transform: translateY(-2px);
+}
+
+/* ========== STATS SECTION ========== */
+.stats-section {
+  padding: 48px 20px 56px;
+  background: #f5f3ef;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.05);
+  text-align: left;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,.08);
+}
+.stat-label {
+  font-size: .85rem;
+  color: #777;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0a3d1e;
+  line-height: 1.15;
+}
+.stat-value .unit {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #999;
+  margin-left: 2px;
+}
+
+/* ========== PILLARS SECTION ========== */
+.pillars-section {
+  padding: 64px 20px 72px;
+  background: #f5f3ef;
+}
+.section-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+.section-title {
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  font-weight: 800;
+  color: #0a3d1e;
+  margin-bottom: 10px;
+}
+.section-subtitle {
+  font-size: 1.02rem;
+  color: #666;
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+.pillar-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 36px 30px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.05);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.pillar-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0,0,0,.1);
+}
+.pillar-icon-wrap {
+  width: 54px; height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 26px;
+}
+.pillar-icon-wrap.retain { background: #eef6ee; }
+.pillar-icon-wrap.perfdev { background: #fef8ed; }
+.pillar-icon-wrap.wininsp { background: #fdeef2; }
+
+.pillar-name {
+  font-size: 1.22rem;
+  font-weight: 800;
+  color: #0a3d1e;
+  margin-bottom: 10px;
+}
+.pillar-desc {
+  font-size: .92rem;
+  color: #666;
+  line-height: 1.65;
+}
+
+/* ========== ABOUT / CLUB SECTION ========== */
+.club-section {
+  padding: 64px 20px 72px;
+  background: #f5f3ef;
+}
+.about-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  max-width: 960px;
+  margin: 0 auto 60px;
+}
+.about-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 36px 32px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.05);
+}
+.about-card-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0a3d1e;
+  margin-bottom: 12px;
+}
+.about-card-text {
+  font-size: .95rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+/* Age Groups Grid */
+.age-groups-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+.age-group-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.05);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.age-group-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+.ag-header {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
+}
+.ag-coach-photo {
+  width: 40px; height: 40px; border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d4a017;
+  flex-shrink: 0;
+}
+.ag-name {
+  font-size: 1.2rem; font-weight: 800; color: #d4a017;
+}
+.ag-dates {
+  font-size: .72rem; color: #aaa; margin-bottom: 4px; font-family: monospace;
+}
+.ag-coach {
+  font-size: .82rem; color: #555; font-weight: 600;
+}
+
+/* ========== HOW WE TRAIN ========== */
+.how-we-train {
+  padding: 64px 20px 72px;
+  background: #f5f3ef;
+}
+.hwt-intro {
+  max-width: 860px;
+  margin: 0 auto 44px;
+  padding: 24px 28px;
+  background: #fff;
+  border-radius: 14px;
+  border-left: 4px solid #d4a017;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+.hwt-intro p {
+  font-size: .95rem; color: #555; line-height: 1.7;
+}
+.hwt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.hwt-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 22px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.05);
+  border-top: 3px solid #d4a017;
+  transition: transform .2s ease, box-shadow .2s ease;
+  position: relative;
+}
+.hwt-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+.hwt-num {
+  position: absolute;
+  top: -12px; left: 20px;
+  width: 26px; height: 26px;
+  background: #d4a017;
+  color: #0a3d1e;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .82rem;
+  font-weight: 800;
+}
+.hwt-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0a3d1e;
+  margin-bottom: 10px;
+  margin-top: 6px;
+}
+.hwt-desc {
+  font-size: .86rem;
+  color: #666;
+  line-height: 1.65;
+}
+
+/* ========== SCHEDULE SECTION ========== */
+.schedule-section {
+  padding: 64px 20px 72px;
+  background: #f5f3ef;
+}
+.schedule-color-group {
+  max-width: 1100px;
+  margin: 0 auto 36px;
+}
+.schedule-color-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.schedule-color-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.schedule-color-dot.green { background: #2d8a47; }
+.schedule-color-dot.white { background: #f0f0f0; border: 2px solid #ccc; }
+.schedule-color-dot.blue { background: #2a6db5; }
+.schedule-color-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0a3d1e;
+}
+.schedule-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: .88rem;
+}
+.schedule-table th {
+  background: #0a3d1e;
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 10px;
+  text-align: center;
+  font-size: .82rem;
+  letter-spacing: .3px;
+  white-space: nowrap;
+}
+.schedule-table th:first-child {
+  text-align: left;
+  padding-left: 16px;
+  min-width: 90px;
+}
+.schedule-table td {
+  padding: 10px 8px;
+  text-align: center;
+  border-bottom: 1px solid #f0ede8;
+  color: #444;
+  font-size: .82rem;
+  line-height: 1.5;
+  vertical-align: top;
+}
+.schedule-table td:first-child {
+  text-align: left;
+  padding-left: 16px;
+  font-weight: 700;
+  color: #0a3d1e;
+  white-space: nowrap;
+}
+.schedule-table tr:last-child td {
+  border-bottom: none;
+}
+.schedule-table tr:hover td {
+  background: #fafaf7;
+}
+.sch-slot {
+  display: inline-block;
+  background: #f0f7f1;
+  color: #2d6a3f;
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: .78rem;
+  font-weight: 600;
+  margin: 1px 0;
+  white-space: nowrap;
+}
+.sch-slot.match {
+  background: #fef8ed;
+  color: #b8860b;
+}
+.sch-slot.venue-jx {
+  background: #eef3fa;
+  color: #2a5a8a;
+}
+.sch-venue {
+  font-size: .68rem;
+  color: #999;
+  display: block;
+}
+
+/* ========== COACHES SECTION ========== */
+.coaches-section {
+  padding: 64px 20px 80px;
+  background: #f5f3ef;
+}
+.coaches-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+.coach-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+  border: 1px solid rgba(0,0,0,.05);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.coach-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+.coach-avatar {
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 3px solid #d4a017;
+}
+.coach-info { flex: 1; min-width: 0; }
+.coach-name {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: #0a3d1e;
+  margin-bottom: 3px;
+}
+.coach-teams {
+  font-size: .82rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+  background: #0a3d1e;
+  color: rgba(255,255,255,.45);
+  text-align: center;
+  padding: 32px 20px;
+  font-size: .85rem;
+}
+.footer a { color: #d4a017; text-decoration: none; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1024px) {
+  .age-groups-grid { grid-template-columns: repeat(5, 1fr); }
+}
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .pillars-grid { grid-template-columns: 1fr; max-width: 480px; }
+  .about-cards { grid-template-columns: 1fr; max-width: 480px; }
+  .coaches-grid { grid-template-columns: repeat(2, 1fr); }
+  .age-groups-grid { grid-template-columns: repeat(5, 1fr); }
+  .hwt-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-links { display: none; }
+  .nav-links.open { display: flex; flex-direction: column;
+    position: absolute; top: 58px; left: 0; right: 0;
+    background: #0a3d1e; padding: 12px 16px; gap: 2px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+  .nav-toggle { display: block; }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { padding: 20px 16px; }
+  .stat-value { font-size: 1.55rem; }
+  .coaches-grid { grid-template-columns: 1fr; max-width: 340px; }
+  .coach-card { padding: 14px 18px; }
+  .coach-avatar { width: 58px; height: 58px; }
+  .age-groups-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-buttons { flex-direction: column; width: 100%; max-width: 300px; }
+  .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+  .schedule-table { font-size: .76rem; }
+  .schedule-table th, .schedule-table td { padding: 8px 5px; }
+  .hwt-grid { grid-template-columns: 1fr; max-width: 380px; }
+}
+</style>
+<script src="https://beacon.cdn.qq.com/sdk/4.5.9/beacon_web.min.js"></script>
+<script>
+(function(){
+  try{
+    var beacon=new BeaconAction({
+      appkey:'0WEB06U85YBSLJNL',
+      versionCode:'1.0.0',
+      channelID:'share',
+      delay:1000,
+      sessionDuration:30*60*1000,
+      isOversea:false,
+      needReportRqdEvent:false
+    });
+    beacon.onDirectUserAction('preview_page_view',{
+      'url':location.href,
+      'referrer':document.referrer,
+      'title':document.title,
+      'sandbox_id':'f6572f6494f3437c99a315f6c521b400'
+    });
+  }catch(e){}
+})();
+</script></head>
+<body>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="fcg-logo.png" alt="FCG" class="nav-logo" onerror="this.style.display='none'">
+    <span class="nav-brand">FCG Greenfield</span>
+  </div>
+  <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+  <div class="nav-links" id="navLinks">
+    <a href="#top" class="nav-link active" onclick="closeNav()">Home</a>
+    <a href="#about" class="nav-link" onclick="closeNav()">Club</a>
+    <a href="#schedule" class="nav-link" onclick="closeNav()">Schedule</a>
+    <a href="#coaches" class="nav-link" onclick="closeNav()">Coaches</a>
+    <a href="player-portal.html" class="nav-link gold">Player Portal</a>
+    <a href="fcg-portal/" class="nav-link">Coach</a>
+    <a href="admin-login.html" class="nav-link">Admin</a>
+  </div>
+</nav>
+
+<script>function closeNav(){ document.getElementById('navLinks').classList.remove('open'); }</script>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="top">
+  <img src="fcg-logo.png" alt="FC Greenfield Logo" class="hero-logo" onerror="this.style.display='none'">
+  <div class="hero-badge">Shenzhen &middot; Established 26-08-2014</div>
+  <h1 class="hero-title-white">Building Champions,</h1>
+  <h1 class="hero-title-gold">On and Off the Pitch</h1>
+  <p class="hero-desc">Football Club Shenzhen Greenfield — developing the next generation of elite Chinese football talent through world-class methodology and individualized player pathways.</p>
+  <div class="hero-buttons">
+    <a href="#about" class="btn-primary">About FCG</a>
+    <a href="#coaches" class="btn-outline">Our Coaches</a>
+    <a href="player-portal.html" class="btn-outline" style="border-color:#d4a017;color:#d4a017;">Player Portal →</a>
+  </div>
+</section>
+
+<!-- ==================== STATS ROW ==================== -->
+<section class="stats-section" id="stats">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Players</div>
+      <div class="stat-value" id="statPlayers">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Teams</div>
+      <div class="stat-value" id="statTeams">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg PER</div>
+      <div class="stat-value"><span id="statPER">—</span><span class="unit">/5</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg Attendance</div>
+      <div class="stat-value" id="statAtt">—</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== THREE PILLARS ==================== -->
+<section class="pillars-section" id="pillars">
+  <div class="section-header">
+    <h2 class="section-title">Three Pillars of Excellence</h2>
+    <p class="section-subtitle">Our holistic approach to player development — measured, tracked, and continuously improved.</p>
+  </div>
+  <div class="pillars-grid">
+    <!-- Retention -->
+    <div class="pillar-card">
+      <div class="pillar-icon-wrap retain">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2d8a47" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8" rx=".5"/><rect x="12" y="6" width="3" height="12" rx=".5"/><rect x="17" y="13" width="3" height="5" rx=".5"/></svg>
+      </div>
+      <h3 class="pillar-name">Retention</h3>
+      <p class="pillar-desc">Keeping talented players engaged and committed to the FCG pathway through meaningful development and recognition.</p>
+    </div>
+    <!-- Performance & Development combined -->
+    <div class="pillar-card">
+      <div class="pillar-icon-wrap perfdev">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c97b00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </div>
+      <h3 class="pillar-name">Performance &amp; Development</h3>
+      <p class="pillar-desc">Tracking technical, tactical, physical, and mental metrics to continuously raise the standard of play — structured pathways from grassroots to elite, guided by individualized progression plans.</p>
+    </div>
+    <!-- Win & Inspire combined -->
+    <div class="pillar-card">
+      <div class="pillar-icon-wrap wininsp">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d44a7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      </div>
+      <h3 class="pillar-name">Win &amp; Inspire</h3>
+      <p class="pillar-desc">Competitive results that validate our methodology and inspire confidence at every level — creating moments and mentors that ignite passion and lifelong love for the beautiful game.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ABOUT FCG / CLUB ==================== -->
+<section class="club-section" id="about">
+  <div class="section-header">
+    <h2 class="section-title">About FCG</h2>
+  </div>
+
+  <!-- Mission + Pathway cards -->
+  <div class="about-cards">
+    <div class="about-card">
+      <h3 class="about-card-title">Our Mission</h3>
+      <p class="about-card-text">To provide a world-class football education that develops skilled, confident, disciplined young people prepared for success in sport and life.</p>
+    </div>
+    <div class="about-card">
+      <h3 class="about-card-title">Development Pathway</h3>
+      <p class="about-card-text">From U5 to U15, our structured pathway ensures every player develops at the right pace with age-appropriate coaching and competition.</p>
+    </div>
+  </div>
+
+  <!-- Age Groups with coach photos -->
+  <h3 style="font-size:1.35rem;font-weight:800;color:#0a3d1e;margin-bottom:24px;padding:0 20px;max-width:1060px;margin-left:auto;margin-right:auto;">Age Groups</h3>
+  <div class="age-groups-grid" id="ageGroupsGrid">
+    <!-- Loaded dynamically from data -->
+  </div>
+</section>
+
+<!-- ==================== HOW WE TRAIN ==================== -->
+<section class="how-we-train" id="howwetrain">
+  <div class="section-header">
+    <h2 class="section-title">How We Train</h2>
+  </div>
+  <div class="hwt-intro">
+    <p>FCG follows a structured, long-term development method. We do not train random drills. Each session has a clear football problem, a small number of focus points, and exercises that move from simple repetition to realistic pressure.</p>
+  </div>
+  <div class="hwt-grid">
+    <div class="hwt-card">
+      <div class="hwt-num">1</div>
+      <h3 class="hwt-title">Clear Weekly Topics</h3>
+      <p class="hwt-desc">Every week has a football theme, so players and coaches know the main learning objective. Players work through attacking and defending topics such as building up, attacking the wings, scoring from crosses, pressing, defending wide areas, and protecting the goal.</p>
+    </div>
+    <div class="hwt-card">
+      <div class="hwt-num">2</div>
+      <h3 class="hwt-title">Focus Points</h3>
+      <p class="hwt-desc">Coaches use a small number of focus points per session so players know exactly what to improve: body position, first touch, receiving angle, timing, communication, reaction, or finishing technique.</p>
+    </div>
+    <div class="hwt-card">
+      <div class="hwt-num">3</div>
+      <h3 class="hwt-title">Game-Realistic Training</h3>
+      <p class="hwt-desc">Exercises start simple, then add pressure, opponents, direction, transition, and match speed. The goal is not only to perform an action, but to use it at the right moment in a real game.</p>
+    </div>
+    <div class="hwt-card">
+      <div class="hwt-num">4</div>
+      <h3 class="hwt-title">Positive Coaching</h3>
+      <p class="hwt-desc">We want players to enjoy football, work hard, be brave, and learn from mistakes. Confidence and motivation are part of development. Players are tracked across technical, tactical, physical, communication, and mindset areas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCHEDULE ==================== -->
+<section class="schedule-section" id="schedule">
+  <div class="section-header">
+    <h2 class="section-title">Training Schedule</h2>
+    <p class="section-subtitle">Weekly training times — Green teams, White teams, then Blue teams.</p>
+  </div>
+  <div id="scheduleContainer">
+    <!-- Loaded dynamically -->
+  </div>
+</section>
+
+<!-- ==================== COACHES ==================== -->
+<section class="coaches-section" id="coaches">
+  <div class="section-header">
+    <h2 class="section-title">Our Coaches</h2>
+  </div>
+  <div class="coaches-grid" id="coachesGrid">
+    <!-- Coaches loaded dynamically -->
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+  <div style="margin-bottom:12px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+    <a href="player-portal.html" style="color:#0a3d1e;text-decoration:none;font-weight:600;">Player Portal</a>
+    <a href="fcg-portal/" style="color:#0a3d1e;text-decoration:none;font-weight:600;">Coach Login</a>
+    <a href="admin-login.html" style="color:#0a3d1e;text-decoration:none;font-weight:600;">Admin Dashboard</a>
+  </div>
+  &copy; 2014–2026 Football Club Shenzhen Greenfield. All rights reserved.
+</footer>
+
+<script>
+// ============ LOAD DATA ============
+const FCG = {};
+async function loadData() {
+  try {
+    const resp = await fetch('fcg-data.json');
+    if (!resp.ok) throw new Error('fetch failed');
+    FCG.data = await resp.json();
+    renderPage();
+  } catch(e) {
+    console.warn('Data not loading via HTTP, showing static fallback');
+    renderFallback();
+  }
+}
+
+// Build coach lookup that handles U09 vs U9 naming mismatch
+function buildCoachMap(coaches) {
+  const map = {};
+  for (const c of coaches) {
+    for (const t of c.teams || []) {
+      // Store both original name and normalized (remove leading zero)
+      map[t] = { name: c.name, photo: c.photo || '' };
+      map[t.replace(/-(\d)(?=-)/g, '-$1')] = { name: c.name, photo: c.photo || '' };
+    }
+  }
+  return map;
+}
+
+function renderPage() {
+  const players = FCG.data.players || [];
+  const teams = FCG.data.teams || [];
+  const coaches = FCG.data.coaches || [];
+  const schedule = FCG.data.schedule || [];
+
+  // --- Stats ---
+  const perVals = players.filter(p => p.PER != null).map(p => p.PER);
+  const attVals = players.filter(p => p.cycleAvgShowup != null && p.team !== 'U15-G' && p.team !== 'U05-W').map(p => p.cycleAvgShowup);
+
+  document.getElementById('statPlayers').textContent = players.length;
+  document.getElementById('statTeams').textContent = teams.filter(t => t.name !== 'X').length;
+  document.getElementById('statPER').textContent = perVals.length ? (perVals.reduce((a,b)=>a+b,0)/perVals.length).toFixed(1) : '\u2014';
+  document.getElementById('statAtt').textContent = attVals.length ? (attVals.reduce((a,b)=>a+b,0)/attVals.length).toFixed(1) : '\u2014';
+
+  const coachMap = buildCoachMap(coaches);
+
+  // --- Age Groups ---
+  renderAgeGroups(teams, coachMap);
+
+  // --- Schedule ---
+  renderSchedule(schedule);
+
+  // --- Coaches ---
+  renderCoaches(coaches);
+}
+
+// Age group birth date ranges
+const AGE_DATES = {
+  'U4':  '2021.09.01 \u2014 2022.12.31',
+  'U5':  '2020.09.01 \u2014 2021.12.31',
+  'U6':  '2019.09.01 \u2014 2020.12.31',
+  'U7':  '2018.09.01 \u2014 2019.12.31',
+  'U8':  '2017.09.01 \u2014 2018.12.31',
+  'U9':  '2016.09.01 \u2014 2017.12.31',
+  'U10': '2015.09.01 \u2014 2016.12.31',
+  'U11': '2014.09.01 \u2014 2015.12.31',
+  'U12': '2013.09.01 \u2014 2014.12.31',
+  'U15': '2010.09.01 \u2014 2012.12.31'
+};
+
+// Primary coach per age group (for photo display)
+const AGE_COACHES = {
+  'U4':  { name: 'Easy', photo: 'Easy.jpg' },
+  'U5':  { name: 'Mia', photo: 'Mia.jpg' },
+  'U6':  { name: 'Mia', photo: 'Mia.jpg' },
+  'U7':  { name: 'Lance', photo: 'Lance.jpg' },
+  'U8':  { name: 'Roger', photo: 'Roger.jpg' },
+  'U9':  { name: 'Johan', photo: 'Johan.jpg' },
+  'U10': { name: 'Nikola', photo: 'Nikola.jpg' },
+  'U11': { name: 'Tigran', photo: 'Tigran.jpg' },
+  'U12': { name: 'Rash', photo: 'Rash.jpg' },
+  'U15': { name: 'Relax', photo: 'Relax.jpg' }
+};
+
+// Day order for schedule
+const DAYS = ['MON','TUE','WED','THU','FRI','SAT','SUN'];
+
+function renderAgeGroups(teams, coachMap) {
+  // Group by age group prefix (U4, U5, U6, ...U15)
+  const groups = {};
+  ['U4','U5','U6','U7','U8','U9','U10','U11','U12','U15'].forEach(k => { groups[k] = []; });
+  teams.filter(t => t.name !== 'X' && /^U\d+/.test(t.name)).forEach(t => {
+    const ag = 'U' + t.name.match(/^U(\d+)/)[1];
+    groups[ag].push(t);
+  });
+
+  const grid = document.getElementById('ageGroupsGrid');
+  let html = '';
+  Object.keys(groups).sort((a,b) => parseInt(a.slice(1)) - parseInt(b.slice(1))).forEach(ag => {
+    const ac = AGE_COACHES[ag];
+    html += `
+    <div class="age-group-card">
+      <div class="ag-header">
+        ${ac && ac.photo ? `<img src="${ac.photo}" class="ag-coach-photo" onerror="this.style.display='none'">` : ''}
+        <span class="ag-name">${ag}</span>
+      </div>
+      <div class="ag-dates">${AGE_DATES[ag] || ''}</div>
+      ${ac ? `<div class="ag-coach">Coach: ${ac.name}</div>` : '<div class="ag-coach" style="color:#bbb">Coming soon</div>'}
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function renderTeamsList(teams, coachMap) {
+  const validTeams = teams.filter(t => t.name !== 'X');
+  // Build full team-to-coach map including all teams
+  const fullCoachMap = {
+    'U15-G': { name:'Relax', photo:'Relax.jpg' },
+    'U12-G': { name:'Rash', photo:'Rash.jpg' },
+    'U12-W': { name:'Relax', photo:'Relax.jpg' },
+    'U11-G': { name:'Tigran', photo:'Tigran.jpg' },
+    'U11-W': { name:'Lance', photo:'Lance.jpg' },
+    'U10-G': { name:'Nikola', photo:'Nikola.jpg' },
+    'U10-W': { name:'Rico', photo:'Rico.jpg' },
+    'U09-G': { name:'Johan', photo:'Johan.jpg' },
+    'U09-W': { name:'Tigran', photo:'Tigran.jpg' },
+    'U09-B': { name:'Relax', photo:'Relax.jpg' },
+    'U08-G': { name:'Roger', photo:'Roger.jpg' },
+    'U08-W': { name:'Lance', photo:'Lance.jpg' },
+    'U08-B': { name:'Mia', photo:'Mia.jpg' },
+    'U07-G': { name:'Lance', photo:'Lance.jpg' },
+    'U07-W': { name:'Mia', photo:'Mia.jpg' },
+    'U07-B': { name:'Mia', photo:'Mia.jpg' },
+    'U06-G': { name:'Mia', photo:'Mia.jpg' },
+    'U06-W': { name:'Easy', photo:'Easy.jpg' },
+    'U05-G': { name:'Mia', photo:'Mia.jpg' },
+    'U05-W': { name:'Easy', photo:'Easy.jpg' },
+  };
+  // Merge with data-driven map
+  Object.assign(fullCoachMap, coachMap);
+
+  const grid = document.getElementById('teamsGrid');
+  grid.innerHTML = validTeams.map(t => {
+    const info = fullCoachMap[t.name] || fullCoachMap[t.name.replace(/-(\d)(?=-)/g,'-$1')] || {};
+    return `
+    <div class="coach-card">
+      ${info.photo ? `<img src="${info.photo}" alt="${info.name||''}" class="coach-avatar"
+        onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 68 68%22><circle cx=%2234%22 cy=%2234%22 r=%2234%22 fill=%22%230a3d1e%22/><text x=%2234%22 y=%2242%22 text-anchor=%22middle%22 fill=%22%23d4a017%22 font-size=%2224%22 font-weight=%22bold%22>?</text></svg>'">` : ''}
+      <div class="coach-info">
+        <div class="coach-name">${t.name}</div>
+        <div class="coach-teams">${info.name ? 'Coach: ' + info.name : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderSchedule(schedule) {
+  const container = document.getElementById('scheduleContainer');
+  if (!schedule.length) {
+    container.innerHTML = '<p style="text-align:center;color:#999;padding:40px">Schedule data loading...</p>';
+    return;
+  }
+
+  // Group schedule entries by team suffix color
+  const colorGroups = { green: [], white: [], blue: [] };
+  schedule.forEach(s => {
+    if (s.team.endsWith('-G')) colorGroups.green.push(s);
+    else if (s.team.endsWith('-W')) colorGroups.white.push(s);
+    else if (s.team.endsWith('-B')) colorGroups.blue.push(s);
+  });
+
+  // Sort each group by age (U5 before U6 before U7...)
+  const sortByAge = (a, b) => {
+    const na = parseInt(a.team.match(/U(\d+)/)?.[1] || '99');
+    const nb = parseInt(b.team.match(/U(\d+)/)?.[1] || '99');
+    return na - nb;
+  };
+  colorGroups.green.sort(sortByAge);
+  colorGroups.white.sort(sortByAge);
+  colorGroups.blue.sort(sortByAge);
+
+  let html = '';
+
+  const renderColorGroup = (label, dotClass, entries) => {
+    if (!entries.length) return '';
+    let groupHtml = `
+    <div class="schedule-color-group">
+      <div class="schedule-color-header">
+        <span class="schedule-color-dot ${dotClass}"></span>
+        <span class="schedule-color-title">${label} Teams</span>
+      </div>
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead><tr>
+            <th>Team</th>
+            ${DAYS.map(d => `<th>${d}</th>`).join('')}
+          </tr></thead>
+          <tbody>`;
+
+    entries.forEach(s => {
+      // Build a map of day -> slots
+      const dayMap = {};
+      (s.slots || []).forEach(slot => {
+        if (!dayMap[slot.day]) dayMap[slot.day] = [];
+        dayMap[slot.day].push(slot);
+      });
+
+      groupHtml += `<tr><td>${s.team}</td>`;
+      DAYS.forEach(day => {
+        const slots = dayMap[day];
+        if (slots && slots.length) {
+          groupHtml += `<td>${slots.map(slot => {
+            let cls = 'sch-slot';
+            if (slot.type === 'Match') cls += ' match';
+            else if (slot.venue === 'JX') cls += ' venue-jx';
+            return `<span class="${cls}">${slot.time}</span><span class="sch-venue">${slot.venue || ''}</span>`;
+          }).join(' ')}</td>`;
+        } else {
+          groupHtml += '<td>—</td>';
+        }
+      });
+      groupHtml += '</tr>';
+    });
+
+    groupHtml += '</tbody></table></div></div>';
+    return groupHtml;
+  };
+
+  html += renderColorGroup('Green', 'green', colorGroups.green);
+  html += renderColorGroup('White', 'white', colorGroups.white);
+  html += renderColorGroup('Blue', 'blue', colorGroups.blue);
+
+  container.innerHTML = html;
+}
+
+function renderCoaches(coaches) {
+  const grid = document.getElementById('coachesGrid');
+  grid.innerHTML = coaches.map(c => `
+    <div class="coach-card">
+      <img src="${c.photo}" alt="${c.name}" class="coach-avatar"
+        onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 68 68%22><circle cx=%2234%22 cy=%2234%22 r=%2234%22 fill=%22%230a3d1e%22/><text x=%2234%22 y=%2242%22 text-anchor=%22middle%22 fill=%22%23d4a017%22 font-size=%2224%22 font-weight=%22bold%22>${c.name[0]}</text></svg>'">
+      <div class="coach-info">
+        <div class="coach-name">${c.name}</div>
+        <div class="coach-teams">${(c.teams||[]).join(', ')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderFallback() {
+  document.getElementById('statPlayers').textContent = '331';
+  document.getElementById('statTeams').textContent = '21';
+  document.getElementById('statPER').textContent = '3.0';
+  document.getElementById('statAtt').textContent = '2.7';
+
+  const fallbackCoaches = [
+    {name:'Tigran', photo:'Tigran.jpg', teams:['U11-G','U09-W']},
+    {name:'Rash', photo:'Rash.jpg', teams:['U12-G']},
+    {name:'Relax', photo:'Relax.jpg', teams:['U15-G','U12-W','U09-B']},
+    {name:'Lance', photo:'Lance.jpg', teams:['U11-W','U08-W','U07-G']},
+    {name:'Nikola', photo:'Nikola.jpg', teams:['U10-G']},
+    {name:'Rico', photo:'Rico.jpg', teams:['U10-W']},
+    {name:'Johan', photo:'Johan.jpg', teams:['U09-G']},
+    {name:'Roger', photo:'Roger.jpg', teams:['U08-G']},
+    {name:'Mia', photo:'Mia.jpg', teams:['U07-W','U06-G','U05-G','U07-B','U08-B']},
+    {name:'Easy', photo:'Easy.jpg', teams:['U06-W','U05-W']}
+  ];
+  const coachMap = buildCoachMap(fallbackCoaches);
+
+  // Static age groups (with dates + coach photos)
+  const staticAgeGroups = [
+    {key:'U4'}, {key:'U5'}, {key:'U6'}, {key:'U7'}, {key:'U8'},
+    {key:'U9'}, {key:'U10'}, {key:'U11'}, {key:'U12'}, {key:'U15'}
+  ];
+
+  const agGrid = document.getElementById('ageGroupsGrid');
+  agGrid.innerHTML = staticAgeGroups.map(ag => {
+    const ac = AGE_COACHES[ag.key];
+    return `
+    <div class="age-group-card">
+      <div class="ag-header">
+        ${ac && ac.photo ? `<img src="${ac.photo}" class="ag-coach-photo" onerror="this.style.display='none'">` : ''}
+        <span class="ag-name">${ag.key}</span>
+      </div>
+      <div class="ag-dates">${AGE_DATES[ag.key] || ''}</div>
+      ${ac ? `<div class="ag-coach">Coach: ${ac.name}</div>` : '<div class="ag-coach" style="color:#bbb">Coming soon</div>'}
+    </div>`;
+  }).join('');
+
+  // Static coaches
+  renderCoaches(fallbackCoaches);
+
+  document.getElementById('scheduleContainer').innerHTML =
+    '<p style="text-align:center;color:#999;padding:40px">Schedule available when running with local server.</p>';
+}
+
+// Start
+loadData();
+</script>
+
+</body>
+</html>
