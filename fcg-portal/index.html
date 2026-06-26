@@ -1361,6 +1361,19 @@ function renderDrills(){
   if(!drillData){contentContainer.innerHTML='<div style="text-align:center;padding:40px;color:#999;">No drill data available for '+selectedTopic+' at '+normalizeGameplanAge(currentTeam.gameplan)+' level.<br><br>Check back when drills are added to the Drills sheet.</div>';return;}
 
   var html='';
+  // Session video (above all drill cards)
+  if(drillData.video){
+    html+='<div class="drill-card" style="margin-bottom:16px;border-left:4px solid var(--gold);">';
+    html+='<div class="drill-card-header"><span class="drill-phase" style="background:var(--gold);">🎬 Session Video</span><h4>Watch this week\'s training</h4></div>';
+    html+='<div class="drill-card-body"><div class="drill-media-box" style="flex:0 0 100%;border-right:none;">';
+    html+='<div class="drill-media-panel drill-video-panel" style="display:block;">';
+    html+='<a href="'+escHtml(drillData.video)+'" target="_blank" class="drill-video-play-btn">';
+    html+='<span class="drill-video-play-icon">▶</span>';
+    html+='<span>Watch Demo</span>';
+    html+='</a>';
+    html+='<span style="font-size:10px;color:var(--text-light);margin-top:4px;">Opens in new tab</span>';
+    html+='</div></div></div></div>';
+  }
   html+=renderDrillCard('Activation',drillData.activation,false);
   html+=renderDrillCard('Drill 1',drillData.drill1,false);
   html+=renderDrillCard('Drill 2',drillData.drill2,false);

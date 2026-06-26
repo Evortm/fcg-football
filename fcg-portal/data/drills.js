@@ -40,7 +40,6 @@ const DRILLS_DATA = {
       title: "Great Wall",
       desc: "🟢 1 starts with the ball [feet or hand]. 🔴 9 defends the two goals from behind the wall. 🟢 1 tries to beat  🔴 9  by faking [and using the MOTW].Goal = 1 point. Switch positions. Vary width/length.",
       success: "🟢 wins 9 out of 10 times."
-      ,video: "https://www.capcut.cn/share/7655536914350658840"
     },
     drill2: {
       title: "1V1 GK escaping pressure",
@@ -52,6 +51,7 @@ const DRILLS_DATA = {
       desc: "We start in the hospital and who can do the moves are going to try doing sets of 3-5-10.",
       success: "All players with interest know the 2 moves."
     },
+    ,video: "https://www.capcut.cn/share/7655536914350658840"
   },
   "A1 | U5": {
     age: "U5",
@@ -66,7 +66,6 @@ const DRILLS_DATA = {
       title: "1V1 GK vs Striker",
       desc: "🟢 1 starts with the ball. 🔴 9 defends the two goals. 🟢 1 tries to beat 🔴 9 by faking [and using the MOTW].Goal = 1 point. Switch positions. Vary width/length.Keep intensity high.",
       success: "🟢 wins 8 out of 10 times."
-      ,video: "https://www.capcut.cn/share/7655536914350658840"
     },
     drill2: {
       title: "2V1 escaping pressure",
@@ -78,6 +77,7 @@ const DRILLS_DATA = {
       desc: "1. Set of 60 sec2. Set of 45 sec3. Set of 30 secPlayers are allowed to do the moves slowly, but can't make a mistake.",
       success: "Most players can keep doing the sets"
     },
+    ,video: "https://www.capcut.cn/share/7655536914350658840"
   },
   "A1 | U6": {
     age: "U6",
@@ -92,7 +92,6 @@ const DRILLS_DATA = {
       title: "2V1 GK+1 vs Striker",
       desc: "🟢 1 starts with the ball. Together with 🟢 3, they try to beat 🔴 9, who defends the two goals. 🟢 score by passing or dribbling through the small goal/gates. 🔴 9 can score on the big goal.Goal = 1 point. Switch positions. Vary width/length.Keep intensity high.",
       success: "🟢 wins 7 out of 10 times."
-      ,video: "https://www.capcut.cn/share/7655173956030272792"
     },
     drill2: {
       title: "3v1 from GK > 3V2 SSG",
@@ -104,6 +103,7 @@ const DRILLS_DATA = {
       desc: "2 Set of 40 sec2 Set of 30 sec2 Set of 20 secPlayers are allowed to do the moves slowly, but can't make a mistake.",
       success: "All players can do sets with move combinations"
     },
+    ,video: "https://www.capcut.cn/share/7655173956030272792"
   },
   "A1 | U7": {
     age: "U7",
@@ -118,7 +118,6 @@ const DRILLS_DATA = {
       title: "2V1 GK+1 vs Striker",
       desc: "🟢 1 starts with the ball. Together with 🟢 3, they try to beat 🔴 9, who defends the two goals. 🟢 score by passing or dribbling through the small goal/gates. 🔴 9 can score on the big goal.Goal = 1 point. Switch positions. Vary width/length.Keep intensity high.",
       success: "🟢 wins 7 out of 10 times."
-      ,video: "https://www.capcut.cn/share/7655173956030272792"
     },
     drill2: {
       title: "3v2 from GK > 3V3 SSG",
@@ -130,6 +129,7 @@ const DRILLS_DATA = {
       desc: "2 Set of 40 sec2 Set of 30 sec2 Set of 20 sec",
       success: "All players can do sets with move combinations"
     },
+    ,video: "https://www.capcut.cn/share/7655173956030272792"
   },
   "A1 | U8": {
     age: "U8",
@@ -289,7 +289,6 @@ const DRILLS_DATA = {
       title: "Score and defend",
       desc: "🟢7 dribbles quickly to goal and scores. Then line up at the other side.When players start to understand how to react, we 🟢11 scores from a cross. And 🔴7 starts to defend \"stopping the car\", which is ball 2.",
       success: "React to ball 2 without help"
-      ,video: "https://www.capcut.cn/share/7647067494599120190"
     },
     drill2: {
       title: "Bounce bounce shoot",
@@ -301,6 +300,7 @@ const DRILLS_DATA = {
       desc: "Combination of quick drillsPut the ball on the cone: small steps, big last step, toes pointed down, and make a magic jump.Practice stop and goes 1v0 and 1v1 in the open space.",
       success: "When drills can start in half a minute and last shorter due to high intensity"
     },
+    ,video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U5": {
     age: "U5",
@@ -315,7 +315,6 @@ const DRILLS_DATA = {
       title: "Cross and finish",
       desc: "After🟢11 stops the ball at the cone,🔴7 is starting to defend.🟢7 gives the cross to 🟢11 and prepares a new ball for the next player.🟢11 and 🔴7 compete for the second ball.🔴7  must have been inside the box upon going for ball 2.",
       success: "When more than 50% of the cross arrives at  🟢11"
-      ,video: "https://www.capcut.cn/share/7647067494599120190"
     },
     drill2: {
       title: "2v1 - 2v2 Transition",
@@ -327,6 +326,7 @@ const DRILLS_DATA = {
       desc: "S&G with acceleration in sets of 10 or 20/60 sec depending on the intensity. Increase intensity during the week.",
       success: "Combine a stop and go with a scissors or stepover"
     },
+    ,video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U6": {
     age: "U6",
@@ -341,7 +341,6 @@ const DRILLS_DATA = {
       title: "Dribble, cross and finish",
       desc: "🟢7 speed dribbles, crosses to 🟢11 and sprints to ball 2.🟢11 stops the ball at the cone, then🔴7 starts to defend the cross from ball 1.- Defenders are not allowed to \"cheat\"- Dribble distance adjusted increase successrate",
       success: "When >66% of the first cross is being shot."
-      ,video: "https://www.capcut.cn/share/7647067494599120190"
     },
     drill2: {
       title: "3v2 - 3v3 Transition",
@@ -353,6 +352,7 @@ const DRILLS_DATA = {
       desc: "S&G with 100% acceleration in sets of 10 [50 sec]. Increase intensity > Increase duration during the week.+ Combine S&G with change of direction",
       success: "[45 Sec] S&G with 100% acceleration without colliding"
     },
+    ,video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U7": {
     age: "U7",
@@ -367,7 +367,6 @@ const DRILLS_DATA = {
       title: "Dribble, cross and finish",
       desc: "🟢7 speed dribbles, crosses to 🟢11 and sprints to ball 2.🟢11 stops the ball at the cone, then🔴7 starts to defend the cross from ball 1.",
       success: "First cross is a slightly back-passed by >50%"
-      ,video: "https://www.capcut.cn/share/7647067494599120190"
     },
     drill2: {
       title: "3v2 - 3v3 Transition",
@@ -379,6 +378,7 @@ const DRILLS_DATA = {
       desc: "S&G with 100% acceleration in sets of 10 [50 sec]. Increase intensity > Increase duration during the week.+ Combine S&G with change of direction and/or first touch after passing.",
       success: "[60 Sec] S&G with 100% acceleration without colliding"
     },
+    ,video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U8": {
     age: "U8",
