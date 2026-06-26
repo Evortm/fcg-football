@@ -1279,8 +1279,27 @@ function normalizeGameplanAge(age){if(!age)return'';return age.replace(/^U0/,'U'
 function findDrillData(){var age=normalizeGameplanAge(currentTeam.gameplan);return DRILLS_DATA[selectedTopic+' | '+age]||null;}
 function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
+// Auto-compute drill image path from sequential numbering
+// Images are named: {TOPIC}_{NUMBER}.png where NUMBER = ageIndex * 4 + phaseIndex
+// ageIndex: U4=0, U5=1, U6=2, U7=3, U8=4, U9=5, U10=6, U11=7, U12=8
+// phaseIndex: Activation=0, Drill 1=1, Drill 2=2, Drill 3=3
+var AGE_ORDER=['U4','U5','U6','U7','U8','U9','U10','U11','U12'];
+var PHASE_MAP={'Activation':0,'Drill 1':1,'Drill 2':2,'Drill 3':3};
+function getDrillImage(topic,age,label){
+  var ageIdx=AGE_ORDER.indexOf(age);
+  if(ageIdx<0)return'';
+  var phaseIdx=PHASE_MAP[label];
+  if(phaseIdx==null)return'';
+  return'img/drills/'+topic+'_'+(ageIdx*4+phaseIdx)+'.png';
+}
+
 function renderDrillCard(label,data,isLast){
   if(!data||!data.title)return'';
+  // Auto-compute image path if not explicitly set in data
+  if(!data.image){
+    var age=normalizeGameplanAge(currentTeam.gameplan);
+    data.image=getDrillImage(selectedTopic,age,label);
+  }
   var imgPath=(data.image||'').replace(/^https?:\/\/docimg\d+\.docs\.qq\.com\/image\/.*$/,'');
   var hasImg=imgPath&&imgPath.length>0;
   var hasVideo=!!data.video;

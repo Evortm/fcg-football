@@ -7,9 +7,40 @@ This guide explains how to add and update drill content for the FCG coach portal
 | Content | File | Folder |
 |---------|------|--------|
 | Drill text (title, description, success criteria) | `data/drills.js` | `fcg-portal/data/` |
-| Drill diagram images | Named `{TOPIC}_{AGE}_{PHASE}.png` | `fcg-portal/img/drills/` |
+| Drill diagram images | Named `{TOPIC}_{NUMBER}.png` (sequential) | `fcg-portal/img/drills/` |
 | Gameplan pitch images | Named `{TOPIC}-{STYLE}.png` | `fcg-portal/img/` |
 | Video links | `video` field in drill entry | Inside `data/drills.js` |
+
+## Drill Image Numbering (Sequential — No Renaming!)
+
+Images use **sequential numbering** per topic. The code auto-computes which image belongs to which age group and phase.
+
+**Formula:** `image_number = ageIndex × 4 + phaseIndex`
+
+| Age | ageIndex | Image numbers | 
+|-----|----------|---------------|
+| U4  | 0 | 0, 1, 2, 3 |
+| U5  | 1 | 4, 5, 6, 7 |
+| U6  | 2 | 8, 9, 10, 11 |
+| U7  | 3 | 12, 13, 14, 15 |
+| U8  | 4 | 16, 17, 18, 19 |
+| U9  | 5 | 20, 21, 22, 23 |
+| U10 | 6 | 24, 25, 26, 27 |
+| U11 | 7 | 28, 29, 30, 31 |
+| U12 | 8 | 32, 33, 34, 35 |
+
+Within each age group: `0=activation, 1=drill1, 2=drill2, 3=drill3`
+
+**Example for topic A2:**
+```
+A2_0.png  = U4 activation     A2_4.png  = U5 activation
+A2_1.png  = U4 drill 1        A2_5.png  = U5 drill 1
+A2_2.png  = U4 drill 2        A2_6.png  = U5 drill 2
+A2_3.png  = U4 drill 3        A2_7.png  = U5 drill 3
+...
+```
+
+Just export your images in order and name them `{TOPIC}_0.png`, `{TOPIC}_1.png`, etc. No renaming needed!
 
 ## Gameplan Styles by Age
 
@@ -40,16 +71,18 @@ This guide explains how to add and update drill content for the FCG coach portal
 
 ### Step 1: Create drill diagram images
 
-Create 4 diagram images (activation + 3 drills). Name them:
+Create 4 diagram images (activation + 3 drills). For U6 (ageIndex=2), the numbers are 8-11:
 
 ```
-A2_U6_0.png   (activation)
-A2_U6_1.png   (drill 1)
-A2_U6_2.png   (drill 2)
-A2_U6_3.png   (drill 3)
+A2_8.png   (U6 activation)
+A2_9.png   (U6 drill 1)
+A2_10.png  (U6 drill 2)
+A2_11.png  (U6 drill 3)
 ```
 
 Upload them to: `fcg-portal/img/drills/`
+
+**No need to set image paths in drills.js — the code computes them automatically!**
 
 ### Step 2: Add gameplan image (optional)
 
@@ -73,30 +106,28 @@ Find an existing block (like `"A1 | U6"`), copy it, and change the key:
     activation: {
       title: "Passing Gates",
       desc: "Players pass through gates, focusing on:\nBig step, inside foot, balance.",
-      image: "img/drills/A2_U6_0.png",
       success: "All players can pass with correct technique"
     },
     drill1: {
       title: "Build up from GK",
       desc: "GK plays to defender who builds up under pressure.",
-      image: "img/drills/A2_U6_1.png",
       success: "7 out of 10 successful build-ups",
       video: "https://www.capcut.cn/share/YOUR_VIDEO_ID"
     },
     drill2: {
       title: "3v2 build up",
       desc: "3 attackers vs 2 defenders, build from GK.",
-      image: "img/drills/A2_U6_2.png",
       success: "5 out of 10 clean exits"
     },
     drill3: {
       title: "4v4 SSG",
       desc: "Small-sided game focusing on build-up.",
-      image: "img/drills/A2_U6_3.png",
       success: "Team builds from GK every time"
     }
   },
 ```
+
+Note: **No `image` field needed** — it's auto-computed from the sequential numbering.
 
 ### Step 4: Save and deploy
 
@@ -116,7 +147,6 @@ Find an existing block (like `"A1 | U6"`), copy it, and change the key:
     drill1: {
       title: "Build up from GK",
       desc: "...",
-      image: "img/drills/A2_U6_1.png",
       success: "...",
       video: "https://www.capcut.cn/share/7647067494599120190"
     },
@@ -157,7 +187,7 @@ The video field is **optional** — if you don't have a video, just leave it out
 fcg-portal/
   index.html              ← Do NOT edit (presentation only)
   data/
-    drills.js             ← EDIT THIS: drill descriptions, images, videos
+    drills.js             ← EDIT THIS: drill descriptions + videos (no image paths needed)
     gameplans.js          ← Tactical text (rarely needs editing)
     drills-template.js    ← Reference template (do not edit)
   img/
@@ -165,8 +195,8 @@ fcg-portal/
     A1-5v5.png
     ...
     drills/
-      A1_U4_0.png         ← Drill images (TOPIC_AGE_PHASE.png)
-      A1_U4_1.png
+      A1_0.png            ← Drill images (TOPIC_NUMBER.png, sequential)
+      A1_1.png
       ...
     easy.jpg              ← Coach photos
     mia.jpg
