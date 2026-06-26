@@ -7,8 +7,8 @@ This guide explains how to add and update drill content for the FCG coach portal
 | Content | File | Folder |
 |---------|------|--------|
 | Drill text (title, description, success criteria) | `data/drills.js` | `fcg-portal/data/` |
-| Drill diagram images | Named `{TOPIC}_{NUMBER}.png` (sequential) | `fcg-portal/img/drills/` |
-| Gameplan pitch images | Named `{TOPIC}-{STYLE}.png` | `fcg-portal/img/` |
+| Drill diagram images | Named `{TOPIC}_{NUMBER}.png` (sequential) | `fcg-portal/img/drills/{TOPIC}/` |
+| Gameplan pitch images | Named `{TOPIC}-{STYLE}.png` | `fcg-portal/img/gameplans/{TOPIC}/` |
 | Video links | `video` field in drill entry | Inside `data/drills.js` |
 
 ## Drill Image Numbering (Sequential — No Renaming!)
@@ -80,7 +80,7 @@ A2_10.png  (U6 drill 2)
 A2_11.png  (U6 drill 3)
 ```
 
-Upload them to: `fcg-portal/img/drills/`
+Upload them to: `fcg-portal/img/drills/A2/`
 
 **No need to set image paths in drills.js — the code computes them automatically!**
 
@@ -88,7 +88,7 @@ Upload them to: `fcg-portal/img/drills/`
 
 Create a pitch diagram named: `A2-5v5.png` (U6 = 5v5 style)
 
-Upload to: `fcg-portal/img/`
+Upload to: `fcg-portal/img/gameplans/A2/`
 
 If you skip this, the gameplan section shows text only (image auto-hides).
 
@@ -173,7 +173,9 @@ The video field is **optional** — if you don't have a video, just leave it out
 ## How To: Upload Images via GitHub Web
 
 1. Go to: https://github.com/Evortm/fcg-football
-2. Navigate to `fcg-portal/img/drills/` (for drill images) or `fcg-portal/img/` (for gameplan images)
+2. Navigate to the topic folder:
+   - Drill images: `fcg-portal/img/drills/{TOPIC}/` (e.g. `fcg-portal/img/drills/A2/`)
+   - Gameplan images: `fcg-portal/img/gameplans/{TOPIC}/` (e.g. `fcg-portal/img/gameplans/A2/`)
 3. Click "Add file" → "Upload files"
 4. Drag your images in (make sure they're named correctly!)
 5. Click "Commit changes"
@@ -191,14 +193,17 @@ fcg-portal/
     gameplans.js          ← Tactical text (rarely needs editing)
     drills-template.js    ← Reference template (do not edit)
   img/
-    A1-3v3.png            ← Gameplan images (TOPIC-STYLE.png)
-    A1-5v5.png
-    ...
-    drills/
-      A1_0.png            ← Drill images (TOPIC_NUMBER.png, sequential)
-      A1_1.png
+    gameplans/
+      A1/A1-3v3.png       ← Gameplan images (TOPIC/TOPIC-STYLE.png)
+      A1/A1-5v5.png
+      A2/A2-3v3.png
       ...
-    easy.jpg              ← Coach photos
+    drills/
+      A1/A1_0.png         ← Drill images (TOPIC/TOPIC_NUMBER.png, sequential)
+      A1/A1_1.png
+      A2/A2_0.png
+      ...
+    easy.jpg              ← Coach photos (stay at root)
     mia.jpg
     ...
   UPDATING-DRILLS.md      ← This file

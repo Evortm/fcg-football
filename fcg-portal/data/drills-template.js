@@ -7,10 +7,11 @@
 // 2. Change the key from "A2 | U4" to your topic and age
 // 3. Fill in the title, desc, success, and video fields
 // 4. Paste it into drills.js (inside the DRILLS_DATA object)
-// 5. Upload your drill images to img/drills/ (see naming below)
+// 5. Upload your drill images to img/drills/{TOPIC}/ (see naming below)
 //
 // IMAGE NAMING (SEQUENTIAL - no renaming needed!):
-//   Images are named: {TOPIC}_{NUMBER}.png
+//   Images go in: img/drills/{TOPIC}/ folder
+//   Named: {TOPIC}_{NUMBER}.png
 //   The code auto-computes which image goes where.
 //
 //   Number = ageIndex * 4 + phaseIndex
@@ -33,10 +34,10 @@
 //   The video field is OPTIONAL - leave it out if no video
 //
 // GAMEPLAN IMAGE:
-//   Upload to img/{TOPIC}-{STYLE}.png (top level img/ folder)
+//   Upload to img/gameplans/{TOPIC}/{TOPIC}-{STYLE}.png
 //   STYLE depends on age: U4-U5=3v3, U6-U7=5v5, U8-U9=7v7,
 //   U10=8v8-1, U11-U12=8v8-2
-//   Example: img/A2-5v5.png (for U6 or U7)
+//   Example: img/gameplans/A2/A2-5v5.png (for U6 or U7)
 //
 // ============================================================
 

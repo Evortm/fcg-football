@@ -1263,7 +1263,7 @@ function renderGameplan(){
   }
   
   // Image — click to view full-size
-  html+='<div class="gameplan-img-wrap"><a href="img/'+key+'.png" target="_blank" title="Click to view full-size"><img src="img/'+key+'.png" alt="'+selectedTopic+' gameplan" onerror="this.style.display=\'none\';this.parentElement.style.display=\'none\'"></a></div>';
+  html+='<div class="gameplan-img-wrap"><a href="img/gameplans/'+selectedTopic+'/'+key+'.png" target="_blank" title="Click to view full-size"><img src="img/gameplans/'+selectedTopic+'/'+key+'.png" alt="'+selectedTopic+' gameplan" onerror="this.style.display=\'none\';this.parentElement.style.display=\'none\'"></a></div>';
   
   // Tactical "how" text (only show if non-empty)
   if(gp && gp.how && gp.how.trim()){
@@ -1290,7 +1290,7 @@ function getDrillImage(topic,age,label){
   if(ageIdx<0)return'';
   var phaseIdx=PHASE_MAP[label];
   if(phaseIdx==null)return'';
-  return'img/drills/'+topic+'_'+(ageIdx*4+phaseIdx)+'.png';
+  return'img/drills/'+topic+'/'+topic+'_'+(ageIdx*4+phaseIdx)+'.png';
 }
 
 function renderDrillCard(label,data,isLast){
