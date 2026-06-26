@@ -51,7 +51,7 @@ const DRILLS_DATA = {
       desc: "We start in the hospital and who can do the moves are going to try doing sets of 3-5-10.",
       success: "All players with interest know the 2 moves."
     },
-    ,video: "https://www.capcut.cn/share/7655536914350658840"
+    video: "https://www.capcut.cn/share/7655536914350658840"
   },
   "A1 | U5": {
     age: "U5",
@@ -77,7 +77,7 @@ const DRILLS_DATA = {
       desc: "1. Set of 60 sec2. Set of 45 sec3. Set of 30 secPlayers are allowed to do the moves slowly, but can't make a mistake.",
       success: "Most players can keep doing the sets"
     },
-    ,video: "https://www.capcut.cn/share/7655536914350658840"
+    video: "https://www.capcut.cn/share/7655536914350658840"
   },
   "A1 | U6": {
     age: "U6",
@@ -103,7 +103,7 @@ const DRILLS_DATA = {
       desc: "2 Set of 40 sec2 Set of 30 sec2 Set of 20 secPlayers are allowed to do the moves slowly, but can't make a mistake.",
       success: "All players can do sets with move combinations"
     },
-    ,video: "https://www.capcut.cn/share/7655173956030272792"
+    video: "https://www.capcut.cn/share/7655173956030272792"
   },
   "A1 | U7": {
     age: "U7",
@@ -129,7 +129,7 @@ const DRILLS_DATA = {
       desc: "2 Set of 40 sec2 Set of 30 sec2 Set of 20 sec",
       success: "All players can do sets with move combinations"
     },
-    ,video: "https://www.capcut.cn/share/7655173956030272792"
+    video: "https://www.capcut.cn/share/7655173956030272792"
   },
   "A1 | U8": {
     age: "U8",
@@ -300,7 +300,7 @@ const DRILLS_DATA = {
       desc: "Combination of quick drillsPut the ball on the cone: small steps, big last step, toes pointed down, and make a magic jump.Practice stop and goes 1v0 and 1v1 in the open space.",
       success: "When drills can start in half a minute and last shorter due to high intensity"
     },
-    ,video: "https://www.capcut.cn/share/7647067494599120190"
+    video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U5": {
     age: "U5",
@@ -326,7 +326,7 @@ const DRILLS_DATA = {
       desc: "S&G with acceleration in sets of 10 or 20/60 sec depending on the intensity. Increase intensity during the week.",
       success: "Combine a stop and go with a scissors or stepover"
     },
-    ,video: "https://www.capcut.cn/share/7647067494599120190"
+    video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U6": {
     age: "U6",
@@ -352,7 +352,7 @@ const DRILLS_DATA = {
       desc: "S&G with 100% acceleration in sets of 10 [50 sec]. Increase intensity > Increase duration during the week.+ Combine S&G with change of direction",
       success: "[45 Sec] S&G with 100% acceleration without colliding"
     },
-    ,video: "https://www.capcut.cn/share/7647067494599120190"
+    video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U7": {
     age: "U7",
@@ -378,7 +378,7 @@ const DRILLS_DATA = {
       desc: "S&G with 100% acceleration in sets of 10 [50 sec]. Increase intensity > Increase duration during the week.+ Combine S&G with change of direction and/or first touch after passing.",
       success: "[60 Sec] S&G with 100% acceleration without colliding"
     },
-    ,video: "https://www.capcut.cn/share/7647067494599120190"
+    video: "https://www.capcut.cn/share/7647067494599120190"
   },
   "A8 | U8": {
     age: "U8",
