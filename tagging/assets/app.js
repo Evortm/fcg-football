@@ -279,26 +279,37 @@
   }
 
   function initClipSelect() {
-    el.clipSelect.innerHTML = "";
-    var groups = {};
-    DATA.clips.forEach(function (clip, i) {
-      var key = squadOf(clip).label;
-      if (!groups[key]) {
-        groups[key] = document.createElement("optgroup");
-        groups[key].label = key;
-        el.clipSelect.appendChild(groups[key]);
-      }
-      var opt = document.createElement("option");
-      opt.value = String(i);
-      opt.textContent = clipOptionLabel(clip);
-      opt.title = clip.id + " · " + clip.source_name;
-      groups[key].appendChild(opt);
+    var label = document.createElement("label");
+    label.textContent = "Team ";
+    var teamSelect = document.createElement("select");
+    teamSelect.id = "teamSelect";
+    teamSelect.setAttribute("aria-label", "Select team");
+    var teams = [];
+    DATA.clips.forEach(function(c) { if (teams.indexOf(c.group) < 0) teams.push(c.group); });
+    teams.sort().forEach(function(team) {
+      var option = document.createElement("option");
+      option.value = team; option.textContent = team + " · " + squadOf(DATA.clips.find(function(c) { return c.group === team; })).label;
+      teamSelect.appendChild(option);
     });
-    el.clipSelect.title = DATA.clips.length < 2
-      ? "Only one clip registered — add clips with tools/register_clip.py"
-      : DATA.clips.length + " clips · grouped by team";
-    el.clipSelect.addEventListener("change", function () {
-      selectClip(DATA.clips[Number(el.clipSelect.value) || 0]);
+    label.appendChild(teamSelect);
+    el.clipSelect.parentNode.insertBefore(label, el.clipSelect);
+    teamSelect.value = V.group;
+    function populate() {
+      el.clipSelect.innerHTML = "";
+      DATA.clips.forEach(function(clip, i) {
+        if (clip.group !== teamSelect.value) return;
+        var option = document.createElement("option");
+        option.value = String(i); option.textContent = clipOptionLabel(clip);
+        el.clipSelect.appendChild(option);
+      });
+      el.clipSelect.title = "W11 A7 · " + teamSelect.value;
+    }
+    populate();
+    teamSelect.addEventListener("change", function() {
+      populate(); selectClip(DATA.clips[Number(el.clipSelect.value)]);
+    });
+    el.clipSelect.addEventListener("change", function() {
+      selectClip(DATA.clips[Number(el.clipSelect.value)]);
     });
   }
 
@@ -519,7 +530,7 @@
   function allPlayers() {
     /* Only the anonymous slots assigned to this test clip. Unknown player is always offered. */
     var teams = squadOf(V).teams;
-    return DATA.roster.filter(function (p) { return teams.indexOf(p.team) >= 0; })
+    return DATA.roster.filter(function (p) { return Array.isArray(V.rosterIds) ? V.rosterIds.indexOf(p.id) >= 0 : teams.indexOf(p.team) >= 0; })
       .slice()
       .sort(function (a, b) {
         var byTeam = teams.indexOf(a.team) - teams.indexOf(b.team);
@@ -529,7 +540,7 @@
   }
 
   function rosterHint() {
-    return "Anonymous slots · " + allPlayers().length + " players (no names or personal data)";
+    return squadOf(V).label + " · " + allPlayers().length + " players";
   }
 
   function renderOptions(query) {
