@@ -223,13 +223,13 @@
 
       var name = document.createElement("span");
       name.className = "obs-name";
-      name.textContent = fp.label;
-      if (fp.desc) name.title = fp.desc;
+      name.textContent = fp.desc || fp.label;
+      name.title = fp.label;
 
       var rate = document.createElement("div");
       rate.className = "rate";
       rate.setAttribute("role", "group");
-      rate.setAttribute("aria-label", fp.label);
+      rate.setAttribute("aria-label", fp.desc || fp.label);
       C.RATINGS.forEach(function (value) {
         var btn = document.createElement("button");
         btn.type = "button";
