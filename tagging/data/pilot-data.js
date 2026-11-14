@@ -920,7 +920,7 @@ window.PILOT = {
       "window": "0:00–186.00 seconds",
       "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U10-FRI-HB.mp4?sharecode=ATVBZ37MV6",
       "source_name": "A7-FULL-D2-U10-FRI-HB.mp4",
-      "duration": 186.0,
+      "duration": 186,
       "basis": "Clip position",
       "combined": false,
       "hash": "d1702e0e7487a58b056aee49ca71f97ba7d7241c254db61ca71a86123dd614f4",
@@ -938,7 +938,7 @@ window.PILOT = {
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 186.0,
+          "file_end": 186,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -5002,7 +5002,7 @@ window.PILOT = {
       "code": "A7U12TC",
       "label": "Technical communication",
       "topic": "A7 · W11 · U12",
-      "desc": "Support and guide teammates鈥攅ncourage them after mistakes or give useful instructions during play."
+      "desc": "Support and guide teammates—encourage them after mistakes or give useful instructions during play."
     },
     {
       "code": "A7U12PH",
