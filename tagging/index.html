@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tagging UI trial · sanitized</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/mobile.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="mark" aria-hidden="true">FCG</div>
+    <div class="titles">
+      <h1>Player tagging</h1>
+      <p id="clipSubtitle">—</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <div class="reviewer-field">
+      <label for="reviewer">Reviewer</label>
+      <input id="reviewer" type="text" placeholder="Anonymous reviewer ID" autocomplete="off" maxlength="40" spellcheck="false">
+    </div>
+    <button class="video-chip" id="videoChip" title="Copy video ID" type="button">
+      <span>Video</span><code id="videoIdLabel">—</code>
+    </button>
+    <div class="menu-wrap">
+      <button class="btn ghost" id="exportBtn" type="button" aria-haspopup="true" aria-expanded="false">Export</button>
+      <div class="menu" id="exportMenu" hidden>
+        <button type="button" data-action="csv"><span>Events CSV</span><small>for the overview sheet</small></button>
+        <button type="button" data-action="tsv"><span>Copy rows</span><small>paste into weekfile &gt; Tags</small></button>
+        <button type="button" data-action="json"><span>Backup JSON</span><small>all tags on this device</small></button>
+        <button type="button" data-action="import"><span>Import backup…</span><small>merge by event ID</small></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="card stage">
+    <div class="card-head">
+      <h2>Clip</h2>
+      <div class="clip-select-wrap">
+        <label class="sr-only" for="clipSelect">Clip</label>
+        <select id="clipSelect" class="clip-select" aria-label="Select clip"></select>
+      </div>
+      <div class="clip-meta">
+        <code id="clipName">—</code>
+        <span class="sep">·</span><span id="clipDuration">—</span>
+        <span class="sep">·</span><span id="clipOrigin">—</span>
+        <span class="sep">·</span><span id="clipNote">2 recordings</span>
+      </div>
+    </div>
+
+    <div class="video-shell">
+      <video id="video" preload="metadata" playsinline></video>
+      <div class="video-fallback" id="videoFallback" hidden>
+        <strong>Clip could not be played</strong>
+        <span>Keep the clip file inside <code>media/</code>, same name. Use Edge or Chrome.</span>
+      </div>
+    </div>
+
+    <div class="timeline-wrap">
+      <div class="timeline" id="timeline" role="slider" tabindex="0" aria-label="Seek clip" aria-valuemin="0" aria-valuemax="22.021" aria-valuenow="0">
+        <div class="tl-track"></div>
+        <div class="tl-region" id="tlRegion"></div>
+        <div class="tl-mark" id="tlStart" hidden></div>
+        <div class="tl-mark" id="tlEnd" hidden></div>
+        <div class="tl-head" id="tlHead"></div>
+      </div>
+      <div class="ticks" id="ticks"></div>
+    </div>
+
+    <div class="transport">
+      <div class="time-read">
+        <div class="time-main">
+          <code id="curTime">00:00.000</code>
+          <span class="muted">/ <code id="durTime">00:22.021</code></span>
+        </div>
+        <div class="time-source"><span>source</span> <code id="sourceNow">—</code><span class="rec" id="recLabel">rec 1</span></div>
+      </div>
+      <div class="transport-buttons">
+        <button class="icon-btn" id="frameBack" type="button" title="Back one frame (←)">−1f</button>
+        <button class="play-btn" id="playBtn" type="button" aria-label="Play">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn" id="frameFwd" type="button" title="Forward one frame (→)">+1f</button>
+        <select class="speed" id="speed" aria-label="Playback speed">
+          <option value="0.25">0.25×</option>
+          <option value="0.5">0.5×</option>
+          <option value="1" selected>1×</option>
+          <option value="1.5">1.5×</option>
+          <option value="2">2×</option>
+        </select>
+      </div>
+      <div class="marker-actions">
+        <button class="btn small" id="setStart" type="button">Set start <kbd>S</kbd></button>
+        <button class="btn small" id="setEnd" type="button">Set end <kbd>E</kbd></button>
+      </div>
+    </div>
+
+    <div class="segment">
+      <div class="seg-item">
+        <span class="seg-label">Start</span>
+        <code id="segStart">—</code>
+        <span class="seg-source" id="segStartSource">—</span>
+        <button class="link" type="button" data-mark="start">use playhead</button>
+      </div>
+      <div class="seg-arrow" aria-hidden="true">→</div>
+      <div class="seg-item">
+        <span class="seg-label">End</span>
+        <code id="segEnd">—</code>
+        <span class="seg-source" id="segEndSource">—</span>
+        <button class="link" type="button" data-mark="end">use playhead</button>
+      </div>
+      <div class="seg-len"><strong id="segLen">—</strong><span>duration</span></div>
+    </div>
+
+    <p class="keys"><kbd>Space</kbd> play/pause <span class="dot">·</span> <kbd>S</kbd> start <span class="dot">·</span> <kbd>E</kbd> end <span class="dot">·</span> <kbd>←</kbd><kbd>→</kbd> frame <span class="dot">·</span> <kbd>Shift</kbd> + arrows 1 s</p>
+  </section>
+
+  <section class="card tagform" id="tagForm">
+    <div class="card-head">
+      <h2 id="formTitle">Tag an action</h2>
+      <span class="mode" id="modeBadge">New</span>
+    </div>
+
+    <div class="group">
+      <label class="group-label" for="playerSearch">Player</label>
+      <div class="combo">
+        <input id="playerSearch" type="text" placeholder="Search name or player ID…" autocomplete="off" spellcheck="false"
+               role="combobox" aria-expanded="false" aria-controls="playerList" aria-autocomplete="list">
+        <button class="combo-clear" id="clearPlayer" type="button" aria-label="Clear player" hidden>×</button>
+        <div class="combo-list" id="playerList" role="listbox" hidden></div>
+      </div>
+      <p class="hint" id="playerHint">Roster —</p>
+    </div>
+
+    <div class="group">
+      <div class="group-top">
+        <span class="group-label">Observations</span>
+        <button class="link" id="fillRest" type="button" hidden>Rest as Cannot assess</button>
+      </div>
+      <div class="obs" id="obs"><!-- one row per clip focus point, built by the app --></div>
+    </div>
+
+    <div class="group grow">
+      <label class="group-label" for="comment">Comment <span class="optional">optional</span></label>
+      <textarea id="comment" rows="2" maxlength="500" placeholder="What did you see? Keep it factual."></textarea>
+      <div class="counter"><span id="commentCount">0</span>/500</div>
+    </div>
+
+    <div class="context">
+      <div><span>Team</span><strong id="ctxTeam">—</strong></div>
+      <div><span>Session</span><strong id="ctxSession">—</strong></div>
+      <div><span>Video</span><strong class="mono" id="ctxVideo">—</strong></div>
+    </div>
+
+    <div class="form-footer">
+      <div class="confirm" role="group" aria-label="Confirmation status">
+        <button type="button" data-status="Draft" aria-pressed="true">Draft</button>
+        <button type="button" data-status="Confirmed" aria-pressed="false">Confirmed</button>
+      </div>
+      <div class="form-actions">
+        <button class="btn ghost" id="clearForm" type="button">Clear</button>
+        <button class="btn primary" id="saveBtn" type="button">Save tag</button>
+      </div>
+      <button class="link danger" id="deleteBtn" type="button" hidden>Delete this tag</button>
+      <p class="form-error" id="formError" role="alert" hidden></p>
+    </div>
+  </section>
+
+  <section class="card events">
+    <div class="card-head">
+      <h2>Tags <span class="count" id="eventCount">0</span></h2>
+      <span class="chip-legend" id="chipLegend" hidden></span>
+      <div class="events-tools">
+        <input id="filter" type="search" placeholder="Filter tags…" autocomplete="off">
+        <button class="btn small ghost" id="verifyAll" type="button" title="Seek every tag and compare timestamps">Check replay</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="eventTable">
+        <thead>
+          <tr>
+            <th>Event</th><th>Player</th><th>Segment</th><th>Observations</th><th>Reviewer</th><th>Status</th><th class="right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="eventBody"></tbody>
+      </table>
+      <div class="empty" id="emptyState">
+        <strong>No tags yet</strong>
+        <span>Set a start and end marker, pick a player, rate the focus points, then save.</span>
+      </div>
+    </div>
+    <div class="store-note">
+      <span id="storeNote">Saved on this device</span>
+      <span class="sep">·</span>
+      <button class="link" id="copyCsv" type="button">Copy rows for weekfile → Tags</button>
+    </div>
+  </section>
+
+  <section class="card help">
+    <h2>Quick start</h2>
+    <ol>
+      <li><span class="num">1</span><span>Enter the reviewer name.</span></li>
+      <li><span class="num">2</span><span>Mark start (<kbd>S</kbd>) and end (<kbd>E</kbd>).</span></li>
+      <li><span class="num">3</span><span>Pick a player, or <em>Unknown player</em>.</span></li>
+      <li><span class="num">4</span><span>Rate the focus points, then save.</span></li>
+      <li><span class="num">5</span><span>Replay, then export for the overview.</span></li>
+    </ol>
+    <p class="guardrail">Manual observation only — no automatic judgments, scores or training use. Unknown identity is allowed; never guess.</p>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importFile" accept="application/json,.json" hidden>
+
+<script src="data/pilot-data.js"></script>
+<script src="assets/core.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/mobile.js"></script>
+</body>
+</html>
