@@ -87,3 +87,9 @@ table{min-width:0!important}thead{display:none}tbody tr{display:block;border-bot
 /* The coach-approved 67% density is the phone default at 100% browser zoom.
    CSS zoom participates in layout, so no transformed overflow or clipped bottom. */
 @media(max-width:700px){ body.compact-phone{zoom:0.67} }
+/* Keep full-width footage while the rest of the phone UI uses compact density. */
+@media(max-width:700px){
+.compact-phone .stage{padding-left:0;padding-right:0}
+.compact-phone .video-shell{border-radius:0}
+.compact-phone #video{display:block;width:100%;height:auto;max-height:none;object-fit:contain}
+}
