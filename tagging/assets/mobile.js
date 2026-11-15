@@ -5,10 +5,15 @@ const video=document.getElementById('video'),transport=document.querySelector('.
 const back=document.createElement('button'),forward=document.createElement('button');
 for(const [b,id,label,offset]of[[back,'secondBack','−5s',-5],[forward,'secondForward','+5s',5]]){b.id=id;b.type='button';b.className='icon-btn phone-second';b.textContent=label;b.setAttribute('aria-label',offset<0?'Back five seconds':'Forward five seconds');b.onclick=()=>{video.pause();video.currentTime=Math.max(0,Math.min(video.duration||0,video.currentTime+offset));};}
 const seek=document.createElement('input');seek.id='phoneSeek';seek.type='range';seek.min='0';seek.max='0';seek.step='0.001';seek.value='0';seek.setAttribute('aria-label','Seek to a moment in the video');
-let dragging=false;
+let dragging=false,pending=null;
+function clampTime(t){return Number.isFinite(video.duration)&&video.duration>0?Math.max(0,Math.min(video.duration,t)):null;}
+/* Live preview only inside the downloaded part; one clean seek on release
+   keeps no-range media servers from thrashing back to 0:00 mid-drag. */
+function inBuffered(t){try{for(let i=0;i<video.buffered.length;i++)if(t>=video.buffered.start(i)&&t<=video.buffered.end(i))return true;}catch(err){}return false;}
 function syncSeek(){if(Number.isFinite(video.duration)&&video.duration>0)seek.max=String(video.duration);if(!dragging)seek.value=String(video.currentTime||0);seek.setAttribute('aria-valuetext',new Date((video.currentTime||0)*1000).toISOString().slice(14,23));}
-function seekFromInput(){if(Number.isFinite(video.duration)&&video.duration>0)video.currentTime=Math.max(0,Math.min(video.duration,Number(seek.value)));}
-seek.addEventListener('pointerdown',()=>{dragging=true;});seek.addEventListener('input',seekFromInput);seek.addEventListener('change',()=>{seekFromInput();dragging=false;});seek.addEventListener('pointerup',()=>{dragging=false;});seek.addEventListener('pointercancel',()=>{dragging=false;syncSeek();});seek.addEventListener('blur',()=>{dragging=false;syncSeek();});
+function seekFromInput(){const t=clampTime(Number(seek.value));if(t==null)return;pending=t;if(inBuffered(t))video.currentTime=t;}
+function commitSeek(){if(pending!=null){const t=clampTime(pending);if(t!=null)video.currentTime=t;}pending=null;}
+seek.addEventListener('pointerdown',()=>{dragging=true;});seek.addEventListener('input',seekFromInput);seek.addEventListener('change',()=>{commitSeek();dragging=false;});seek.addEventListener('pointerup',()=>{dragging=false;});seek.addEventListener('pointercancel',()=>{pending=null;dragging=false;syncSeek();});seek.addEventListener('blur',()=>{pending=null;dragging=false;syncSeek();});
 for(const event of ['loadedmetadata','durationchange','timeupdate','emptied'])video.addEventListener(event,syncSeek);
 const menu=document.createElement('details');menu.className='phone-settings';
 const summary=document.createElement('summary');summary.textContent='☰';summary.setAttribute('aria-label','Settings, reviewer, export and help');
