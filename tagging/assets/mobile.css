@@ -55,3 +55,6 @@ table{min-width:0!important}thead{display:none}tbody tr{display:block;border-bot
 
 /* Allow the page to scroll when a swipe begins on the video or timeline. */
 #video, .video-shell, #timeline { touch-action: pan-y pinch-zoom; }
+
+/* Let touchscreen video swipes reach the page; use the external Play button. */
+@media(pointer:coarse){#video{pointer-events:none;touch-action:auto}.video-shell{touch-action:pan-y pinch-zoom}}
