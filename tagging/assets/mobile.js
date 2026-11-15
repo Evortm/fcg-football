@@ -14,3 +14,13 @@ function mount(){if(mounted)return;mounted=true;document.body.classList.add('com
 function unmount(){if(!mounted)return;observer.disconnect();restores.reverse().forEach(restore=>restore());restores=[];menu.remove();buttons.forEach(([b,html])=>{b.innerHTML=html;b.removeAttribute('aria-label');});document.body.classList.remove('compact-phone');mounted=false;}
 const phone=matchMedia('(max-width:700px)');function apply(){if(phone.matches)mount();else unmount();}phone.addEventListener('change',apply);apply();
 })();
+
+// Touch gestures: vertical swipes scroll; taps/horizontal drags seek.
+(()=>{
+const timeline=document.getElementById('timeline'),video=document.getElementById('video');let gesture=null;
+function seek(x){const r=timeline.getBoundingClientRect(),duration=Number.isFinite(video.duration)?video.duration:0;if(r.width&&duration)video.currentTime=Math.max(0,Math.min(duration,(x-r.left)/r.width*duration));}
+timeline.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;e.stopImmediatePropagation();gesture={id:e.pointerId,x:e.clientX,y:e.clientY,mode:'tap'};},true);
+timeline.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!gesture||gesture.id!==e.pointerId)return;e.stopImmediatePropagation();const dx=Math.abs(e.clientX-gesture.x),dy=Math.abs(e.clientY-gesture.y);if(gesture.mode==='tap'&&Math.max(dx,dy)>8)gesture.mode=dx>dy?'seek':'scroll';if(gesture.mode==='seek')seek(e.clientX);},true);
+timeline.addEventListener('pointerup',e=>{if(e.pointerType!=='touch'||!gesture||gesture.id!==e.pointerId)return;e.stopImmediatePropagation();if(gesture.mode!=='scroll')seek(e.clientX);gesture=null;},true);
+timeline.addEventListener('pointercancel',e=>{if(gesture&&gesture.id===e.pointerId)gesture=null;},true);
+})();
