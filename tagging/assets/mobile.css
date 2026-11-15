@@ -52,3 +52,6 @@ table{min-width:0!important}thead{display:none}tbody tr{display:block;border-bot
 .compact-phone #playBtn{grid-column:2;grid-row:1;width:52px;min-width:44px;max-width:none;height:44px;border-radius:8px}
 .compact-phone #setEnd{grid-column:3;grid-row:1;width:100%;font-size:12px}
 }
+
+/* Allow the page to scroll when a swipe begins on the video or timeline. */
+#video, .video-shell, #timeline { touch-action: pan-y pinch-zoom; }
