@@ -40,3 +40,5 @@ body{font-size:14px}
 .events>.card-head{padding:7px 10px;flex-wrap:wrap;gap:6px}.events-tools{width:100%}
 table{min-width:0!important}thead{display:none}tbody tr{display:block;border-bottom:1px solid #ddd;padding:6px}tbody td{display:block;border:0!important;padding:3px 6px}tbody td:first-child,.p-id,.seg-cell small{display:none}.actions{justify-content:flex-start}
 }
+/* Keep legacy controls in the DOM for saved-tag compatibility, outside the coach workflow. */
+.confirm, #speed, #verifyAll, .phone-second, #eventTable th:nth-child(6), #eventTable td:nth-child(6) { display: none !important; }
