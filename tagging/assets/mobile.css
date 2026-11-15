@@ -60,3 +60,27 @@ table{min-width:0!important}thead{display:none}tbody tr{display:block;border-bot
 .compact-phone #secondBack{grid-column:1}.compact-phone #setStart{grid-column:2;font-size:11px;line-height:1.25}
 .compact-phone #playBtn{grid-column:3;width:44px}.compact-phone #setEnd{grid-column:4;font-size:11px;line-height:1.25}.compact-phone #secondForward{grid-column:5}
 }
+/* Denser phone layout without scaling down touch targets. */
+@media(max-width:700px){
+.compact-phone .topbar{padding:3px 5px;gap:4px}
+.compact-phone .layout{padding:0 4px 6px!important;gap:4px}
+.compact-phone .stage,.compact-phone .tagform{padding:6px}
+.compact-phone .video-shell{aspect-ratio:auto}
+.compact-phone #video{height:auto;max-height:25vh;max-height:25svh;object-fit:contain}
+.compact-phone .timeline-wrap{margin-top:2px;padding:0 2px!important}
+.compact-phone #phoneSeek{height:28px}
+.compact-phone .transport{padding:1px 0 3px}
+.compact-phone .tagform>.card-head{padding:2px 4px}
+.compact-phone .tagform .group{padding:4px;margin:0}
+.compact-phone .group-top{margin-bottom:2px}
+.compact-phone .obs{gap:5px;margin-top:2px}
+.compact-phone .obs-row{padding:0;gap:2px}
+.compact-phone .obs-name{font-size:12px;line-height:1.3}
+.compact-phone .rate{padding:2px;gap:3px}
+.compact-phone .rate button{min-height:44px;font-size:11px;padding:4px 2px}
+.compact-phone .form-footer{padding:4px;margin-top:3px;gap:4px}
+.compact-phone .tagform .group.grow{flex:none}
+.compact-phone .tagform textarea{height:44px;min-height:44px}
+.compact-phone .counter{display:none}
+.compact-phone .events{padding:6px}
+}

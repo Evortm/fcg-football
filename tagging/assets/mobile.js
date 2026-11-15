@@ -3,7 +3,7 @@
 (()=>{
 const video=document.getElementById('video'),transport=document.querySelector('.transport-buttons');
 const back=document.createElement('button'),forward=document.createElement('button');
-for(const [b,id,label,offset]of[[back,'secondBack','−1s',-1],[forward,'secondForward','+1s',1]]){b.id=id;b.type='button';b.className='icon-btn phone-second';b.textContent=label;b.setAttribute('aria-label',offset<0?'Back one second':'Forward one second');b.onclick=()=>{video.pause();video.currentTime=Math.max(0,Math.min(video.duration||0,video.currentTime+offset));};}
+for(const [b,id,label,offset]of[[back,'secondBack','−5s',-5],[forward,'secondForward','+5s',5]]){b.id=id;b.type='button';b.className='icon-btn phone-second';b.textContent=label;b.setAttribute('aria-label',offset<0?'Back five seconds':'Forward five seconds');b.onclick=()=>{video.pause();video.currentTime=Math.max(0,Math.min(video.duration||0,video.currentTime+offset));};}
 const seek=document.createElement('input');seek.id='phoneSeek';seek.type='range';seek.min='0';seek.max='0';seek.step='0.001';seek.value='0';seek.setAttribute('aria-label','Seek to a moment in the video');
 let dragging=false;
 function syncSeek(){if(Number.isFinite(video.duration)&&video.duration>0)seek.max=String(video.duration);if(!dragging)seek.value=String(video.currentTime||0);seek.setAttribute('aria-valuetext',new Date((video.currentTime||0)*1000).toISOString().slice(14,23));}
