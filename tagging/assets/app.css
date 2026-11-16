@@ -135,10 +135,14 @@ kbd {
   padding: 16px; min-width: 0;
 }
 .events, .help { grid-column: 1 / -1; }
-/* Without the start/end readout the clip card is shorter than the tagging
-   form. Let it keep its natural height on laptop instead of stretching into
-   an empty panel; below 1081px the single-column layout needs full width. */
-@media (min-width: 1081px) { .stage { align-self: start; } }
+/* Laptop: the Clip card and the tagging form must be exactly the same height
+   (the grid already stretches them). The shortcut line is anchored to the
+   bottom of the Clip card, so any leftover space reads as a footer instead of
+   an empty panel. Below 1081px the cards stack and each keeps its own height. */
+@media (min-width: 1081px) {
+  .stage { display: flex; flex-direction: column; }
+  .stage .keys { margin-top: auto; padding-top: 16px; }
+}
 
 .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
 .card-head h2 { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.3; }
@@ -295,7 +299,30 @@ kbd {
   font-family: var(--fcg-mono); font-size: 12px; font-weight: 700;
   font-variant-numeric: tabular-nums; letter-spacing: 0;
 }
-.keys { margin: 16px 0 0; font-size: 12.5px; color: var(--fcg-text-muted); line-height: 1.6; }
+.keys { margin: 16px 0 0; font-size: 14px; color: var(--fcg-text-muted); line-height: 1.6; }
+.keys kbd { font-size: 12.5px; }
+
+/* Desktop mirrors the phone's seek row: −5s · Set start · Play · Set end · +5s.
+   The time readout and frame-stepping buttons sit on a second line, so both
+   views expose exactly the same controls around the start/end markers. */
+@media (min-width: 701px) {
+  .transport {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px minmax(0, 1fr) 48px;
+    align-items: center; gap: 8px;
+  }
+  .transport .transport-buttons, .transport .marker-actions { display: contents; }
+  .transport .time-read { grid-column: 1 / 4; grid-row: 2; }
+  #secondBack { grid-column: 1; grid-row: 1; }
+  #setStart { grid-column: 2; grid-row: 1; }
+  #playBtn { grid-column: 3; grid-row: 1; justify-self: center; }
+  #setEnd { grid-column: 4; grid-row: 1; }
+  #secondForward { grid-column: 5; grid-row: 1; }
+  #frameBack { grid-column: 4; grid-row: 2; justify-self: end; width: 48px; min-width: 0; }
+  #frameFwd { grid-column: 5; grid-row: 2; width: 48px; min-width: 0; }
+  .transport .marker-actions .btn { width: 100%; }
+  .transport .icon-btn, .transport .play-btn { height: 44px; }
+}
 
 /* ---------------------------------------------------------------- form */
 .tagform { display: flex; flex-direction: column; }
