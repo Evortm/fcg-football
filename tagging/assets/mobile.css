@@ -39,6 +39,11 @@ body{font-size:15px}
 .card{border-radius:10px;padding:12px}
 .compact-phone .layout{padding:0 8px 8px!important;gap:8px}
 .compact-phone .stage,.compact-phone .tagform{padding:12px}
+/* On phone mobile.js writes the stamped time into the button label itself,
+   so the desktop ::after would duplicate it. */
+.marker-actions .btn.stamped::after{content:none}
+.compact-phone .same-time{width:100%;min-height:44px}
+.compact-phone .marker-actions .btn.stamped{font-size:12px}
 .video-shell{position:relative;border-radius:8px;margin:0!important}
 #video{width:100%;height:auto;object-fit:contain;background:#000;display:block}
 .timeline-wrap{padding:0 4px!important;margin-top:8px}
@@ -51,7 +56,6 @@ body{font-size:15px}
 .transport-buttons>button,.transport-buttons>.speed{height:44px;min-height:44px;flex:1;max-width:96px;font-size:14px}
 .marker-actions{display:flex;width:100%;gap:8px}
 .marker-actions>button{flex:1;min-width:0;min-height:44px;padding:5px;font-size:14px;font-variant-numeric:tabular-nums}
-.compact-phone .segment{margin-top:8px;padding:8px;gap:8px}
 .compact-phone .keys{display:none!important}
 kbd{display:none}
 .tagform>.card-head{padding:4px 0;min-height:0}

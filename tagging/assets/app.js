@@ -68,6 +68,7 @@
     commentCount: $("#commentCount"),
     confirm: $(".confirm"),
     saveBtn: $("#saveBtn"),
+    sameTimeBtn: $("#sameTimeBtn"),
     clearBtn: $("#clearForm"),
     deleteBtn: $("#deleteBtn"),
     formTitle: $("#formTitle"),
@@ -466,6 +467,18 @@
   function renderSegment() {
     var hasStart = state.start !== null;
     var hasEnd = state.end !== null;
+    /* The separate start/end readout box is hidden. Each marker button now
+       carries its own stamped time (data-time -> CSS ::after on laptop;
+       mobile.js writes the same value into the phone label) and turns lime
+       when stamped. The class/attribute survive mobile.js text rewrites. */
+    [[el.setStart, hasStart, state.start, "start"], [el.setEnd, hasEnd, state.end, "end"]].forEach(function (row) {
+      var btn = row[0], has = row[1], text = has ? fmt(row[2]) : "";
+      btn.classList.toggle("stamped", has);
+      btn.dataset.time = text;
+      btn.setAttribute("aria-label", has
+        ? "Set " + row[3] + " marker, currently " + text
+        : "Set " + row[3] + " marker");
+    });
     el.segStart.textContent = hasStart ? fmt(state.start) : "—";
     el.segEnd.textContent = hasEnd ? fmt(state.end) : "—";
     el.segStartSource.textContent = hasStart
@@ -735,7 +748,7 @@
   }
 
   function saveEvent() {
-    if (!state.player) { showError("Select a player, or choose Unknown player."); el.playerSearch.focus(); return; }
+    if (!state.player) { showError("Select a player, or choose Unknown player."); el.playerSearch.focus(); return false; }
     var reviewer = el.reviewer.value.trim();
     var existing = state.editing
       ? store.events.filter(function (ev) { return ev.event_id === state.editing; })[0]
@@ -761,11 +774,11 @@
 
     if (isFinite(ev.t_start) && isFinite(ev.t_end) && C.crossesCut(ev.t_start, ev.t_end, V.segments)) {
       showError("This segment crosses the recording cut at " + fmt(V.segments[0].file_end) + " — tag each side separately.");
-      return;
+      return false;
     }
 
     var errors = C.validateEvent(ev, maxClip(), V.focus);
-    if (errors.length) { showError(errors[0]); return; }
+    if (errors.length) { showError(errors[0]); return false; }
 
     if (existing) {
       store.events = store.events.map(function (item) { return item.event_id === ev.event_id ? ev : item; });
@@ -783,6 +796,26 @@
     renderEvents();
     resetForm(true);
     toast((existing ? "Updated " : "Saved ") + ev.event_id, "good");
+    return true;
+  }
+
+  /* One repetition can contain several players, each with different focus
+     points. Save the current tag, keep exactly the same start/end markers and
+     open a fresh form for the next player. No schema, export or storage change. */
+  function saveAndSameTime() {
+    if (state.start === null || state.end === null) {
+      showError("Mark a start and end first, then tag another player on the same repetition.");
+      return;
+    }
+    var start = state.start, end = state.end;
+    /* Save a tag that is in progress; an empty form simply reuses the markers
+       that the previous save left in place. Validation errors keep the form. */
+    if (state.player && !saveEvent()) return;
+    state.start = start;
+    state.end = end;
+    resetForm(true);
+    el.playerSearch.focus();
+    toast("Same repetition kept — choose the next player.", "good");
   }
 
   function deleteEvent(id) {
@@ -1201,6 +1234,7 @@
     });
 
     el.saveBtn.addEventListener("click", saveEvent);
+    el.sameTimeBtn.addEventListener("click", saveAndSameTime);
     el.clearBtn.addEventListener("click", function () { resetForm(false); });
     el.deleteBtn.addEventListener("click", function () {
       if (state.editing) deleteEvent(state.editing);
