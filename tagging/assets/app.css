@@ -430,6 +430,36 @@ textarea:hover { border-color: var(--fcg-border-strong); }
   #playerHint[data-picked="1"] { display: none; }
   /* 3. Team / Session / Video duplicate the header subtitle + video chip. */
   .tagform .context { display: none; }
+
+  /* 4. One balanced action row instead of a second full-width button row.
+        A 2-column grid makes both halves exactly equal: left = the orange
+        chain action, right = Clear + Save tag split equally again. */
+  .tagform .form-footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 12px; align-items: center;
+  }
+  .tagform .form-footer .same-time {
+    grid-column: 1; grid-row: 1;
+    width: 100%; padding: 0 10px;
+    border: 1px solid var(--fcg-action-orange); border-style: solid;
+    background: var(--fcg-action-orange);
+    color: var(--fcg-accent-ink); font-weight: 700;
+  }
+  .tagform .form-footer .same-time:hover {
+    background: var(--fcg-action-orange-hover);
+    border-color: var(--fcg-action-orange-hover);
+    color: var(--fcg-accent-ink);
+  }
+  .tagform .form-footer .same-time:focus-visible { outline-color: var(--fcg-action-orange-hover); }
+  .tagform .form-footer .form-actions {
+    grid-column: 2; grid-row: 1;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px; margin-left: 0;
+  }
+  .tagform .form-footer .form-actions .btn { width: 100%; padding: 0 10px; }
+  /* Contextual extras keep their own row so the three actions stay aligned. */
+  .tagform .form-footer #deleteBtn, .tagform .form-footer .form-error { grid-column: 1 / -1; }
 }
 
 .form-footer { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }

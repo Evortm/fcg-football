@@ -38,6 +38,10 @@
   --fcg-danger: #ff9b8f;
   --fcg-danger-line: #b8544a;
   --fcg-danger-surface: #3a1c1c;
+  /* Warm secondary action ("Same time, different player"): distinct from the
+     lime primary and the neutral ghost buttons. Navy ink keeps text contrast. */
+  --fcg-action-orange: #f5a623;
+  --fcg-action-orange-hover: #ffbb4d;
   --fcg-mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   /* Coach-approved phone density (16 Nov 2026). 0.5 gives the compact view
