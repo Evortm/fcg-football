@@ -40,6 +40,7 @@
   --fcg-danger-surface: #3a1c1c;
   --fcg-mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
-  /* Set to 0.67 to restore the previously approved compact phone density. */
-  --fcg-phone-zoom: 1;
+  /* Coach-approved phone density (16 Nov 2026). 0.5 gives the compact view
+     the coach selected; 1 would render the phone layout at full size. */
+  --fcg-phone-zoom: 0.5;
 }

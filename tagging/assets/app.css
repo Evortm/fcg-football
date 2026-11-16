@@ -152,8 +152,11 @@ kbd {
 .clip-select-wrap select:hover { border-color: var(--fcg-border-strong); }
 .clip-select-wrap select:disabled { color: var(--fcg-text-muted); cursor: default; }
 .clip-select-wrap option, .clip-select-wrap optgroup { background: var(--fcg-card); color: var(--fcg-text); font-size: 14px; }
-.clip-meta { display: flex; align-items: center; gap: 8px; flex: 1 1 auto; min-width: 0; flex-wrap: wrap; font-size: 12.5px; color: var(--fcg-text-muted); }
-.clip-meta code { color: var(--fcg-text-secondary); font-size: 12px; white-space: normal; overflow-wrap: anywhere; }
+/* Clip file metadata used to sit between the header and the video. Coaches
+   asked for that strip to be removed on laptop and phone. The nodes stay in
+   the DOM because app.js writes #clipName / #clipDuration / #clipOrigin /
+   #clipNote into them; only their presentation is switched off. */
+.clip-meta, .clip-meta code { display: none; }
 .sep { color: var(--fcg-border-strong); }
 
 /* ---------------------------------------------------------------- video */

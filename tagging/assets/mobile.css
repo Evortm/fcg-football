@@ -8,9 +8,10 @@ body{font-size:15px}
 .compact-phone .brand{display:flex;gap:8px}
 .compact-phone .titles{display:none}
 .compact-phone .crest{width:30px;height:36px}
-.compact-phone .stage>.card-head{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.compact-phone .stage>.card-head h2{display:none}
-.compact-phone .clip-meta{font-size:12px;gap:6px}
+/* With clip metadata removed and the selectors moved into the header by
+   mobile.js, the stage card head is empty — collapse it so the video starts
+   directly under the header. */
+.compact-phone .stage>.card-head{display:none}
 .compact-phone .clip-select-wrap{display:flex;gap:8px;flex:1;min-width:0;align-items:center}
 .compact-phone .clip-select-wrap>label:not(.sr-only){font-size:12.5px;flex:0 0 40%;min-width:0;color:var(--fcg-text-muted)}
 .compact-phone .clip-select-wrap label{display:flex;align-items:center;gap:4px;min-width:0}
@@ -109,8 +110,8 @@ tbody td:first-child,.p-id,.seg-cell small{display:none}
 .compact-phone #setEnd{grid-column:4;font-size:12px;line-height:1.25}
 .compact-phone #secondForward{grid-column:5}
 }
-/* Phone density is a single token. 0.67 restores the earlier compact default;
-   1 keeps body text and inputs legible at 390px without hiding information. */
+/* Phone density is a single token in fcg-tokens.css. The approved value is
+   0.5; 1 would render the phone layout at full size. */
 @media(max-width:700px){ body.compact-phone{zoom:var(--fcg-phone-zoom)} }
 /* Keep full-width footage while the rest of the phone UI uses the same tokens. */
 @media(max-width:700px){
