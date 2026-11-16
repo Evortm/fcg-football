@@ -16,7 +16,7 @@ window.PILOT = {
       },
       "session": "TUE",
       "window": "0:00–182.97 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U11-TUE-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U11-TUE-HB.mp4",
       "source_name": "A7-FULL-ACT-U11-TUE-HB.mp4",
       "duration": 182.97,
       "basis": "Clip position",
@@ -71,7 +71,8 @@ window.PILOT = {
         "2015-Timmy-闫天泽",
         "2016-Xiaobei-隆子毅",
         "2015-Yoyo-赵奕凯"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U11-TUE-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U09G-THU-01",
@@ -89,7 +90,7 @@ window.PILOT = {
       },
       "session": "THU",
       "window": "0:00–191.50 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U9-THU-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U9-THU-HB.mp4",
       "source_name": "A7-FULL-ACT-U9-THU-HB.mp4",
       "duration": 191.5,
       "basis": "Clip position",
@@ -134,7 +135,8 @@ window.PILOT = {
         "2018-Rain-陈文伍",
         "2018-Steven-莫云哲",
         "2017-Susie-詹家怡"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U9-THU-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U09G-THU-01",
@@ -152,7 +154,7 @@ window.PILOT = {
       },
       "session": "THU",
       "window": "0:00–185.83 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U9-THU-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U9-THU-HB.mp4",
       "source_name": "A7-FULL-D1-U9-THU-HB.mp4",
       "duration": 185.83,
       "basis": "Clip position",
@@ -197,7 +199,8 @@ window.PILOT = {
         "2018-Rain-陈文伍",
         "2018-Steven-莫云哲",
         "2017-Susie-詹家怡"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U9-THU-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U09G-THU-01",
@@ -215,7 +218,7 @@ window.PILOT = {
       },
       "session": "THU",
       "window": "0:00–172.10 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U9-THU-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U9-THU-HB.mp4",
       "source_name": "A7-FULL-D2-U9-THU-HB.mp4",
       "duration": 172.1,
       "basis": "Clip position",
@@ -260,7 +263,8 @@ window.PILOT = {
         "2018-Rain-陈文伍",
         "2018-Steven-莫云哲",
         "2017-Susie-詹家怡"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U9-THU-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U06G-MON-01",
@@ -279,7 +283,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–179.68 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U6-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U6-MON-JX.mp4",
       "source_name": "A7-FULL-ACT-U6-MON-JX.mp4",
       "duration": 179.68,
       "basis": "Clip position",
@@ -346,7 +350,8 @@ window.PILOT = {
         "2019-Sven-胡偲远",
         "2020-Thomas-陈泽宸",
         "2018-Vincent-杨孝灿"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U6-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U06G-MON-01",
@@ -365,7 +370,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–180.35 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U6-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U6-MON-JX.mp4",
       "source_name": "A7-FULL-D1-U6-MON-JX.mp4",
       "duration": 180.35,
       "basis": "Clip position",
@@ -432,7 +437,8 @@ window.PILOT = {
         "2019-Sven-胡偲远",
         "2020-Thomas-陈泽宸",
         "2018-Vincent-杨孝灿"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U6-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U06G-MON-01",
@@ -451,7 +457,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–180.15 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U6-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U6-MON-JX.mp4",
       "source_name": "A7-FULL-D2-U6-MON-JX.mp4",
       "duration": 180.15,
       "basis": "Clip position",
@@ -518,7 +524,8 @@ window.PILOT = {
         "2019-Sven-胡偲远",
         "2020-Thomas-陈泽宸",
         "2018-Vincent-杨孝灿"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U6-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D3-U06G-MON-01",
@@ -537,7 +544,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–179.95 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U6-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D3-U6-MON-JX.mp4",
       "source_name": "A7-FULL-D3-U6-MON-JX.mp4",
       "duration": 179.95,
       "basis": "Clip position",
@@ -604,7 +611,8 @@ window.PILOT = {
         "2019-Sven-胡偲远",
         "2020-Thomas-陈泽宸",
         "2018-Vincent-杨孝灿"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U6-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U08G-THU-01",
@@ -622,7 +630,7 @@ window.PILOT = {
       },
       "session": "THU",
       "window": "0:00–183.33 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U8-THU-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U8-THU-HB.mp4",
       "source_name": "A7-FULL-ACT-U8-THU-HB.mp4",
       "duration": 183.33,
       "basis": "Clip position",
@@ -660,7 +668,8 @@ window.PILOT = {
         "2019-Yoyo-王进宁",
         "2019-Yuanyuan-林洛潇",
         "2019-Zephyr-林煦然"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U8-THU-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U08G-MON-01",
@@ -678,7 +687,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–175.37 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U8-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U8-MON-HB.mp4",
       "source_name": "A7-FULL-D1-U8-MON-HB.mp4",
       "duration": 175.37,
       "basis": "Clip position",
@@ -716,7 +725,8 @@ window.PILOT = {
         "2019-Yoyo-王进宁",
         "2019-Yuanyuan-林洛潇",
         "2019-Zephyr-林煦然"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U8-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U08G-MON-01",
@@ -734,7 +744,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–172.10 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U8-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U8-MON-HB.mp4",
       "source_name": "A7-FULL-D2-U8-MON-HB.mp4",
       "duration": 172.1,
       "basis": "Clip position",
@@ -772,7 +782,8 @@ window.PILOT = {
         "2019-Yoyo-王进宁",
         "2019-Yuanyuan-林洛潇",
         "2019-Zephyr-林煦然"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U8-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U10G-MON-01",
@@ -790,7 +801,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–180.93 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U10-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U10-MON-HB.mp4",
       "source_name": "A7-FULL-ACT-U10-MON-HB.mp4",
       "duration": 180.93,
       "basis": "Clip position",
@@ -836,7 +847,8 @@ window.PILOT = {
         "2017-Ryan-于茗希",
         "2017-Simon-张夏蒙",
         "2017-Zayn-王俊煜"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U10-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U10G-MON-01",
@@ -854,7 +866,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–185.47 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U10-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U10-MON-HB.mp4",
       "source_name": "A7-FULL-D1-U10-MON-HB.mp4",
       "duration": 185.47,
       "basis": "Clip position",
@@ -900,7 +912,8 @@ window.PILOT = {
         "2017-Ryan-于茗希",
         "2017-Simon-张夏蒙",
         "2017-Zayn-王俊煜"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U10-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U10G-FRI-01",
@@ -918,7 +931,7 @@ window.PILOT = {
       },
       "session": "FRI",
       "window": "0:00–186.00 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U10-FRI-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U10-FRI-HB.mp4",
       "source_name": "A7-FULL-D2-U10-FRI-HB.mp4",
       "duration": 186,
       "basis": "Clip position",
@@ -964,7 +977,8 @@ window.PILOT = {
         "2017-Ryan-于茗希",
         "2017-Simon-张夏蒙",
         "2017-Zayn-王俊煜"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U10-FRI-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U11G-THU-01",
@@ -982,7 +996,7 @@ window.PILOT = {
       },
       "session": "THU",
       "window": "0:00–195.17 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U11-THU-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U11-THU-HB.mp4",
       "source_name": "A7-FULL-D1-U11-THU-HB.mp4",
       "duration": 195.17,
       "basis": "Clip position",
@@ -1037,7 +1051,8 @@ window.PILOT = {
         "2015-Timmy-闫天泽",
         "2016-Xiaobei-隆子毅",
         "2015-Yoyo-赵奕凯"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U11-THU-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U11G-FRI-01",
@@ -1055,7 +1070,7 @@ window.PILOT = {
       },
       "session": "FRI",
       "window": "0:00–213.30 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U11-FRI-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U11-FRI-HB.mp4",
       "source_name": "A7-FULL-D2-U11-FRI-HB.mp4",
       "duration": 213.3,
       "basis": "Clip position",
@@ -1110,7 +1125,8 @@ window.PILOT = {
         "2015-Timmy-闫天泽",
         "2016-Xiaobei-隆子毅",
         "2015-Yoyo-赵奕凯"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U11-FRI-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D3-U11G-TUE-01",
@@ -1128,7 +1144,7 @@ window.PILOT = {
       },
       "session": "TUE",
       "window": "0:00–182.03 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U11-TUE-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D3-U11-TUE-HB.mp4",
       "source_name": "A7-FULL-D3-U11-TUE-HB.mp4",
       "duration": 182.03,
       "basis": "Clip position",
@@ -1183,7 +1199,8 @@ window.PILOT = {
         "2015-Timmy-闫天泽",
         "2016-Xiaobei-隆子毅",
         "2015-Yoyo-赵奕凯"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U11-TUE-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U05G-TUE-01",
@@ -1201,7 +1218,7 @@ window.PILOT = {
       },
       "session": "TUE",
       "window": "0:00–179.98 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U5-TUE-JX.mp4",
       "source_name": "A7-FULL-ACT-U5-TUE-JX.mp4",
       "duration": 179.98,
       "basis": "Clip position",
@@ -1255,7 +1272,8 @@ window.PILOT = {
         "2020-Will-章邺巍",
         "2022-Xiaoshu-陈小树",
         "2022-Yunsong-毛沄崧"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U05G-TUE-01",
@@ -1273,7 +1291,7 @@ window.PILOT = {
       },
       "session": "TUE",
       "window": "0:00–180.38 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U5-TUE-JX.mp4",
       "source_name": "A7-FULL-D1-U5-TUE-JX.mp4",
       "duration": 180.38,
       "basis": "Clip position",
@@ -1327,7 +1345,8 @@ window.PILOT = {
         "2020-Will-章邺巍",
         "2022-Xiaoshu-陈小树",
         "2022-Yunsong-毛沄崧"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U05G-TUE-01",
@@ -1345,7 +1364,7 @@ window.PILOT = {
       },
       "session": "TUE",
       "window": "0:00–180.15 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U5-TUE-JX.mp4",
       "source_name": "A7-FULL-D2-U5-TUE-JX.mp4",
       "duration": 180.15,
       "basis": "Clip position",
@@ -1399,7 +1418,8 @@ window.PILOT = {
         "2020-Will-章邺巍",
         "2022-Xiaoshu-陈小树",
         "2022-Yunsong-毛沄崧"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D3-U05G-TUE-01",
@@ -1417,7 +1437,7 @@ window.PILOT = {
       },
       "session": "TUE",
       "window": "0:00–180.35 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D3-U5-TUE-JX.mp4",
       "source_name": "A7-FULL-D3-U5-TUE-JX.mp4",
       "duration": 180.35,
       "basis": "Clip position",
@@ -1471,7 +1491,8 @@ window.PILOT = {
         "2020-Will-章邺巍",
         "2022-Xiaoshu-陈小树",
         "2022-Yunsong-毛沄崧"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U5-TUE-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U09W-MON-01",
@@ -1489,7 +1510,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–172.10 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U9W-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U9W-MON-HB.mp4",
       "source_name": "A7-FULL-ACT-U9W-MON-HB.mp4",
       "duration": 172.1,
       "basis": "Clip position",
@@ -1526,7 +1547,8 @@ window.PILOT = {
         "2017-Tony-王子熠",
         "2016-Will-成为",
         "2015-Xiuhe-周修禾"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U9W-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U09W-MON-01",
@@ -1544,7 +1566,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–172.87 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U9W-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U9W-MON-HB.mp4",
       "source_name": "A7-FULL-D1-U9W-MON-HB.mp4",
       "duration": 172.87,
       "basis": "Clip position",
@@ -1581,7 +1603,8 @@ window.PILOT = {
         "2017-Tony-王子熠",
         "2016-Will-成为",
         "2015-Xiuhe-周修禾"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U9W-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U09W-MON-01",
@@ -1599,7 +1622,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–174.97 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U9W-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U9W-MON-HB.mp4",
       "source_name": "A7-FULL-D2-U9W-MON-HB.mp4",
       "duration": 174.97,
       "basis": "Clip position",
@@ -1636,7 +1659,8 @@ window.PILOT = {
         "2017-Tony-王子熠",
         "2016-Will-成为",
         "2015-Xiuhe-周修禾"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U9W-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U07G-MON-01",
@@ -1655,7 +1679,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–179.68 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U7-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U7-MON-JX.mp4",
       "source_name": "A7-FULL-ACT-U7-MON-JX.mp4",
       "duration": 179.68,
       "basis": "Clip position",
@@ -1709,7 +1733,8 @@ window.PILOT = {
         "2018-Ryanhao-郝睿恩",
         "2019-Xixi-苏杞南",
         "2018-YI-金翊"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U7-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U07G-MON-01",
@@ -1728,7 +1753,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–180.31 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U7-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U7-MON-JX.mp4",
       "source_name": "A7-FULL-D1-U7-MON-JX.mp4",
       "duration": 180.31,
       "basis": "Clip position",
@@ -1782,7 +1807,8 @@ window.PILOT = {
         "2018-Ryanhao-郝睿恩",
         "2019-Xixi-苏杞南",
         "2018-YI-金翊"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U7-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U07G-MON-01",
@@ -1801,7 +1827,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–179.71 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U7-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U7-MON-JX.mp4",
       "source_name": "A7-FULL-D2-U7-MON-JX.mp4",
       "duration": 179.71,
       "basis": "Clip position",
@@ -1855,7 +1881,8 @@ window.PILOT = {
         "2018-Ryanhao-郝睿恩",
         "2019-Xixi-苏杞南",
         "2018-YI-金翊"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U7-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D3-U07G-MON-01",
@@ -1874,7 +1901,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–179.85 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U7-MON-JX.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D3-U7-MON-JX.mp4",
       "source_name": "A7-FULL-D3-U7-MON-JX.mp4",
       "duration": 179.85,
       "basis": "Clip position",
@@ -1928,7 +1955,8 @@ window.PILOT = {
         "2018-Ryanhao-郝睿恩",
         "2019-Xixi-苏杞南",
         "2018-YI-金翊"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U7-MON-JX.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U15G-FRI-01",
@@ -1946,7 +1974,7 @@ window.PILOT = {
       },
       "session": "FRI",
       "window": "0:00–188.23 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U15-FRI-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U15-FRI-HB.mp4",
       "source_name": "A7-FULL-ACT-U15-FRI-HB.mp4",
       "duration": 188.23,
       "basis": "Clip position",
@@ -2003,7 +2031,8 @@ window.PILOT = {
         "2013-Simba-李羽桦",
         "2011-Stefan-王瑀凡",
         "2013-Zoey-陈佐"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U15-FRI-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U15G-FRI-01",
@@ -2021,7 +2050,7 @@ window.PILOT = {
       },
       "session": "FRI",
       "window": "0:00–182.47 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U15-FRI-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U15-FRI-HB.mp4",
       "source_name": "A7-FULL-D1-U15-FRI-HB.mp4",
       "duration": 182.47,
       "basis": "Clip position",
@@ -2078,7 +2107,8 @@ window.PILOT = {
         "2013-Simba-李羽桦",
         "2011-Stefan-王瑀凡",
         "2013-Zoey-陈佐"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U15-FRI-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U15G-FRI-01",
@@ -2096,7 +2126,7 @@ window.PILOT = {
       },
       "session": "FRI",
       "window": "0:00–187.83 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U15-FRI-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U15-FRI-HB.mp4",
       "source_name": "A7-FULL-D2-U15-FRI-HB.mp4",
       "duration": 187.83,
       "basis": "Clip position",
@@ -2153,7 +2183,8 @@ window.PILOT = {
         "2013-Simba-李羽桦",
         "2011-Stefan-王瑀凡",
         "2013-Zoey-陈佐"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U15-FRI-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U09B-MON-01",
@@ -2171,7 +2202,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–171.40 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U9B-MON-HB.mp4",
       "source_name": "A7-FULL-ACT-U9B-MON-HB.mp4",
       "duration": 171.4,
       "basis": "Clip position",
@@ -2227,7 +2258,8 @@ window.PILOT = {
         "2018-Simon-李承泽",
         "2013-Slyvia-丘子萱",
         "2016-Yamin-黄彦鸣"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U09B-MON-01",
@@ -2245,7 +2277,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–173.23 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U9B-MON-HB.mp4",
       "source_name": "A7-FULL-D1-U9B-MON-HB.mp4",
       "duration": 173.23,
       "basis": "Clip position",
@@ -2301,7 +2333,8 @@ window.PILOT = {
         "2018-Simon-李承泽",
         "2013-Slyvia-丘子萱",
         "2016-Yamin-黄彦鸣"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U09B-MON-01",
@@ -2319,7 +2352,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–172.23 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U9B-MON-HB.mp4",
       "source_name": "A7-FULL-D2-U9B-MON-HB.mp4",
       "duration": 172.23,
       "basis": "Clip position",
@@ -2375,7 +2408,8 @@ window.PILOT = {
         "2018-Simon-李承泽",
         "2013-Slyvia-丘子萱",
         "2016-Yamin-黄彦鸣"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D3-U09B-MON-01",
@@ -2393,7 +2427,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–171.30 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D3-U9B-MON-HB.mp4",
       "source_name": "A7-FULL-D3-U9B-MON-HB.mp4",
       "duration": 171.3,
       "basis": "Clip position",
@@ -2449,7 +2483,8 @@ window.PILOT = {
         "2018-Simon-李承泽",
         "2013-Slyvia-丘子萱",
         "2016-Yamin-黄彦鸣"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D3-U9B-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U12G-MON-01",
@@ -2467,7 +2502,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–189.30 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U12-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U12-MON-HB.mp4",
       "source_name": "A7-FULL-ACT-U12-MON-HB.mp4",
       "duration": 189.3,
       "basis": "Clip position",
@@ -2520,7 +2555,8 @@ window.PILOT = {
         "2014-William-王艺瀚",
         "2015-Wonaldo-吴纳多",
         "2015-Yiang-李奕昂"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U12-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U12G-THU-01",
@@ -2538,7 +2574,7 @@ window.PILOT = {
       },
       "session": "THU",
       "window": "0:00–188.80 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U12-THU-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U12-THU-HB.mp4",
       "source_name": "A7-FULL-D1-U12-THU-HB.mp4",
       "duration": 188.8,
       "basis": "Clip position",
@@ -2591,7 +2627,8 @@ window.PILOT = {
         "2014-William-王艺瀚",
         "2015-Wonaldo-吴纳多",
         "2015-Yiang-李奕昂"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U12-THU-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U12G-THU-01",
@@ -2609,7 +2646,7 @@ window.PILOT = {
       },
       "session": "THU",
       "window": "0:00–182.17 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U12-THU-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U12-THU-HB.mp4",
       "source_name": "A7-FULL-D2-U12-THU-HB.mp4",
       "duration": 182.17,
       "basis": "Clip position",
@@ -2662,7 +2699,8 @@ window.PILOT = {
         "2014-William-王艺瀚",
         "2015-Wonaldo-吴纳多",
         "2015-Yiang-李奕昂"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U12-THU-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-ACT-U11W-MON-01",
@@ -2680,7 +2718,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–181.13 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U11W-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-ACT-U11W-MON-HB.mp4",
       "source_name": "A7-FULL-ACT-U11W-MON-HB.mp4",
       "duration": 181.13,
       "basis": "Clip position",
@@ -2723,7 +2761,8 @@ window.PILOT = {
         "2016-Simon-封俊宇",
         "2017-Vincent-唐诗睿",
         "2015-Yuchen-司雨辰"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-ACT-U11W-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D1-U11W-MON-01",
@@ -2741,7 +2780,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–191.47 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U11W-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D1-U11W-MON-HB.mp4",
       "source_name": "A7-FULL-D1-U11W-MON-HB.mp4",
       "duration": 191.47,
       "basis": "Clip position",
@@ -2784,7 +2823,8 @@ window.PILOT = {
         "2016-Simon-封俊宇",
         "2017-Vincent-唐诗睿",
         "2015-Yuchen-司雨辰"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D1-U11W-MON-HB.mp4?sharecode=ATVBZ37MV6"
     },
     {
       "id": "VID-FCG-A7F-D2-U11W-MON-01",
@@ -2802,7 +2842,7 @@ window.PILOT = {
       },
       "session": "MON",
       "window": "0:00–188.33 seconds",
-      "file": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U11W-MON-HB.mp4?sharecode=ATVBZ37MV6",
+      "file": "media/A7-FULL-D2-U11W-MON-HB.mp4",
       "source_name": "A7-FULL-D2-U11W-MON-HB.mp4",
       "duration": 188.33,
       "basis": "Clip position",
@@ -2845,7 +2885,8 @@ window.PILOT = {
         "2016-Simon-封俊宇",
         "2017-Vincent-唐诗睿",
         "2015-Yuchen-司雨辰"
-      ]
+      ],
+      "file_remote": "https://wbapp-4oajooaek64k7mvswvbun8.app.workbuddy.host/media/A7-FULL-D2-U11W-MON-HB.mp4?sharecode=ATVBZ37MV6"
     }
   ],
   "roster": [

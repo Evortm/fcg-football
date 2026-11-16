@@ -112,7 +112,9 @@
     duration: V.duration || 0,
     storageOk: true,
     comboIndex: -1,
-    comboOptions: []
+    comboOptions: [],
+    /* Clip id whose hosted fallback copy has already been attempted. */
+    remoteTried: null
   };
 
   var store = loadStore();
@@ -322,6 +324,7 @@
     state.ratings = {};
     state.replayStop = null;
     el.video.pause();
+    state.remoteTried = null;
     el.video.src = clip.file;
     try { el.video.load(); } catch (err) {}
 
@@ -1075,6 +1078,7 @@
     initMeta();
     initTicks();
     initCutMarks();
+    state.remoteTried = null;
     el.video.src = V.file;
 
     el.reviewer.value = store.reviewer || "";
@@ -1086,10 +1090,18 @@
     el.video.addEventListener("play", setPlayIcon);
     el.video.addEventListener("pause", setPlayIcon);
     el.video.addEventListener("error", function () {
+      /* Clips are served from this site so seeking works. If a local copy is
+         missing, fall back once to the original hosted file before giving up. */
+      if (V.file_remote && state.remoteTried !== V.id) {
+        state.remoteTried = V.id;
+        el.video.src = V.file_remote;
+        try { el.video.load(); } catch (err) {}
+        return;
+      }
       el.fallback.hidden = false;
       var span = el.fallback.querySelector("span");
-      if (span) span.innerHTML = "Keep <code>" + V.file + "</code> beside this file, same name. Use Edge or Chrome.";
-      toast("Clip missing — keep " + V.file + " beside index.html.", "bad");
+      if (span) span.innerHTML = "<code>" + V.file + "</code> is not on the site yet. Upload it to <code>tagging/media/</code>, or use Edge or Chrome.";
+      toast("Clip missing — upload " + V.file + " to tagging/media/.", "bad");
     });
     if (el.video.readyState >= 1) onMeta();
 
