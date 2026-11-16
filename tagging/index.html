@@ -5,15 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FCG · W11 A7 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
-<link rel="stylesheet" href="assets/app.css?v=20261116-media">
-<link rel="stylesheet" href="assets/mobile.css?v=20261116-media">
+<link rel="icon" href="assets/fcg-logo.png" type="image/png">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261116-fcgstyle">
+<link rel="stylesheet" href="assets/app.css?v=20261116-fcgstyle">
+<link rel="stylesheet" href="assets/mobile.css?v=20261116-fcgstyle">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <div class="mark" aria-hidden="true">FCG</div>
+    <img class="crest" src="assets/fcg-logo.png?v=20261116-fcgstyle" alt="FCG crest">
     <div class="titles">
-      <h1>Player tagging</h1>
+      <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
     </div>
   </div>
@@ -202,24 +204,26 @@
   </section>
 
   <section class="card help">
-    <h2>Quick start</h2>
-    <ol>
-      <li><span class="num">1</span><span>Enter the reviewer name.</span></li>
-      <li><span class="num">2</span><span>Mark start (<kbd>S</kbd>) and end (<kbd>E</kbd>).</span></li>
-      <li><span class="num">3</span><span>Pick a player, or <em>Unknown player</em>.</span></li>
-      <li><span class="num">4</span><span>Rate the focus points, then save.</span></li>
-      <li><span class="num">5</span><span>Replay, then export for the overview.</span></li>
-    </ol>
-    <p class="guardrail">Manual observation only — no automatic judgments, scores or training use. Unknown identity is allowed; never guess.</p>
+    <details>
+      <summary>Quick start</summary>
+      <ol>
+        <li><span class="num">1</span><span>Enter the reviewer name.</span></li>
+        <li><span class="num">2</span><span>Mark start (<kbd>S</kbd>) and end (<kbd>E</kbd>).</span></li>
+        <li><span class="num">3</span><span>Pick a player, or <em>Unknown player</em>.</span></li>
+        <li><span class="num">4</span><span>Rate the focus points, then save.</span></li>
+        <li><span class="num">5</span><span>Replay, then export for the overview.</span></li>
+      </ol>
+      <p class="guardrail">Manual observation only — no automatic judgments, scores or training use. Unknown identity is allowed; never guess.</p>
+    </details>
   </section>
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261116-media"></script>
-<script src="assets/core.js?v=20261116-media"></script>
-<script src="assets/app.js?v=20261116-media"></script>
-<script src="assets/mobile.js?v=20261116-media"></script>
+<script src="data/pilot-data.js?v=20261116-fcgstyle"></script>
+<script src="assets/core.js?v=20261116-fcgstyle"></script>
+<script src="assets/app.js?v=20261116-fcgstyle"></script>
+<script src="assets/mobile.js?v=20261116-fcgstyle"></script>
 </body>
 </html>

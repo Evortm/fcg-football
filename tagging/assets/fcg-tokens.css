@@ -1,0 +1,45 @@
+/* Visual tokens from the current local FCG academy app.
+   Map existing tagging selectors to these tokens; this is not a full stylesheet. */
+:root {
+  --fcg-bg: #001b2b;
+  --fcg-card: #082b3d;
+  --fcg-hover: #0d3246;
+  --fcg-accent: #90e701;
+  --fcg-text: #ffffff;
+  --fcg-text-secondary: #d4e0e7;
+  --fcg-text-muted: #b8ccd8;
+  --fcg-border: #456579;
+  --fcg-border-strong: #58778c;
+  --fcg-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  /* Recommended dimensions for this tagging interface. */
+  --fcg-space: 8px;
+  --fcg-radius-card: 14px;
+  --fcg-radius-control: 8px;
+  --fcg-control-height: 44px;
+
+  /* Derived tokens for this tagging interface only. The colours above are
+     the source of truth; these are surfaces and status accents used by the
+     existing selectors in app.css / mobile.css. */
+  --fcg-surface: #062635;
+  --fcg-surface-raised: #103749;
+  --fcg-line-subtle: #23455a;
+  --fcg-accent-hover: #a6ff2b;
+  --fcg-accent-ink: #001b2b;
+  --fcg-status-good: #8ce0ab;
+  --fcg-status-good-line: #3f9d6b;
+  --fcg-status-good-surface: rgba(63, 157, 107, .18);
+  --fcg-status-warn: #ffd47a;
+  --fcg-status-warn-line: #c08a26;
+  --fcg-status-warn-surface: rgba(192, 138, 38, .18);
+  --fcg-status-neutral: #c3d4df;
+  --fcg-status-neutral-line: #7d99ab;
+  --fcg-status-neutral-surface: rgba(125, 153, 171, .16);
+  --fcg-danger: #ff9b8f;
+  --fcg-danger-line: #b8544a;
+  --fcg-danger-surface: #3a1c1c;
+  --fcg-mono: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  /* Set to 0.67 to restore the previously approved compact phone density. */
+  --fcg-phone-zoom: 1;
+}

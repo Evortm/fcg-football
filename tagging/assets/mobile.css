@@ -1,44 +1,89 @@
+/* Phone layout for the FCG tagging tool.
+   Same DOM movements as before (see mobile.js); this file only restyles the
+   phone surface and restores reviewer / clip / context / help information. */
+
 @media(max-width:700px){
-body{font-size:14px}
-.compact-phone .topbar{position:relative;padding:5px 8px;gap:6px;display:flex;flex-direction:row;align-items:center;z-index:30}
-.compact-phone .brand,.compact-phone .stage>.card-head{display:none}
-.compact-phone .clip-select-wrap{display:flex;gap:5px;flex:1;min-width:0;align-items:center}
-.compact-phone .clip-select-wrap>label:not(.sr-only){font-size:0;flex:0 0 39%;min-width:0}
-.compact-phone #teamSelect,.compact-phone #clipSelect{width:100%;min-width:0;height:44px;min-height:44px;font-size:14px;padding:5px;border-radius:6px}
+body{font-size:15px}
+.compact-phone .topbar{position:relative;padding:8px;gap:8px;display:flex;flex-direction:row;align-items:center;flex-wrap:wrap;z-index:30;background:var(--fcg-bg);border-bottom:1px solid var(--fcg-border)}
+.compact-phone .brand{display:flex;gap:8px}
+.compact-phone .titles{display:none}
+.compact-phone .crest{width:30px;height:36px}
+.compact-phone .stage>.card-head{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.compact-phone .stage>.card-head h2{display:none}
+.compact-phone .clip-meta{font-size:12px;gap:6px}
+.compact-phone .clip-select-wrap{display:flex;gap:8px;flex:1;min-width:0;align-items:center}
+.compact-phone .clip-select-wrap>label:not(.sr-only){font-size:12.5px;flex:0 0 40%;min-width:0;color:var(--fcg-text-muted)}
+.compact-phone .clip-select-wrap label{display:flex;align-items:center;gap:4px;min-width:0}
+.compact-phone .clip-select-wrap label>select{flex:1}
+.compact-phone .clip-select-wrap select{width:100%;min-width:0;height:44px;min-height:44px;font-size:14px;padding:0 8px;border-radius:var(--fcg-radius-control)}
 .compact-phone #clipSelect{flex:1}
 .phone-settings{position:static;flex:0 0 44px}
-.phone-settings>summary{display:flex;align-items:center;justify-content:center;list-style:none;height:44px;cursor:pointer;font-size:22px;border:1px solid #ccd6ce;border-radius:6px}
+.phone-settings>summary{display:flex;align-items:center;justify-content:center;list-style:none;height:44px;min-width:44px;cursor:pointer;font-size:0;border:1px solid var(--fcg-border-strong);border-radius:var(--fcg-radius-control);background:var(--fcg-card);color:var(--fcg-text)}
 .phone-settings>summary::-webkit-details-marker{display:none}
-.phone-settings-panel{position:absolute;right:8px;left:8px;top:100%;max-height:75vh;overflow:auto;background:#fff;padding:12px;box-shadow:0 5px 20px #0003;border:1px solid #d9e0dc;border-radius:8px;color:#182d21}
+.phone-settings>summary::after{content:"Menu";font-size:12.5px;font-weight:600;color:var(--fcg-text-secondary)}
+.phone-settings-panel{position:absolute;right:8px;left:8px;top:100%;max-height:75vh;overflow:auto;background:var(--fcg-card);color:var(--fcg-text);padding:12px;border:1px solid var(--fcg-border-strong);border-radius:10px;z-index:60}
 .phone-settings:not([open])>.phone-settings-panel{display:none}
 .compact-phone .top-actions{display:flex;flex-wrap:wrap;width:100%;gap:8px}
-.reviewer-field{flex:1;min-width:150px}.reviewer-field input{width:100%;font-size:16px}
-.video-chip,.clip-meta,.context{display:none!important}
-.compact-phone .help{display:block;margin-top:12px;padding:0;border:0;box-shadow:none}
-.phone-frame-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
-#phoneNote{font-size:13px;margin:10px 0;line-height:1.4}
-.layout{display:flex!important;flex-direction:column;padding:0 6px 8px!important;gap:6px}
-.card{border-radius:6px}.video-shell{position:relative;border-radius:4px;margin:0!important}
-#video{width:100%;max-height:30vh;object-fit:contain;background:#102017}
-.timeline-wrap{padding:0 7px!important}.timeline{height:22px;min-height:22px;touch-action:none}.ticks{display:none}
-.compact-phone .transport{display:flex;flex-direction:column;padding:3px 6px 6px;gap:5px}
-.compact-phone .time-read{display:none}
-.compact-phone .transport-buttons{width:100%;display:flex;justify-content:center;gap:7px}
-.transport-buttons>button,.transport-buttons>.speed{height:44px;min-height:44px;flex:1;max-width:96px;font-size:15px}
-.marker-actions{display:flex;width:100%;gap:6px}
+.compact-phone .video-chip{display:inline-flex!important;max-width:100%}
+.compact-phone .reviewer-field{flex:1 1 100%;min-width:0}
+.compact-phone .reviewer-field label{font-size:12.5px}
+.compact-phone .reviewer-field input{width:100%;font-size:16px}
+.compact-phone .help{display:block;margin-top:12px;padding:0;border:0;background:transparent}
+.compact-phone .help summary{font-size:15px}
+.compact-phone .help ol{grid-template-columns:1fr;gap:8px;margin-top:8px}
+.compact-phone .guardrail{margin-top:12px}
+.phone-frame-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px;color:var(--fcg-text-secondary);font-size:13px}
+#phoneNote{font-size:13px;margin:10px 0;line-height:1.45;color:var(--fcg-text-secondary)}
+.layout{display:flex!important;flex-direction:column;padding:0 8px 8px!important;gap:8px}
+.card{border-radius:10px;padding:12px}
+.compact-phone .layout{padding:0 8px 8px!important;gap:8px}
+.compact-phone .stage,.compact-phone .tagform{padding:12px}
+.video-shell{position:relative;border-radius:8px;margin:0!important}
+#video{width:100%;height:auto;object-fit:contain;background:#000;display:block}
+.timeline-wrap{padding:0 4px!important;margin-top:8px}
+.timeline{height:28px;min-height:28px;touch-action:none}
+.ticks{display:none}
+.compact-phone .transport{display:flex;flex-direction:column;padding:4px 0;gap:8px}
+.compact-phone .time-read{display:flex;flex-direction:row;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:13px}
+.compact-phone .time-source{font-size:11px}
+.compact-phone .transport-buttons{width:100%;display:flex;justify-content:center;gap:8px}
+.transport-buttons>button,.transport-buttons>.speed{height:44px;min-height:44px;flex:1;max-width:96px;font-size:14px}
+.marker-actions{display:flex;width:100%;gap:8px}
 .marker-actions>button{flex:1;min-width:0;min-height:44px;padding:5px;font-size:14px;font-variant-numeric:tabular-nums}
-.compact-phone .segment,.keys{display:none!important}kbd{display:none}
-.tagform>.card-head{padding:6px 10px;min-height:0}.tagform>.card-head h2{font-size:13px}
-.tagform .group{padding:6px 10px;margin:0}.group-label{font-size:13px;margin-bottom:3px}
-.combo input,textarea{font-size:16px!important}.combo input{min-height:44px}
-.combo-list{max-height:210px}.combo-option{min-height:44px}.hint{font-size:11px;margin:3px 0 0}
-.obs{gap:8px}.obs-row{padding:2px 0;gap:4px}.obs-name{font-size:13px;line-height:1.35;color:#243b2c}
-.rate{display:flex!important;gap:4px}.rate button{flex:1;min-width:0;min-height:44px;padding:5px 3px;font-size:12px;line-height:1.15;white-space:normal}
-.tagform textarea{min-height:44px}.counter{font-size:10px}
-.form-footer{padding:7px 10px;gap:7px;flex-wrap:wrap}.form-actions{display:flex;flex:1;gap:6px}.form-actions button{min-height:44px}
-#saveBtn{flex:1;font-size:16px;min-height:46px}.confirm button{min-height:44px}
-.events>.card-head{padding:7px 10px;flex-wrap:wrap;gap:6px}.events-tools{width:100%}
-table{min-width:0!important}thead{display:none}tbody tr{display:block;border-bottom:1px solid #ddd;padding:6px}tbody td{display:block;border:0!important;padding:3px 6px}tbody td:first-child,.p-id,.seg-cell small{display:none}.actions{justify-content:flex-start}
+.compact-phone .segment{margin-top:8px;padding:8px;gap:8px}
+.compact-phone .keys{display:none!important}
+kbd{display:none}
+.tagform>.card-head{padding:4px 0;min-height:0}
+.tagform>.card-head h2{font-size:18px}
+.tagform .group{padding:4px 0;margin:0}
+.group-label{font-size:14px;margin-bottom:4px}
+.combo input,textarea{font-size:16px!important}
+.combo input{min-height:44px}
+.combo-list{max-height:230px}
+.combo-option{min-height:44px}
+.hint{font-size:12.5px;margin:4px 0 0}
+.obs{gap:10px}
+.obs-row{padding:2px 0;gap:6px}
+.obs-name{font-size:13px;line-height:1.4;color:var(--fcg-text-secondary)}
+.rate{display:flex!important;gap:6px}
+.rate button{flex:1;min-width:0;min-height:44px;padding:5px 4px;font-size:13px;line-height:1.2;white-space:normal}
+.tagform textarea{min-height:80px;height:80px}
+.counter{font-size:12px}
+.context{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:12px;padding-top:8px}
+.form-footer{padding:8px 0 0;gap:8px;flex-wrap:wrap}
+.form-actions{display:flex;flex:1;gap:8px}
+.form-actions button{min-height:44px}
+#saveBtn{flex:1;font-size:15px;min-height:46px}
+.confirm button{min-height:44px}
+.events>.card-head{padding:4px 0;flex-wrap:wrap;gap:8px}
+.events-tools{width:100%}
+table{min-width:0!important}
+thead{display:none}
+tbody tr{display:block;border-bottom:1px solid var(--fcg-border);padding:8px}
+tbody td{display:block;border:0!important;padding:4px 6px}
+tbody td:first-child,.p-id,.seg-cell small{display:none}
+.actions{justify-content:flex-start}
+.store-note{font-size:12px}
 }
 
 /* Keep legacy controls in the DOM for saved-tag compatibility, outside the coach workflow. */
@@ -46,50 +91,30 @@ table{min-width:0!important}thead{display:none}tbody tr{display:block;border-bot
 /* One phone transport row: start, playback, end. */
 #filter { display: none !important; }
 @media(max-width:700px){
-.compact-phone .transport{display:grid;grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr);align-items:center;gap:6px;padding:4px 6px 7px}
+.compact-phone .transport{display:grid;grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr);align-items:center;gap:8px;padding:4px 0}
 .compact-phone .transport-buttons,.compact-phone .marker-actions{display:contents}
-.compact-phone #setStart{grid-column:1;grid-row:1;width:100%;font-size:12px}
-.compact-phone #playBtn{grid-column:2;grid-row:1;width:52px;min-width:44px;max-width:none;height:44px;border-radius:8px}
-.compact-phone #setEnd{grid-column:3;grid-row:1;width:100%;font-size:12px}
+.compact-phone #setStart{grid-column:1;grid-row:1;width:100%;font-size:13px}
+.compact-phone #playBtn{grid-column:2;grid-row:1;width:52px;min-width:44px;max-width:none;height:44px;border-radius:var(--fcg-radius-control)}
+.compact-phone #setEnd{grid-column:3;grid-row:1;width:100%;font-size:13px}
+.compact-phone .time-read{grid-column:1/-1;grid-row:2}
 }
 @media(max-width:700px){
 .compact-phone #timeline,.compact-phone #ticks{display:none}
-#phoneSeek{display:block;width:100%;height:36px;margin:0;accent-color:#0d6b3f;cursor:pointer;touch-action:none}
-.compact-phone .transport{grid-template-columns:44px minmax(0,1fr) 44px minmax(0,1fr) 44px;gap:4px}
+#phoneSeek{display:block;width:100%;height:36px;margin:0;accent-color:var(--fcg-accent);cursor:pointer;touch-action:none}
+.compact-phone .transport{grid-template-columns:44px minmax(0,1fr) 44px minmax(0,1fr) 44px;gap:6px}
 .compact-phone .phone-second{display:block!important;width:44px;min-width:44px;max-width:44px;height:44px;font-size:12px;padding:2px;grid-row:1}
-.compact-phone #secondBack{grid-column:1}.compact-phone #setStart{grid-column:2;font-size:11px;line-height:1.25}
-.compact-phone #playBtn{grid-column:3;width:44px}.compact-phone #setEnd{grid-column:4;font-size:11px;line-height:1.25}.compact-phone #secondForward{grid-column:5}
+.compact-phone #secondBack{grid-column:1}
+.compact-phone #setStart{grid-column:2;font-size:12px;line-height:1.25}
+.compact-phone #playBtn{grid-column:3;width:44px}
+.compact-phone #setEnd{grid-column:4;font-size:12px;line-height:1.25}
+.compact-phone #secondForward{grid-column:5}
 }
-/* Denser phone layout without scaling down touch targets. */
-@media(max-width:700px){
-.compact-phone .topbar{padding:3px 5px;gap:4px}
-.compact-phone .layout{padding:0 4px 6px!important;gap:4px}
-.compact-phone .stage,.compact-phone .tagform{padding:6px}
-.compact-phone .video-shell{aspect-ratio:auto}
-.compact-phone #video{height:auto;max-height:25vh;max-height:25svh;object-fit:contain}
-.compact-phone .timeline-wrap{margin-top:2px;padding:0 2px!important}
-.compact-phone #phoneSeek{height:28px}
-.compact-phone .transport{padding:1px 0 3px}
-.compact-phone .tagform>.card-head{padding:2px 4px}
-.compact-phone .tagform .group{padding:4px;margin:0}
-.compact-phone .group-top{margin-bottom:2px}
-.compact-phone .obs{gap:5px;margin-top:2px}
-.compact-phone .obs-row{padding:0;gap:2px}
-.compact-phone .obs-name{font-size:12px;line-height:1.3}
-.compact-phone .rate{padding:2px;gap:3px}
-.compact-phone .rate button{min-height:44px;font-size:11px;padding:4px 2px}
-.compact-phone .form-footer{padding:4px;margin-top:3px;gap:4px}
-.compact-phone .tagform .group.grow{flex:none}
-.compact-phone .tagform textarea{height:44px;min-height:44px}
-.compact-phone .counter{display:none}
-.compact-phone .events{padding:6px}
-}
-/* The coach-approved 67% density is the phone default at 100% browser zoom.
-   CSS zoom participates in layout, so no transformed overflow or clipped bottom. */
-@media(max-width:700px){ body.compact-phone{zoom:0.67} }
-/* Keep full-width footage while the rest of the phone UI uses compact density. */
+/* Phone density is a single token. 0.67 restores the earlier compact default;
+   1 keeps body text and inputs legible at 390px without hiding information. */
+@media(max-width:700px){ body.compact-phone{zoom:var(--fcg-phone-zoom)} }
+/* Keep full-width footage while the rest of the phone UI uses the same tokens. */
 @media(max-width:700px){
 .compact-phone .stage{padding-left:0;padding-right:0}
-.compact-phone .video-shell{border-radius:0}
+.compact-phone .video-shell{border-radius:0;border-left:0;border-right:0}
 .compact-phone #video{display:block;width:100%;height:auto;max-height:none;object-fit:contain}
 }
