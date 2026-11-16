@@ -411,6 +411,27 @@ textarea:hover { border-color: var(--fcg-border-strong); }
 .context strong { font-size: 12.5px; font-weight: 600; color: var(--fcg-text-secondary); white-space: normal; overflow-wrap: anywhere; }
 .context strong.mono { font-size: 11.5px; }
 
+/* ------------------------------------------------------- laptop-only density
+   Three redundant rows were removed on desktop at the coaches' request.
+   The phone layout (max-width:700px) keeps its approved 50% density and all
+   of these labels. Nodes stay in the DOM because app.js writes to
+   #playerHint and the .context fields on every clip change. */
+@media (min-width: 701px) {
+  /* 1. The "Observations" heading costs a whole row; the focus-point rows
+        below it are self-explanatory. #obs keeps an aria-label for screen
+        readers, and "Rest as Cannot assess" moves to the end of the list. */
+  .tagform .obs-group { display: flex; flex-direction: column; }
+  .tagform .obs-group .group-top { display: contents; }
+  .tagform .obs-group .group-top > .group-label { display: none; }
+  .tagform .obs-group .obs { order: 1; margin-top: 0; }
+  .tagform .obs-group #fillRest { order: 2; align-self: flex-end; margin-top: 8px; }
+  /* 2. Once picked, the hint repeats the name already in the search field.
+        With an empty field the roster hint is still useful, so it stays. */
+  #playerHint[data-picked="1"] { display: none; }
+  /* 3. Team / Session / Video duplicate the header subtitle + video chip. */
+  .tagform .context { display: none; }
+}
+
 .form-footer { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .confirm { display: inline-flex; background: var(--fcg-bg); border: 1px solid var(--fcg-border); border-radius: var(--fcg-radius-control); padding: 3px; gap: 3px; }
 .confirm button {

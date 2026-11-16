@@ -559,6 +559,15 @@
     return squadOf(V).label + " · " + allPlayers().length + " players";
   }
 
+  /* On laptop the hint row is hidden once a player is picked, because the
+     name is already in the search field. The roster hint stays while empty.
+     Phone keeps showing both rows (CSS only targets min-width:701px). */
+  function setPlayerHint(text, picked) {
+    el.playerHint.textContent = text;
+    if (picked) el.playerHint.setAttribute("data-picked", "1");
+    else el.playerHint.removeAttribute("data-picked");
+  }
+
   function renderOptions(query) {
     var q = String(query || "").trim().toLowerCase();
     var list = allPlayers().filter(function (p) {
@@ -629,9 +638,9 @@
     state.player = player;
     el.playerSearch.value = playerDisplay(player);
     el.clearPlayer.hidden = false;
-    el.playerHint.textContent = player.id === C.UNKNOWN
+    setPlayerHint(player.id === C.UNKNOWN
       ? "Unknown identity — no player ID stored"
-      : player.id;
+      : player.id, true);
     closeCombo();
   }
 
@@ -639,7 +648,7 @@
     state.player = null;
     el.playerSearch.value = "";
     el.clearPlayer.hidden = true;
-    el.playerHint.textContent = rosterHint();
+    setPlayerHint(rosterHint(), false);
     closeCombo();
   }
 
@@ -691,7 +700,7 @@
     }
     el.playerSearch.value = "";
     el.clearPlayer.hidden = true;
-    el.playerHint.textContent = rosterHint();
+    setPlayerHint(rosterHint(), false);
     el.comment.value = "";
     updateCommentCount();
     renderRatings();
@@ -716,7 +725,7 @@
     state.player = player;
     el.playerSearch.value = playerDisplay(player);
     el.clearPlayer.hidden = false;
-    el.playerHint.textContent = player.id === C.UNKNOWN ? "Unknown identity — no player ID stored" : player.id;
+    setPlayerHint(player.id === C.UNKNOWN ? "Unknown identity — no player ID stored" : player.id, true);
 
     state.start = ev.t_start;
     state.end = ev.t_end;
@@ -1116,7 +1125,7 @@
 
     el.reviewer.value = store.reviewer || "";
     if (store.reviewer) el.reviewer.dataset.saved = "1";
-    el.playerHint.textContent = rosterHint();
+    setPlayerHint(rosterHint(), false);
 
     el.video.addEventListener("loadedmetadata", onMeta);
     el.video.addEventListener("timeupdate", updateClock);
@@ -1184,7 +1193,7 @@
       if (state.player && el.playerSearch.value !== playerDisplay(state.player)) {
         state.player = null;
         el.clearPlayer.hidden = true;
-        el.playerHint.textContent = rosterHint();
+        setPlayerHint(rosterHint(), false);
       }
       renderOptions(el.playerSearch.value);
       el.playerList.hidden = false;

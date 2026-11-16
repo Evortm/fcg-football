@@ -6,14 +6,14 @@
 <title>FCG · W11 A7 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261116-fcgstyle3">
-<link rel="stylesheet" href="assets/app.css?v=20261116-fcgstyle3">
-<link rel="stylesheet" href="assets/mobile.css?v=20261116-fcgstyle3">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261116-fcgstyle4">
+<link rel="stylesheet" href="assets/app.css?v=20261116-fcgstyle4">
+<link rel="stylesheet" href="assets/mobile.css?v=20261116-fcgstyle4">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261116-fcgstyle3" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261116-fcgstyle4" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
@@ -139,12 +139,12 @@
       <p class="hint" id="playerHint">Roster —</p>
     </div>
 
-    <div class="group">
+    <div class="group obs-group">
       <div class="group-top">
         <span class="group-label">Observations</span>
         <button class="link" id="fillRest" type="button" hidden>Rest as Cannot assess</button>
       </div>
-      <div class="obs" id="obs"><!-- one row per clip focus point, built by the app --></div>
+      <div class="obs" id="obs" role="group" aria-label="Observations"><!-- one row per clip focus point, built by the app --></div>
     </div>
 
     <div class="group grow">
@@ -223,9 +223,9 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261116-fcgstyle3"></script>
-<script src="assets/core.js?v=20261116-fcgstyle3"></script>
-<script src="assets/app.js?v=20261116-fcgstyle3"></script>
-<script src="assets/mobile.js?v=20261116-fcgstyle3"></script>
+<script src="data/pilot-data.js?v=20261116-fcgstyle4"></script>
+<script src="assets/core.js?v=20261116-fcgstyle4"></script>
+<script src="assets/app.js?v=20261116-fcgstyle4"></script>
+<script src="assets/mobile.js?v=20261116-fcgstyle4"></script>
 </body>
 </html>
