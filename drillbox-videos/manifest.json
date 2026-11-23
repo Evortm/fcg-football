@@ -1,0 +1,23 @@
+{
+  "convention": "drillbox-videos/{topic}/{age}/{phase}/video.mp4",
+  "rules": {
+    "green_team_only": true,
+    "min_seconds": 20.0,
+    "ages": "U5-U12",
+    "phases": [
+      "ACT",
+      "D1",
+      "D2"
+    ]
+  },
+  "entries": {
+    "A8/U10/D1": {
+      "url": "/drillbox-videos/A8/U10/D1/video.mp4?v=b0e46bcc",
+      "seconds": 30.0,
+      "bytes": 1522322,
+      "source": "U10-D1.mp4",
+      "updated": "2026-11-23"
+    }
+  },
+  "updated": "2026-11-23T15:54:40"
+}
