@@ -11,9 +11,9 @@ Rules confirmed 2026-11-23:
   * output is H.264 + AAC, faststart, <= 100 MB (GitHub Pages file limit)
 
 Examples:
-  python tools/build_drillbox.py --source ".../SesVid/D1-W13" --topic D1 --dry-run
-  python tools/build_drillbox.py --source ".../SesVid/CURRENT" --topic D1
-  python tools/build_drillbox.py --source ".../A8-W12/SUN" --topic A8 --only U10:D1 --seconds 30
+  python tools/build_drillbox.py --source ".../SesVid/D1-W13" --topic D1 --week W13 --dry-run
+  python tools/build_drillbox.py --source ".../SesVid/CURRENT" --topic D1 --week W13
+  python tools/build_drillbox.py --source ".../A8-W12/SUN" --topic A8 --week W12 --only U10:D1 --seconds 30
 """
 import argparse
 import datetime as dt
@@ -34,6 +34,8 @@ MANIFEST = OUT_ROOT / "manifest.json"
 DEFAULT_SOURCE = Path(r"C:\Users\munni\Documents\Dashboard\SesVid\CURRENT")
 DEFAULT_PHASES = ("ACT", "D1", "D2")
 AGES = range(5, 13)
+# Known FCG26 sequence; --week always wins so a new topic never needs a code change.
+TOPIC_WEEK_HINT = {"A7": "W11", "A8": "W12", "D1": "W13"}
 NAME_RE = re.compile(r"^U(\d+)([WB])?-(ACT|D1|D2|D3)\.(mp4|mov)$", re.IGNORECASE)
 SKIP_DIRS = {"backup", "clips", "renders", "past", "overlay", "_archive",
              "_retired", "_trash", "_extras", "_work", "_qa", "_mask", "_media"}
@@ -106,6 +108,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
     ap.add_argument("--topic", required=True, help="weekly topic code, e.g. D1")
+    ap.add_argument("--week", default="", help="season week for this topic, e.g. W13")
     ap.add_argument("--phases", default=",".join(DEFAULT_PHASES))
     ap.add_argument("--only", help="single cell, e.g. U10:D1")
     ap.add_argument("--start", type=float, default=0, help="seek into source (s)")
@@ -164,9 +167,28 @@ def main():
     if not args.dry_run:
         OUT_ROOT.mkdir(parents=True, exist_ok=True)
         entries["updated"] = dt.datetime.now().isoformat(timespec="seconds")
+        # Week selector source of truth: one row per topic that has videos.
+        # Labels such as "last week" are computed by the reader, never stored.
+        known = {w["topic"]: w.get("week", "") for w in entries.get("weeks", [])}
+        week = args.week.strip().upper() or TOPIC_WEEK_HINT.get(topic, "")
+        if week:
+            known[topic] = week
+        by_topic = {}
+        for cell, meta in entries["entries"].items():
+            agg = by_topic.setdefault(cell.split("/")[0],
+                                      {"cells": 0, "bytes": 0, "updated": ""})
+            agg["cells"] += 1
+            agg["bytes"] += meta.get("bytes", 0)
+            agg["updated"] = max(agg["updated"], meta.get("updated", ""))
+        entries["weeks"] = sorted(
+            [{"week": known.get(t, ""), "topic": t, "cells": a["cells"],
+              "bytes": a["bytes"], "updated": a["updated"]}
+             for t, a in by_topic.items()],
+            key=lambda w: (w["week"], w["topic"]), reverse=True)
         MANIFEST.write_text(json.dumps(entries, indent=2, ensure_ascii=False) + "\n",
                             encoding="utf-8")
-        print("total %.1f MB, manifest -> %s" % (total / 1048576, MANIFEST))
+        print("total %.1f MB, %d weeks, manifest -> %s"
+              % (total / 1048576, len(entries["weeks"]), MANIFEST))
 
 
 if __name__ == "__main__":

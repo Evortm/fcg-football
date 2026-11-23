@@ -67,6 +67,7 @@
     comment: $("#comment"),
     commentCount: $("#commentCount"),
     confirm: $(".confirm"),
+    drillboxToggle: $("#drillboxToggle"),
     saveBtn: $("#saveBtn"),
     sameTimeBtn: $("#sameTimeBtn"),
     clearBtn: $("#clearForm"),
@@ -98,6 +99,7 @@
     replay: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4v5h5"/></svg>',
     edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
     trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9z"/></svg>',
     play: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',
     pause: '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg>'
   };
@@ -108,6 +110,7 @@
     end: null,
     ratings: {},
     status: "Draft",
+    drillbox: false,
     editing: null,
     replayStop: null,
     duration: V.duration || 0,
@@ -689,10 +692,88 @@
     });
   }
 
+  /* ------------------------------------------------- Drillbox nomination
+     One best example per topic / age / exercise cell, Green team only. The
+     flag lives inside `comment` as #drillbox so the 18-column A-R paste into
+     the weekfile stays untouched. The offline publisher reads it; this app
+     never encodes video. */
+  var DRILLBOX_MARK = "#drillbox";
+  var COMMENT_MAX = 500;
+
+  function hasDrillbox(ev) {
+    return /(^|\s)#drillbox\b/i.test(ev.comment || "");
+  }
+
+  function withDrillbox(comment, on) {
+    var base = String(comment || "").replace(/\s*#drillbox\b/gi, "").trim();
+    if (!on) return base;
+    var suffix = " " + DRILLBOX_MARK;
+    if (base.length + suffix.length > COMMENT_MAX) {
+      base = base.slice(0, COMMENT_MAX - suffix.length).trim();
+    }
+    return base ? base + suffix : DRILLBOX_MARK;
+  }
+
+  /* VID-FCG-A7F-ACT-U11G-TUE-01 -> A7/U11/ACT, team G. */
+  function clipCell(videoId) {
+    var m = /^VID-FCG-([A-Z]\d+)[A-Z]?-(ACT|D1|D2|D3|TG)-U(\d+)([A-Z])-/i.exec(videoId || "");
+    if (!m) return { cell: videoId || "?", green: true };
+    return {
+      cell: m[1].toUpperCase() + "/U" + Number(m[3]) + "/" + m[2].toUpperCase(),
+      green: m[4].toUpperCase() === "G"
+    };
+  }
+
+  function updateDrillboxToggle() {
+    el.drillboxToggle.setAttribute("aria-pressed", String(state.drillbox));
+    el.drillboxToggle.title = state.drillbox
+      ? "Nominated as the Drillbox example for " + clipCell(V.id).cell
+      : "Nominate this tag as the Drillbox example for this topic / age / exercise";
+    el.saveBtn.textContent = state.editing
+      ? (state.drillbox ? "Update + Drillbox" : "Update tag")
+      : (state.drillbox ? "Tag + Drillbox" : "Save tag");
+  }
+
+  function clearOtherNominations(keepId, videoId) {
+    var cell = clipCell(videoId).cell, stamp = new Date().toISOString();
+    store.events = store.events.map(function (ev) {
+      if (ev.event_id === keepId || !hasDrillbox(ev)) return ev;
+      if (clipCell(ev.video_id).cell !== cell) return ev;
+      return Object.assign({}, ev, {
+        comment: withDrillbox(ev.comment, false), updated_at: stamp
+      });
+    });
+  }
+
+  function toggleDrillbox(id) {
+    var target = store.events.filter(function (ev) { return ev.event_id === id; })[0];
+    if (!target) return;
+    var on = !hasDrillbox(target), info = clipCell(target.video_id);
+    if (on && !info.green) {
+      toast("Drillbox examples are Green-team only.", "bad");
+      return;
+    }
+    store.events = store.events.map(function (ev) {
+      if (ev.event_id !== id) return ev;
+      return Object.assign({}, ev, {
+        comment: withDrillbox(ev.comment, on), updated_at: new Date().toISOString()
+      });
+    });
+    if (on) clearOtherNominations(id, target.video_id);
+    saveStore();
+    renderEvents();
+    if (state.editing === id) {
+      state.drillbox = on;
+      updateDrillboxToggle();
+    }
+    toast(on ? "Drillbox example for " + info.cell : "Drillbox nomination removed", "good");
+  }
+
   function resetForm(keepMarkers) {
     state.player = null;
     state.ratings = {};
     state.status = "Draft";
+    state.drillbox = false;
     state.editing = null;
     if (!keepMarkers) {
       state.start = null;
@@ -710,7 +791,7 @@
     el.formTitle.textContent = "Tag an action";
     el.modeBadge.textContent = "New";
     el.modeBadge.classList.remove("editing");
-    el.saveBtn.textContent = "Save tag";
+    updateDrillboxToggle();
     el.deleteBtn.hidden = true;
     el.eventBody.querySelectorAll("tr.editing").forEach(function (tr) { tr.classList.remove("editing"); });
   }
@@ -731,9 +812,10 @@
     state.end = ev.t_end;
     state.ratings = Object.assign({}, ev.observations || {});
     state.status = ev.confirmation;
+    state.drillbox = hasDrillbox(ev);
     state.editing = ev.event_id;
 
-    el.comment.value = ev.comment || "";
+    el.comment.value = withDrillbox(ev.comment, false);
     updateCommentCount();
     renderRatings();
     updateStatusButtons();
@@ -743,7 +825,7 @@
     el.formTitle.textContent = "Edit " + ev.event_id;
     el.modeBadge.textContent = "Editing";
     el.modeBadge.classList.add("editing");
-    el.saveBtn.textContent = "Update tag";
+    updateDrillboxToggle();
     el.deleteBtn.hidden = false;
 
     highlightEditingRow(ev.event_id);
@@ -775,7 +857,7 @@
       source_segment: state.start === null ? 0 : segmentOf(state.start).index,
       focus: V.focus,
       observations: state.ratings,
-      comment: el.comment.value,
+      comment: withDrillbox(el.comment.value, state.drillbox),
       reviewer: reviewer,
       confirmation: state.status,
       created_at: existing ? existing.created_at : null
@@ -799,12 +881,15 @@
       store.seqs[V.id] = seq;
       store.events.push(ev);
     }
+    var nominated = state.drillbox;
+    if (nominated) clearOtherNominations(ev.event_id, V.id);
     store.reviewer = reviewer;
     store.events.sort(function (a, b) { return String(b.event_id).localeCompare(String(a.event_id)); });
     saveStore();
     renderEvents();
     resetForm(true);
-    toast((existing ? "Updated " : "Saved ") + ev.event_id, "good");
+    toast((existing ? "Updated " : "Saved ") + ev.event_id
+      + (nominated ? " · Drillbox example for " + clipCell(V.id).cell : ""), "good");
     return true;
   }
 
@@ -942,6 +1027,14 @@
       var actions = document.createElement("div");
       actions.className = "actions";
 
+      var star = document.createElement("button");
+      star.type = "button";
+      star.className = "act drillbox-star" + (hasDrillbox(ev) ? " drillbox-on" : "");
+      star.title = hasDrillbox(ev) ? "Drillbox · on" : "Drillbox";
+      star.setAttribute("aria-label", (hasDrillbox(ev) ? "Remove Drillbox nomination from " : "Nominate as Drillbox example: ") + ev.event_id);
+      star.innerHTML = ICON.star;
+      star.addEventListener("click", function () { toggleDrillbox(ev.event_id); });
+
       var replay = document.createElement("button");
       replay.type = "button";
       replay.className = "act";
@@ -966,6 +1059,7 @@
       del.innerHTML = ICON.trash;
       del.addEventListener("click", function () { deleteEvent(ev.event_id); });
 
+      actions.appendChild(star);
       actions.appendChild(replay);
       actions.appendChild(edit);
       actions.appendChild(del);
@@ -1242,6 +1336,15 @@
       });
     });
 
+    el.drillboxToggle.addEventListener("click", function () {
+      if (!state.drillbox && !clipCell(V.id).green) {
+        toast("Drillbox examples are Green-team only.", "bad");
+        return;
+      }
+      state.drillbox = !state.drillbox;
+      updateDrillboxToggle();
+    });
+
     el.saveBtn.addEventListener("click", saveEvent);
     el.sameTimeBtn.addEventListener("click", saveAndSameTime);
     el.clearBtn.addEventListener("click", function () { resetForm(false); });
@@ -1281,6 +1384,7 @@
 
     document.addEventListener("keydown", onKey);
     updateStatusButtons();
+    updateDrillboxToggle();
     renderRatings();
     renderSegment();
     renderEvents();

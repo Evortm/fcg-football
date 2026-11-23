@@ -497,6 +497,28 @@ textarea:hover { border-color: var(--fcg-border-strong); }
   font-size: 13px; font-weight: 600; color: var(--fcg-text-muted);
 }
 .confirm button[aria-pressed="true"] { background: var(--fcg-hover); color: var(--fcg-text); border: 1px solid var(--fcg-border-strong); padding: 5px 11px; }
+/* Drillbox nomination: a compact pill in the card head, so the approved
+   single balanced action row and the equal-height cards stay untouched. */
+.head-actions { display: flex; align-items: center; gap: 8px; }
+.drillbox-toggle {
+  min-height: 0; height: 28px; padding: 0 10px;
+  font-size: 12px; white-space: nowrap;
+}
+.drillbox-toggle .db-dot {
+  width: 8px; height: 8px; flex: none; border-radius: 50%;
+  border: 1px solid var(--fcg-border-strong); background: transparent;
+}
+.drillbox-toggle[aria-pressed="true"] {
+  background: rgba(144, 231, 1, .14);
+  border-color: var(--fcg-accent); color: var(--fcg-accent);
+}
+.drillbox-toggle[aria-pressed="true"] .db-dot {
+  background: var(--fcg-accent); border-color: var(--fcg-accent);
+}
+.act.drillbox-on {
+  color: var(--fcg-accent); border-color: var(--fcg-accent);
+  background: rgba(144, 231, 1, .12);
+}
 .form-actions { margin-left: auto; display: flex; gap: 8px; }
 /* Save-and-chain action: one repetition can hold several players. */
 .same-time {
