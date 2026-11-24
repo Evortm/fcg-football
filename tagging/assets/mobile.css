@@ -27,6 +27,9 @@ body{font-size:15px}
 .compact-phone .top-actions{display:flex;flex-wrap:wrap;width:100%;gap:8px}
 .compact-phone .video-chip{display:inline-flex!important;max-width:100%}
 .compact-phone .reviewer-field{flex:1 1 100%;min-width:0}
+.compact-phone .week-field{flex:0 0 auto;min-width:0;display:flex;align-items:center;gap:4px}
+.compact-phone .week-field label{font-size:12.5px;flex:0 0 auto}
+.compact-phone .week-field select{width:auto;min-width:0;max-width:150px;height:44px;font-size:14px}
 .compact-phone .reviewer-field label{font-size:12.5px}
 .compact-phone .reviewer-field input{width:100%;font-size:16px}
 .compact-phone .help{display:block;margin-top:12px;padding:0;border:0;background:transparent}

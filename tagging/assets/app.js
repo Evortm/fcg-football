@@ -3,6 +3,21 @@
 
   var C = window.FCG;
   var DATA = window.PILOT;
+  var WEEKS = window.FCG_WEEKS || {
+    defaultWeek: "W11",
+    weeks: [{ id: "W11", short: "W11 · A7", label: "W11 · A7 (pilot)", topic: "A7" }]
+  };
+  function urlWeek() {
+    var raw = "";
+    try { raw = new URLSearchParams(location.search).get("week") || ""; } catch (err) {}
+    return String(raw || WEEKS.defaultWeek || "W11").toUpperCase();
+  }
+  var WEEK_ID = urlWeek();
+  /* If a week's data file did not load, stay on the pilot set instead of
+     showing W13 labels over W11 clips. */
+  if (WEEK_ID !== "W11" && (!DATA.week || DATA.week !== WEEK_ID)) WEEK_ID = "W11";
+  var WEEK_META = WEEKS.weeks.filter(function (w) { return w.id === WEEK_ID; })[0]
+    || { id: WEEK_ID, short: WEEK_ID, label: WEEK_ID, topic: DATA.topic || "" };
   var V = DATA.clips[0]; /* the active clip; reassigned by the clip selector */
   /* One hosted site can serve every coach: ?coach=NK gives each coach their
      own event-ID prefix and their own browser storage. Offline bundles bake the
@@ -17,7 +32,11 @@
     return code;
   }
 
-  var STORE_KEY = "fcg.tagging.sanitized.v1" + (coachCode() ? "." + coachCode() : "");
+  /* W11 keeps its original key so tags already on coaches' devices survive.
+     Later weeks get their own store: switching weeks never mixes tag sets. */
+  var STORE_KEY = "fcg.tagging.sanitized.v1"
+    + (coachCode() ? "." + coachCode() : "")
+    + (WEEK_ID === "W11" ? "" : "." + WEEK_ID.toLowerCase());
 
   function eventPrefix() {
     return V.prefix + (coachCode() ? "-" + coachCode() : "");
@@ -88,6 +107,7 @@
     videoChip: $("#videoChip"),
     chipLegend: $("#chipLegend"),
     clipSelect: $("#clipSelect"),
+    weekSelect: $("#weekSelect"),
     clipSubtitle: $("#clipSubtitle"),
     videoIdLabel: $("#videoIdLabel"),
     clipName: $("#clipName"),
@@ -308,7 +328,7 @@
         option.value = String(i); option.textContent = clipOptionLabel(clip);
         el.clipSelect.appendChild(option);
       });
-      el.clipSelect.title = "W11 A7 · " + teamSelect.value;
+      el.clipSelect.title = WEEK_META.short + " · " + teamSelect.value;
     }
     populate();
     teamSelect.addEventListener("change", function() {
@@ -356,7 +376,8 @@
   /* ------------------------------------------------------------ video meta */
   function initMeta() {
     el.videoIdLabel.textContent = V.id;
-    el.clipSubtitle.textContent = V.title + (V.window ? " · " + V.window : "") + " · " + sessionText(V.session);
+    el.clipSubtitle.textContent = WEEK_META.short + " · " + V.title
+      + (V.window ? " · " + V.window : "") + " · " + sessionText(V.session);
     $("#ctxTeam").textContent = squadOf(V).label;
     $("#ctxSession").textContent = sessionText(V.session);
     $("#ctxVideo").textContent = V.id;
@@ -1200,6 +1221,35 @@
     reader.readAsText(file);
   }
 
+  /* ------------------------------------------------------------ week switch */
+  /* Each week is its own dataset file. Reloading with ?week= keeps the coach
+     code, the reviewer and the tags on that device intact. */
+  function initWeekSelect() {
+    var sel = el.weekSelect;
+    if (!sel) return;
+    sel.innerHTML = "";
+    WEEKS.weeks.forEach(function (w) {
+      var option = document.createElement("option");
+      option.value = w.id;
+      option.textContent = w.short || w.id;
+      option.title = w.label || w.short || w.id;
+      if (w.disabled) option.disabled = true;
+      sel.appendChild(option);
+    });
+    sel.value = WEEK_ID;
+    sel.addEventListener("change", function () {
+      var query;
+      try {
+        var params = new URLSearchParams(location.search);
+        params.set("week", sel.value);
+        query = params.toString();
+      } catch (err) {
+        query = "week=" + encodeURIComponent(sel.value);
+      }
+      location.href = location.pathname + "?" + query;
+    });
+  }
+
   /* ------------------------------------------------------------ wiring */
   function init() {
     /* Restore the last-used clip, then render everything for it. */
@@ -1207,6 +1257,8 @@
       || DATA.clips.filter(function (clip) { return clip.id === DATA.defaultClip; })[0]
       || DATA.clips[0];
     V = initial;
+    document.title = "FCG · " + WEEK_META.short + " team tagging";
+    initWeekSelect();
     initClipSelect();
     el.clipSelect.value = String(DATA.clips.indexOf(V));
     buildObsRows();

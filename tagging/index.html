@@ -3,23 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FCG · W11 A7 team tagging</title>
+<title>FCG · W13 D1 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261123-drillbox1">
-<link rel="stylesheet" href="assets/app.css?v=20261123-drillbox1">
-<link rel="stylesheet" href="assets/mobile.css?v=20261123-drillbox1">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261124-w13tagging1">
+<link rel="stylesheet" href="assets/app.css?v=20261124-w13tagging1">
+<link rel="stylesheet" href="assets/mobile.css?v=20261124-w13tagging1">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261123-drillbox1" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261124-w13tagging1" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
     </div>
   </div>
   <div class="top-actions">
+    <div class="week-field">
+      <label for="weekSelect">Week</label>
+      <select id="weekSelect" aria-label="Select tagging week"></select>
+    </div>
     <div class="reviewer-field">
       <label for="reviewer">Reviewer</label>
       <input id="reviewer" type="text" placeholder="Reviewer name or coach code" autocomplete="off" maxlength="40" spellcheck="false">
@@ -229,9 +233,11 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261123-drillbox1"></script>
-<script src="assets/core.js?v=20261123-drillbox1"></script>
-<script src="assets/app.js?v=20261123-drillbox1"></script>
-<script src="assets/mobile.js?v=20261123-drillbox1"></script>
+<script src="data/pilot-data.js?v=20261124-w13tagging1"></script>
+<script src="data/weeks.js?v=20261124-w13tagging1"></script>
+<script src="data/w13-data.js?v=20261124-w13tagging1"></script>
+<script src="assets/core.js?v=20261124-w13tagging1"></script>
+<script src="assets/app.js?v=20261124-w13tagging1"></script>
+<script src="assets/mobile.js?v=20261124-w13tagging1"></script>
 </body>
 </html>

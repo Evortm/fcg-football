@@ -51,6 +51,17 @@ button:disabled, input:disabled, select:disabled { opacity: .5; cursor: not-allo
 }
 .reviewer-field input:hover { border-color: var(--fcg-border-strong); }
 
+/* Week selector: one dataset per week, loaded by ?week= on reload. */
+.week-field { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.week-field label { font-size: 12.5px; color: var(--fcg-text-secondary); font-weight: 600; }
+.week-field select {
+  height: var(--fcg-control-height); max-width: 190px; padding: 0 10px;
+  border: 1px solid var(--fcg-border-strong); border-radius: var(--fcg-radius-control);
+  background: var(--fcg-surface); color: var(--fcg-text); font-size: 13px;
+}
+.week-field select:hover { border-color: var(--fcg-accent); }
+.week-field option { background: var(--fcg-card); color: var(--fcg-text); font-size: 14px; }
+
 .video-chip {
   display: inline-flex; align-items: center; gap: 8px;
   min-height: var(--fcg-control-height); max-width: 360px; padding: 6px 12px;
