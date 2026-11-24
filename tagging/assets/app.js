@@ -720,6 +720,28 @@
      never encodes video. */
   var DRILLBOX_MARK = "#drillbox";
   var COMMENT_MAX = 500;
+  /* The publisher cuts the tagged segment, so a Drillbox example must be at
+     least 20 seconds long (no maximum). Guard the form, the save and the
+     event-row star so a short clip can never be nominated. */
+  var DRILLBOX_MIN_SECONDS = 20;
+
+  function drillboxLength(start, end) {
+    if (start == null || end == null) return NaN;
+    var s = Number(start), e = Number(end);
+    if (!isFinite(s) || !isFinite(e)) return NaN;
+    return C.round3(e - s);
+  }
+
+  function drillboxTimeError(start, end) {
+    var len = drillboxLength(start, end);
+    if (!isFinite(len) || len <= 0) {
+      return "Drillbox examples need a start and end marker spanning at least 20 seconds.";
+    }
+    if (len < DRILLBOX_MIN_SECONDS) {
+      return "Drillbox clip is " + len.toFixed(1) + " s — examples must be at least 20 s. Extend the end marker.";
+    }
+    return "";
+  }
 
   function hasDrillbox(ev) {
     return /(^|\s)#drillbox\b/i.test(ev.comment || "");
@@ -773,6 +795,10 @@
     if (on && !info.green) {
       toast("Drillbox examples are Green-team only.", "bad");
       return;
+    }
+    if (on) {
+      var shortErr = drillboxTimeError(target.t_start, target.t_end);
+      if (shortErr) { toast(shortErr, "bad"); return; }
     }
     store.events = store.events.map(function (ev) {
       if (ev.event_id !== id) return ev;
@@ -861,6 +887,12 @@
 
   function saveEvent() {
     if (!state.player) { showError("Select a player, or choose Unknown player."); el.playerSearch.focus(); return false; }
+    if (state.drillbox) {
+      /* Never let a short segment slip through as a Drillbox example — the
+         publisher would cut an invalid video from these markers. */
+      var drillboxErr = drillboxTimeError(state.start, state.end);
+      if (drillboxErr) { showError(drillboxErr); toast(drillboxErr, "bad"); return false; }
+    }
     var reviewer = el.reviewer.value.trim();
     var existing = state.editing
       ? store.events.filter(function (ev) { return ev.event_id === state.editing; })[0]
@@ -1389,9 +1421,19 @@
     });
 
     el.drillboxToggle.addEventListener("click", function () {
-      if (!state.drillbox && !clipCell(V.id).green) {
-        toast("Drillbox examples are Green-team only.", "bad");
-        return;
+      if (!state.drillbox) {
+        if (!clipCell(V.id).green) {
+          toast("Drillbox examples are Green-team only.", "bad");
+          return;
+        }
+        /* Markers may already be stamped at this point. Fail early, but still
+           allow nominating before stamping — the save guard catches that. */
+        var len = drillboxLength(state.start, state.end);
+        if (isFinite(len) && len < DRILLBOX_MIN_SECONDS) {
+          var shortErr = drillboxTimeError(state.start, state.end);
+          showError(shortErr); toast(shortErr, "bad");
+          return;
+        }
       }
       state.drillbox = !state.drillbox;
       updateDrillboxToggle();
