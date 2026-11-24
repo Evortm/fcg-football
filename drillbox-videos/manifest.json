@@ -75,12 +75,17 @@
       "updated": "2026-11-24"
     },
     "D1/U7/ACT": {
-      "url": "/drillbox-videos/D1/U7/ACT/video.mp4?v=51c54161",
-      "seconds": 60.0,
-      "bytes": 3854995,
+      "url": "/drillbox-videos/D1/U7/ACT/video.mp4?v=5818756e",
+      "seconds": 29.43,
+      "bytes": 2256720,
       "source": "U7-ACT.mp4",
-      "start": 60.2,
-      "updated": "2026-11-24"
+      "start": 93.518,
+      "updated": "2026-11-24",
+      "tag": "EVT-D1FU07GACTMON-W13D1-0001",
+      "tag_window": [
+        "01:33.518",
+        "02:02.915"
+      ]
     },
     "D1/U7/D1": {
       "url": "/drillbox-videos/D1/U7/D1/video.mp4?v=d88398fc",
@@ -136,7 +141,7 @@
       "week": "W13",
       "topic": "D1",
       "cells": 14,
-      "bytes": 109045937,
+      "bytes": 107447662,
       "updated": "2026-11-24"
     },
     {
@@ -147,5 +152,5 @@
       "updated": "2026-11-23"
     }
   ],
-  "updated": "2026-11-24T16:01:48"
+  "updated": "2026-11-24T20:30:08"
 }

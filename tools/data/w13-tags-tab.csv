@@ -1,0 +1,2 @@
+event_id,video_id,player_id,player_display,player_known,t_start,t_end,t_start_sec,t_end_sec,source_start,source_end,source_segment,observations,comment,reviewer,confirmation,created_at,updated_at
+EVT-D1FU07GACTMON-W13D1-0001,VID-FCG-D1F-ACT-U07G-MON-01,UNKNOWN,Unknown player,FALSE,01:33.518,02:02.915,25:55.200,57:36.000,,,1,D1U7PA=Demonstrated; D1U7OB=Cannot assess; D1U7TW=Cannot assess; D1U7AE=Cannot assess,#drillbox,Easy,Draft,2026-11-24T12:21:49.141Z,2026-11-24T12:21:49.141Z

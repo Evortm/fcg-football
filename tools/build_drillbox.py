@@ -16,10 +16,14 @@ Examples:
   python tools/build_drillbox.py --source ".../SesVid/D1-W13" --topic D1 --week W13 \
       --overlay library --height 1080 --timeslot-map w13-windows.json --dry-run
   python tools/build_drillbox.py --source ".../A8-W12/SUN" --topic A8 --week W12 --only U10:D1 --seconds 30
+  python tools/build_drillbox.py --source ".../D1-W13/MON" --topic D1 --week W13 \
+      --tags tools/data/w13-tags-tab.csv --overlay library --height 1080
 """
 import argparse
+import csv
 import datetime as dt
 import hashlib
+import io
 import json
 import os
 import re
@@ -51,6 +55,10 @@ SKIP_DIRS = {"backup", "clips", "renders", "past", "overlay", "_archive",
 MIN_SECONDS = 20.0
 MAX_BYTES = 95 * 1024 * 1024
 FFMPEG = imageio_ffmpeg.get_ffmpeg_exe()
+# Same video_id contract as clipCell() in tagging/assets/app.js.
+TAG_VIDEO_RE = re.compile(
+    r"^VID-FCG-([A-Z]\d+)[A-Z]?-(ACT|D1|D2|D3|TG)-U(\d+)([A-Z])-", re.IGNORECASE)
+DRILLBOX_MARK_RE = re.compile(r"(^|\s)#drillbox\b", re.IGNORECASE)
 
 
 def duration_of(path):
@@ -173,6 +181,74 @@ def timeslot_for(age, phase, mapping, fallback):
             or mapping.get(("*", phase)) or timeslot_text(fallback))
 
 
+def parse_tag_time(value):
+    """Tags-tab times are fmtTime() strings: mm:ss.mmm, h:mm:ss.mmm or seconds."""
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        if ":" in text:
+            total = 0.0
+            for power, part in enumerate(reversed(text.split(":"))):
+                total += float(part) * (60 ** power)
+            return round(total, 3)
+        return round(float(text), 3)
+    except ValueError:
+        return None
+
+
+def load_tags(raw):
+    """Read the weekfile Tags tab (18-column A-R CSV/TSV) and return the
+    #drillbox nominations, keyed by (age, phase).
+
+    This is the link between tagging and the Drillbox library: the publisher
+    cuts exactly the tagged start/end window instead of a generic excerpt,
+    and records the event id in the manifest. One nomination per cell.
+    """
+    text = Path(raw).read_text(encoding="utf-8-sig") if Path(raw).exists() else raw
+    rows = list(csv.reader(io.StringIO(text),
+                           delimiter="\t" if "\t" in text.splitlines()[0] else ","))
+    if not rows:
+        sys.exit("--tags file is empty")
+    header = [h.strip().lower() for h in rows[0]]
+
+    def col(name, default):
+        return header.index(name) if name in header else default
+
+    i_event, i_video = col("event_id", 0), col("video_id", 1)
+    i_start, i_end = col("t_start", 5), col("t_end", 6)
+    i_comment = col("comment", 13)
+    out = {}
+    for row in rows[1:]:
+        if i_comment >= len(row) or not DRILLBOX_MARK_RE.search(row[i_comment] or ""):
+            continue
+        video_id = (row[i_video] if i_video < len(row) else "").strip()
+        m = TAG_VIDEO_RE.match(video_id)
+        if not m:
+            print("  NOTE: tag %s has an unparseable video_id %s" % (row[i_event], video_id))
+            continue
+        topic, phase, age, variant = (m.group(1).upper(), m.group(2).upper(),
+                                      "U%d" % int(m.group(3)), m.group(4).upper())
+        if variant != "G":
+            print("  NOTE: tag %s is not a Green-team clip (%s)" % (row[i_event], video_id))
+            continue
+        start, end = parse_tag_time(row[i_start]), parse_tag_time(row[i_end])
+        if start is None or end is None or end <= start:
+            print("  NOTE: tag %s has invalid markers (%s / %s)"
+                  % (row[i_event], row[i_start], row[i_end]))
+            continue
+        key = (age, phase)
+        if key in out:
+            print("  NOTE: more than one nomination for %s — keeping %s"
+                  % ("/".join(key), row[i_event]))
+        out[key] = {
+            "event_id": row[i_event].strip(), "video_id": video_id,
+            "topic": topic, "t_start": row[i_start], "t_end": row[i_end],
+            "start": start, "seconds": round(end - start, 3),
+        }
+    return out
+
+
 def build_fields(topic, age, phase, args):
     """Resolve the text fields for one cell, from CSV maps or a JSON override."""
     week = args.week.strip().upper() or TOPIC_WEEK_HINT.get(topic, "")
@@ -226,6 +302,8 @@ def main():
                     help="publish the middle N seconds of each take (e.g. 60)")
     ap.add_argument("--cells-map", default="",
                     help="JSON file/object: per-cell fields AND the allow-list of cells to publish")
+    ap.add_argument("--tags", default="",
+                    help="Tags-tab CSV/TSV (18-column A-R paste): #drillbox rows become the exact published segments")
     ap.add_argument("--crf", type=int, default=28)
     ap.add_argument("--height", type=int, default=540, choices=(540, 720, 1080),
                     help="output height; 1080 keeps overlay text at its designed size")
@@ -247,6 +325,9 @@ def main():
     args = ap.parse_args()
     args.timeslot_map = load_timeslot_map(args.timeslot_map)
     args.cells_map = load_cells_map(args.cells_map)
+    args.tags = load_tags(args.tags) if args.tags else {}
+    if args.tags and (args.mid_excerpt or args.seconds or args.start):
+        sys.exit("--tags supplies its own start/seconds; do not combine with --start / --seconds / --mid-excerpt")
     if args.mid_excerpt and args.mid_excerpt < MIN_SECONDS:
         sys.exit("--mid-excerpt must be >= %.0f s" % MIN_SECONDS)
 
@@ -259,11 +340,23 @@ def main():
     if args.only:
         age, phase = args.only.upper().split(":")
         found = {k: v for k, v in found.items() if k == (age, phase)}
-    if args.cells_map:
-        missing = sorted(set(args.cells_map) - set(found))
-        found = {k: v for k, v in found.items() if k in args.cells_map}
+    if args.tags:
+        for key, tag in args.tags.items():
+            if tag["topic"] != topic:
+                sys.exit("Tag %s belongs to topic %s, not %s" % (tag["event_id"], tag["topic"], topic))
+            if tag["seconds"] < MIN_SECONDS:
+                sys.exit("Tag %s is only %.1f s (< %.0f s)"
+                         % (tag["event_id"], tag["seconds"], MIN_SECONDS))
+        missing = sorted(set(args.tags) - set(found))
         if missing:
             print("  NOTE: no take on disk for %s" % ", ".join("/".join(c) for c in missing))
+        found = {k: v for k, v in found.items() if k in args.tags}
+    if args.cells_map:
+        if not args.tags:
+            missing = sorted(set(args.cells_map) - set(found))
+            if missing:
+                print("  NOTE: no take on disk for %s" % ", ".join("/".join(c) for c in missing))
+        found = {k: v for k, v in found.items() if k in args.cells_map}
     if not found:
         sys.exit("No Green-team U5-U12 clips matching %s in %s" % (phases, args.source))
 
@@ -279,14 +372,21 @@ def main():
         dst = dst_dir / "video.mp4"
         fields = build_fields(topic, age, phase, args) if args.overlay != "none" else None
         missing = [k for k in ("objective",) if fields and not fields.get(k)]
-        start, seconds = args.start, args.seconds
-        if args.mid_excerpt:
-            seconds = min(args.mid_excerpt, duration_of(src))
-            start = max(0.0, (duration_of(src) - seconds) / 2)
+        tag = args.tags.get((age, phase))
+        if tag:
+            start, seconds = tag["start"], tag["seconds"]
+        else:
+            start, seconds = args.start, args.seconds
+            if args.mid_excerpt:
+                seconds = min(args.mid_excerpt, duration_of(src))
+                start = max(0.0, (duration_of(src) - seconds) / 2)
+        window = "  %.1fs @ %.1fs" % (seconds, start) if seconds else "  full take"
+        if tag:
+            window += "  [tag %s]" % tag["event_id"]
         print("  %-14s <- %s" % (cell, src.name)
               + ("  [%s%s]" % (args.overlay,
                  " missing " + ",".join(missing) if missing else "") if fields else "")
-              + ("  %.0fs @ %.0fs" % (seconds, start) if args.mid_excerpt else ""))
+              + window)
         if args.dry_run:
             continue
         if seconds and seconds < MIN_SECONDS:
@@ -306,14 +406,18 @@ def main():
         if size > MAX_BYTES:
             print("    WARNING: %.1f MB exceeds the 95 MB target" % (size / 1048576))
         digest = hashlib.sha1(dst.read_bytes()).hexdigest()[:8]
-        entries["entries"][cell] = {
+        entry = {
             "url": "/drillbox-videos/%s/video.mp4?v=%s" % (cell, digest),
             "seconds": round(seconds, 2),
             "bytes": size,
             "source": src.name,
-            "start": round(start, 1), "seconds": round(seconds, 1) if seconds else None,
+            "start": round(start, 3),
             "updated": dt.date.today().isoformat(),
         }
+        if tag:
+            entry["tag"] = tag["event_id"]
+            entry["tag_window"] = [tag["t_start"], tag["t_end"]]
+        entries["entries"][cell] = entry
         if args.activation_alias and phase == "ACT":
             alias_dir = OUT_ROOT / topic / age / "activation"
             alias_dir.mkdir(parents=True, exist_ok=True)
