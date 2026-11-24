@@ -17,9 +17,128 @@
       "bytes": 1522322,
       "source": "U10-D1.mp4",
       "updated": "2026-11-23"
+    },
+    "D1/U10/ACT": {
+      "url": "/drillbox-videos/D1/U10/ACT/video.mp4?v=d3732d5a",
+      "seconds": 60.0,
+      "bytes": 8418460,
+      "source": "U10-ACT.mp4",
+      "start": 62.2,
+      "updated": "2026-11-24"
+    },
+    "D1/U10/D1": {
+      "url": "/drillbox-videos/D1/U10/D1/video.mp4?v=c70770ee",
+      "seconds": 60.0,
+      "bytes": 10744185,
+      "source": "U10-D1.mp4",
+      "start": 61.2,
+      "updated": "2026-11-24"
+    },
+    "D1/U10/D2": {
+      "url": "/drillbox-videos/D1/U10/D2/video.mp4?v=ef9075f8",
+      "seconds": 60.0,
+      "bytes": 7101162,
+      "source": "U10-D2.mp4",
+      "start": 61.6,
+      "updated": "2026-11-24"
+    },
+    "D1/U11/D2": {
+      "url": "/drillbox-videos/D1/U11/D2/video.mp4?v=d13c2197",
+      "seconds": 60.0,
+      "bytes": 7851072,
+      "source": "U11-D2.mp4",
+      "start": 69.0,
+      "updated": "2026-11-24"
+    },
+    "D1/U12/D2": {
+      "url": "/drillbox-videos/D1/U12/D2/video.mp4?v=85f9967a",
+      "seconds": 60.0,
+      "bytes": 7813817,
+      "source": "U12-D2.mp4",
+      "start": 60.8,
+      "updated": "2026-11-24"
+    },
+    "D1/U6/ACT": {
+      "url": "/drillbox-videos/D1/U6/ACT/video.mp4?v=9e95cbe2",
+      "seconds": 60.0,
+      "bytes": 5717381,
+      "source": "U6-ACT.mp4",
+      "start": 60.1,
+      "updated": "2026-11-24"
+    },
+    "D1/U6/D2": {
+      "url": "/drillbox-videos/D1/U6/D2/video.mp4?v=950ac0d3",
+      "seconds": 60.0,
+      "bytes": 3797972,
+      "source": "U6-D2.mp4",
+      "start": 60.0,
+      "updated": "2026-11-24"
+    },
+    "D1/U7/ACT": {
+      "url": "/drillbox-videos/D1/U7/ACT/video.mp4?v=51c54161",
+      "seconds": 60.0,
+      "bytes": 3854995,
+      "source": "U7-ACT.mp4",
+      "start": 60.2,
+      "updated": "2026-11-24"
+    },
+    "D1/U7/D1": {
+      "url": "/drillbox-videos/D1/U7/D1/video.mp4?v=d88398fc",
+      "seconds": 60.0,
+      "bytes": 4500299,
+      "source": "U7-D1.mp4",
+      "start": 60.0,
+      "updated": "2026-11-24"
+    },
+    "D1/U7/D2": {
+      "url": "/drillbox-videos/D1/U7/D2/video.mp4?v=b25f68c6",
+      "seconds": 60.0,
+      "bytes": 3722426,
+      "source": "U7-D2.mp4",
+      "start": 59.9,
+      "updated": "2026-11-24"
+    },
+    "D1/U8/ACT": {
+      "url": "/drillbox-videos/D1/U8/ACT/video.mp4?v=4cb0d63a",
+      "seconds": 60.0,
+      "bytes": 10594993,
+      "source": "U8-ACT.mp4",
+      "start": 55.9,
+      "updated": "2026-11-24"
+    },
+    "D1/U8/D1": {
+      "url": "/drillbox-videos/D1/U8/D1/video.mp4?v=919e3a82",
+      "seconds": 60.0,
+      "bytes": 10392640,
+      "source": "U8-D1.mp4",
+      "start": 56.2,
+      "updated": "2026-11-24"
+    },
+    "D1/U9/ACT": {
+      "url": "/drillbox-videos/D1/U9/ACT/video.mp4?v=db2a8ef5",
+      "seconds": 60.0,
+      "bytes": 12710281,
+      "source": "U9-ACT.mp4",
+      "start": 56.6,
+      "updated": "2026-11-24"
+    },
+    "D1/U9/D2": {
+      "url": "/drillbox-videos/D1/U9/D2/video.mp4?v=03c90468",
+      "seconds": 60.0,
+      "bytes": 11826254,
+      "source": "U9-D2.mp4",
+      "start": 55.7,
+      "updated": "2026-11-24"
     }
   },
   "weeks": [
+    {
+      "week": "W13",
+      "topic": "D1",
+      "cells": 14,
+      "bytes": 109045937,
+      "updated": "2026-11-24"
+    },
     {
       "week": "W12",
       "topic": "A8",
@@ -28,5 +147,5 @@
       "updated": "2026-11-23"
     }
   ],
-  "updated": "2026-11-23T15:54:40"
+  "updated": "2026-11-24T16:01:48"
 }

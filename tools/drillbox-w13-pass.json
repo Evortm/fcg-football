@@ -1,0 +1,142 @@
+{
+  "U10:ACT": {
+    "team": "U10-G",
+    "phase": "ACT",
+    "drill": "Pull Open / Pull the V, pass & sprint",
+    "objective": "Learn to turn and pass, then sprint to the next station.",
+    "success": "The pass reaches the waiting player and the passer sprints through the change of direction to the red cone.",
+    "timeslot": "17:35-17:40",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U10:D1": {
+    "team": "U10-G",
+    "phase": "D1",
+    "drill": "1v1 · Curved run to press",
+    "objective": "Learn to protect the mini-goal while closing down the receiver.",
+    "success": "The defender blocks the route towards the mini-goal and gets close enough to challenge the ball.",
+    "timeslot": "17:55-18:00",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U10:D2": {
+    "team": "U10-G",
+    "phase": "D2",
+    "drill": "Press the goalkeeper build-up · game",
+    "objective": "Learn to close the return pass with a teammate covering the middle.",
+    "success": "The first defender closes the return pass and a teammate blocks a pass through the middle.",
+    "timeslot": "18:15-18:20",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U11:D2": {
+    "team": "U11-G",
+    "phase": "D2",
+    "drill": "Press the goalkeeper build-up · game",
+    "objective": "Learn to protect the middle together as the goalkeeper plays to either side.",
+    "success": "The nearest defender slows the receiver down and a teammate blocks the pass through the middle.",
+    "timeslot": "18:00-18:05",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U12:D2": {
+    "team": "U12-G",
+    "phase": "D2",
+    "drill": "Press the goalkeeper build-up · game",
+    "objective": "Learn to protect the middle together as the goalkeeper plays to either side.",
+    "success": "The nearest defender slows the receiver down and a teammate blocks the pass through the middle.",
+    "timeslot": "18:05-18:10",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U6:ACT": {
+    "team": "U6-G",
+    "phase": "ACT",
+    "drill": "Pull Open and pass",
+    "objective": "Learn to turn with Pull Open and pass to the next player.",
+    "success": "The player keeps the ball within reach after Pull Open and passes to the waiting player.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U6:D2": {
+    "team": "U6-G",
+    "phase": "D2",
+    "drill": "Press the build-up together",
+    "objective": "Learn to close the way back to the goalkeeper as the receiver takes the ball.",
+    "success": "The defender makes a curved run to block the pass back to the keeper and slows down close to the ball.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U7:ACT": {
+    "team": "U7-G",
+    "phase": "ACT",
+    "drill": "Pull Open and pass",
+    "objective": "Learn to turn with Pull Open and pass to the next player.",
+    "success": "The player keeps the ball within reach after Pull Open and passes to the waiting player.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U7:D1": {
+    "team": "U7-G",
+    "phase": "D1",
+    "drill": "Press the goalkeeper pass",
+    "objective": "Learn to close the return pass as the goalkeeper plays to a teammate.",
+    "success": "The defender blocks the return pass and gets close enough to challenge the receiver.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U7:D2": {
+    "team": "U7-G",
+    "phase": "D2",
+    "drill": "Press the goalkeeper build-up · 3v3",
+    "objective": "Learn to press the receiver with a teammate covering the next pass.",
+    "success": "The first defender closes the return pass while a teammate covers the next forward option.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U8:ACT": {
+    "team": "U8-G",
+    "phase": "ACT",
+    "drill": "Pull Open and pass",
+    "objective": "Learn to turn with Pull Open and pass to the next player.",
+    "success": "The player keeps the ball within reach after Pull Open and passes to the waiting player.",
+    "timeslot": "19:05-19:10",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U8:D1": {
+    "team": "U8-G",
+    "phase": "D1",
+    "drill": "Press the goalkeeper pass",
+    "objective": "Learn to close the return pass as the goalkeeper plays to a teammate.",
+    "success": "The defender blocks the return pass and gets close enough to challenge the receiver.",
+    "timeslot": "19:25-19:30",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U9:ACT": {
+    "team": "U9-G",
+    "phase": "ACT",
+    "drill": "Pull Open / Pull the V, pass & sprint",
+    "objective": "Learn to turn and pass, then sprint to the next station.",
+    "success": "The pass reaches the waiting player and the passer sprints through the change of direction to the red cone.",
+    "timeslot": "19:00-19:05",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U9:D2": {
+    "team": "U9-G",
+    "phase": "D2",
+    "drill": "Press the goalkeeper build-up · game",
+    "objective": "Learn to close the return pass with a teammate covering the middle.",
+    "success": "The first defender closes the return pass and a teammate blocks a pass through the middle.",
+    "timeslot": "19:40-19:45",
+    "status": "Pass 通过",
+    "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  }
+}
