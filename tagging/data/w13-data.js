@@ -76,7 +76,10 @@ window.FCG_W13 = {
         "2015-Wonaldo-吴纳多",
         "2015-Yiang-李奕昂"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "19:01",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U12G-MON-01",
@@ -151,7 +154,10 @@ window.FCG_W13 = {
         "2015-Wonaldo-吴纳多",
         "2015-Yiang-李奕昂"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "19:17",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U12G-MON-01",
@@ -226,7 +232,10 @@ window.FCG_W13 = {
         "2015-Wonaldo-吴纳多",
         "2015-Yiang-李奕昂"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "18:12",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U11G-MON-01",
@@ -303,7 +312,10 @@ window.FCG_W13 = {
         "2016-Xiaobei-隆子毅",
         "2015-Yoyo-赵奕凯"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "19:09",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U11G-MON-01",
@@ -380,7 +392,10 @@ window.FCG_W13 = {
         "2016-Xiaobei-隆子毅",
         "2015-Yoyo-赵奕凯"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "19:21",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U11G-MON-01",
@@ -457,7 +472,10 @@ window.FCG_W13 = {
         "2016-Xiaobei-隆子毅",
         "2015-Yoyo-赵奕凯"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "18:04",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U10G-MON-01",
@@ -525,7 +543,10 @@ window.FCG_W13 = {
         "2017-Simon-张夏蒙",
         "2017-Zayn-王俊煜"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "17:38",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U10G-MON-01",
@@ -593,7 +614,10 @@ window.FCG_W13 = {
         "2017-Simon-张夏蒙",
         "2017-Zayn-王俊煜"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "17:58",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U10G-MON-01",
@@ -661,7 +685,10 @@ window.FCG_W13 = {
         "2017-Simon-张夏蒙",
         "2017-Zayn-王俊煜"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "18:20",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U09G-MON-01",
@@ -728,7 +755,10 @@ window.FCG_W13 = {
         "2018-Steven-莫云哲",
         "2017-Susie-詹家怡"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "19:03",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U09G-MON-01",
@@ -795,7 +825,10 @@ window.FCG_W13 = {
         "2018-Steven-莫云哲",
         "2017-Susie-詹家怡"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "17:42",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U09G-MON-01",
@@ -862,7 +895,10 @@ window.FCG_W13 = {
         "2018-Steven-莫云哲",
         "2017-Susie-詹家怡"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "19:43",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U10W-MON-01",
@@ -927,7 +963,10 @@ window.FCG_W13 = {
         "2017-Vincent-唐诗睿",
         "2015-Yuchen-司雨辰"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "17:34",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U10W-MON-01",
@@ -992,7 +1031,10 @@ window.FCG_W13 = {
         "2017-Vincent-唐诗睿",
         "2015-Yuchen-司雨辰"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "19:26",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U10W-MON-01",
@@ -1057,7 +1099,10 @@ window.FCG_W13 = {
         "2017-Vincent-唐诗睿",
         "2015-Yuchen-司雨辰"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "18:16",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U08W-MON-01",
@@ -1070,6 +1115,7 @@ window.FCG_W13 = {
       "squad": {
         "label": "U09-W / MA",
         "teams": [
+          "U09-B",
           "U09-W"
         ]
       },
@@ -1114,9 +1160,14 @@ window.FCG_W13 = {
         "2016-Qiqi-李羽骐",
         "2017-Tony-王子熠",
         "2016-Will-成为",
-        "2015-Xiuhe-周修禾"
+        "2015-Xiuhe-周修禾",
+        "2017-Fred-蔡佩希",
+        "2017-Henry-黄颢恒"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "17:24",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U08W-MON-01",
@@ -1129,6 +1180,7 @@ window.FCG_W13 = {
       "squad": {
         "label": "U09-W / MA",
         "teams": [
+          "U09-B",
           "U09-W"
         ]
       },
@@ -1173,9 +1225,14 @@ window.FCG_W13 = {
         "2016-Qiqi-李羽骐",
         "2017-Tony-王子熠",
         "2016-Will-成为",
-        "2015-Xiuhe-周修禾"
+        "2015-Xiuhe-周修禾",
+        "2017-Fred-蔡佩希",
+        "2017-Henry-黄颢恒"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "17:47",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U08W-MON-01",
@@ -1188,6 +1245,7 @@ window.FCG_W13 = {
       "squad": {
         "label": "U09-W / MA",
         "teams": [
+          "U09-B",
           "U09-W"
         ]
       },
@@ -1232,9 +1290,14 @@ window.FCG_W13 = {
         "2016-Qiqi-李羽骐",
         "2017-Tony-王子熠",
         "2016-Will-成为",
-        "2015-Xiuhe-周修禾"
+        "2015-Xiuhe-周修禾",
+        "2017-Fred-蔡佩希",
+        "2017-Henry-黄颢恒"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "18:05",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U08G-MON-01",
@@ -1294,7 +1357,10 @@ window.FCG_W13 = {
         "2019-Yuanyuan-林洛潇",
         "2019-Zephyr-林煦然"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "19:10",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U08G-MON-01",
@@ -1354,7 +1420,10 @@ window.FCG_W13 = {
         "2019-Yuanyuan-林洛潇",
         "2019-Zephyr-林煦然"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "18:08",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U08G-MON-01",
@@ -1414,7 +1483,10 @@ window.FCG_W13 = {
         "2019-Yuanyuan-林洛潇",
         "2019-Zephyr-林煦然"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "TUE",
+      "shotTime": "18:22",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U07G-MON-01",
@@ -1427,7 +1499,8 @@ window.FCG_W13 = {
       "squad": {
         "label": "U07-G / MC",
         "teams": [
-          "U07-G"
+          "U07-G",
+          "U08-B"
         ]
       },
       "session": "W13 D1 · MON take",
@@ -1462,15 +1535,38 @@ window.FCG_W13 = {
         }
       ],
       "rosterIds": [
+        "2017-Aiden-徐子扬",
+        "2018-Charlotte-刘沐晨",
+        "2019-Clay-唐启宸",
         "2020-Darren-李子裕",
+        "2019-Dodo-何熹",
         "2020-Eric-王瀚铭",
+        "2019-Eric-刘缙宁",
+        "2018-Ethan-徐意",
+        "2018-Felix-胡佶",
+        "2019-Jack-温沐旭",
+        "2018-Jayden-袁原",
+        "2019-Jayden-张恩祐",
         "2020-Jerry-温杰睿",
+        "2019-Jin-曾凡瑾",
+        "2019-Joey-陈星乔",
+        "2018-Johnny-卢益铖",
         "2019-Lin-陈云林",
+        "2019-Lucas-王景谦",
+        "2019-Lucas-苏锦怀",
+        "2017-Lucy-温沐淇",
+        "2018-Milo-刘穆穆",
+        "2019-Nobel-杨永新",
         "2019-Ryan-肖沐然",
         "2019-Ryan-倪锦秋",
-        "2019-Xixi-苏杞南"
+        "2018-Ryanhao-郝睿恩",
+        "2019-Xixi-苏杞南",
+        "2018-YI-金翊"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "21:20",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U07G-MON-01",
@@ -1483,7 +1579,8 @@ window.FCG_W13 = {
       "squad": {
         "label": "U07-G / MC",
         "teams": [
-          "U07-G"
+          "U07-G",
+          "U08-B"
         ]
       },
       "session": "W13 D1 · MON take",
@@ -1518,15 +1615,38 @@ window.FCG_W13 = {
         }
       ],
       "rosterIds": [
+        "2017-Aiden-徐子扬",
+        "2018-Charlotte-刘沐晨",
+        "2019-Clay-唐启宸",
         "2020-Darren-李子裕",
+        "2019-Dodo-何熹",
         "2020-Eric-王瀚铭",
+        "2019-Eric-刘缙宁",
+        "2018-Ethan-徐意",
+        "2018-Felix-胡佶",
+        "2019-Jack-温沐旭",
+        "2018-Jayden-袁原",
+        "2019-Jayden-张恩祐",
         "2020-Jerry-温杰睿",
+        "2019-Jin-曾凡瑾",
+        "2019-Joey-陈星乔",
+        "2018-Johnny-卢益铖",
         "2019-Lin-陈云林",
+        "2019-Lucas-王景谦",
+        "2019-Lucas-苏锦怀",
+        "2017-Lucy-温沐淇",
+        "2018-Milo-刘穆穆",
+        "2019-Nobel-杨永新",
         "2019-Ryan-肖沐然",
         "2019-Ryan-倪锦秋",
-        "2019-Xixi-苏杞南"
+        "2018-Ryanhao-郝睿恩",
+        "2019-Xixi-苏杞南",
+        "2018-YI-金翊"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "21:08",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U07G-MON-01",
@@ -1539,7 +1659,8 @@ window.FCG_W13 = {
       "squad": {
         "label": "U07-G / MC",
         "teams": [
-          "U07-G"
+          "U07-G",
+          "U08-B"
         ]
       },
       "session": "W13 D1 · MON take",
@@ -1574,15 +1695,38 @@ window.FCG_W13 = {
         }
       ],
       "rosterIds": [
+        "2017-Aiden-徐子扬",
+        "2018-Charlotte-刘沐晨",
+        "2019-Clay-唐启宸",
         "2020-Darren-李子裕",
+        "2019-Dodo-何熹",
         "2020-Eric-王瀚铭",
+        "2019-Eric-刘缙宁",
+        "2018-Ethan-徐意",
+        "2018-Felix-胡佶",
+        "2019-Jack-温沐旭",
+        "2018-Jayden-袁原",
+        "2019-Jayden-张恩祐",
         "2020-Jerry-温杰睿",
+        "2019-Jin-曾凡瑾",
+        "2019-Joey-陈星乔",
+        "2018-Johnny-卢益铖",
         "2019-Lin-陈云林",
+        "2019-Lucas-王景谦",
+        "2019-Lucas-苏锦怀",
+        "2017-Lucy-温沐淇",
+        "2018-Milo-刘穆穆",
+        "2019-Nobel-杨永新",
         "2019-Ryan-肖沐然",
         "2019-Ryan-倪锦秋",
-        "2019-Xixi-苏杞南"
+        "2018-Ryanhao-郝睿恩",
+        "2019-Xixi-苏杞南",
+        "2018-YI-金翊"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "21:08",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U06B-MON-01",
@@ -1658,7 +1802,10 @@ window.FCG_W13 = {
         "2013-Slyvia-丘子萱",
         "2016-Yamin-黄彦鸣"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "19:14",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U06B-MON-01",
@@ -1734,7 +1881,10 @@ window.FCG_W13 = {
         "2013-Slyvia-丘子萱",
         "2016-Yamin-黄彦鸣"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "19:57",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U06G-MON-01",
@@ -1747,7 +1897,8 @@ window.FCG_W13 = {
       "squad": {
         "label": "U06-G / CEL",
         "teams": [
-          "U06-G"
+          "U06-G",
+          "U07-W"
         ]
       },
       "session": "W13 D1 · MON take",
@@ -1782,17 +1933,51 @@ window.FCG_W13 = {
         }
       ],
       "rosterIds": [
+        "2019-Alan-罗奕骐",
+        "2018-Arin-孟宪敦",
+        "2020-Barry-徐秉睿",
         "2021-Benson-沈昊邦",
+        "2019-Bob-林永琰",
         "2020-Colm-卢瀚宇",
+        "2020-Eason-周一辰",
+        "2017-Eibhlis-卢依娜",
+        "2019-Elaine-王嫣灵",
         "2021-Eric-黄焌亮",
+        "2020-Ethan-刘宸安",
         "2019-Eva-郭子伊",
+        "2019-Evan-谈壹铭",
+        "2019-Flash-刘深明",
+        "2018-Henrik-马睿希",
+        "2018-Henry-徐焕宸",
+        "2020-Henry-包锦睿",
+        "2020-Jacky-李有宸",
         "2021-Jalen-杜星佑",
+        "2019-Joe-韩隽毅",
+        "2019-Johnson-张珺荃",
+        "2020-Joshua-林杰克逊",
+        "2019-Leo-刘北辰",
         "2021-Leo-欧阳铭浩",
+        "2020-Lewis-吴律吕",
+        "2019-Liam-杜明峻",
+        "2019-Lucas-蔡一洛",
+        "2019-Lukas-周家葆",
         "2021-Luke-徐章南",
+        "2019-Mark-徐相南",
+        "2019-Mars-洪铭朗",
+        "2018-Max-庄满",
+        "2020-Max-黄元昊",
+        "2019-Oscar-晏惟一",
+        "2020-Richie-陶李希",
         "2020-Spot-朱景宁",
-        "2020-Henry-包锦睿"
+        "2020-Steven-张圳南",
+        "2019-Sven-胡偲远",
+        "2020-Thomas-陈泽宸",
+        "2018-Vincent-杨孝灿"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "21:29",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U06G-MON-01",
@@ -1805,7 +1990,8 @@ window.FCG_W13 = {
       "squad": {
         "label": "U06-G / CEL",
         "teams": [
-          "U06-G"
+          "U06-G",
+          "U07-W"
         ]
       },
       "session": "W13 D1 · MON take",
@@ -1840,17 +2026,51 @@ window.FCG_W13 = {
         }
       ],
       "rosterIds": [
+        "2019-Alan-罗奕骐",
+        "2018-Arin-孟宪敦",
+        "2020-Barry-徐秉睿",
         "2021-Benson-沈昊邦",
+        "2019-Bob-林永琰",
         "2020-Colm-卢瀚宇",
+        "2020-Eason-周一辰",
+        "2017-Eibhlis-卢依娜",
+        "2019-Elaine-王嫣灵",
         "2021-Eric-黄焌亮",
+        "2020-Ethan-刘宸安",
         "2019-Eva-郭子伊",
+        "2019-Evan-谈壹铭",
+        "2019-Flash-刘深明",
+        "2018-Henrik-马睿希",
+        "2018-Henry-徐焕宸",
+        "2020-Henry-包锦睿",
+        "2020-Jacky-李有宸",
         "2021-Jalen-杜星佑",
+        "2019-Joe-韩隽毅",
+        "2019-Johnson-张珺荃",
+        "2020-Joshua-林杰克逊",
+        "2019-Leo-刘北辰",
         "2021-Leo-欧阳铭浩",
+        "2020-Lewis-吴律吕",
+        "2019-Liam-杜明峻",
+        "2019-Lucas-蔡一洛",
+        "2019-Lukas-周家葆",
         "2021-Luke-徐章南",
+        "2019-Mark-徐相南",
+        "2019-Mars-洪铭朗",
+        "2018-Max-庄满",
+        "2020-Max-黄元昊",
+        "2019-Oscar-晏惟一",
+        "2020-Richie-陶李希",
         "2020-Spot-朱景宁",
-        "2020-Henry-包锦睿"
+        "2020-Steven-张圳南",
+        "2019-Sven-胡偲远",
+        "2020-Thomas-陈泽宸",
+        "2018-Vincent-杨孝灿"
       ],
-      "file_remote": ""
+      "file_remote": "",
+      "shotDay": "MON",
+      "shotTime": "21:29",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-ACT-U05G-MON-01",
@@ -1926,7 +2146,10 @@ window.FCG_W13 = {
         "D1U5TW",
         "D1U5AE"
       ],
-      "phaseLabel": "ACT · PASS · TUE"
+      "phaseLabel": "ACT · PASS · TUE",
+      "shotDay": "TUE",
+      "shotTime": "19:22",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D1-U05G-MON-01",
@@ -2002,7 +2225,10 @@ window.FCG_W13 = {
         "D1U5TW",
         "D1U5AE"
       ],
-      "phaseLabel": "D1 · PASS · TUE"
+      "phaseLabel": "D1 · PASS · TUE",
+      "shotDay": "TUE",
+      "shotTime": "19:21",
+      "idDay": "MON"
     },
     {
       "id": "VID-FCG-D1F-D2-U05G-MON-01",
@@ -2078,7 +2304,10 @@ window.FCG_W13 = {
         "D1U5TW",
         "D1U5AE"
       ],
-      "phaseLabel": "D2 · PASS · TUE"
+      "phaseLabel": "D2 · PASS · TUE",
+      "shotDay": "TUE",
+      "shotTime": "19:21",
+      "idDay": "MON"
     }
   ],
   "roster": window.PILOT.roster,

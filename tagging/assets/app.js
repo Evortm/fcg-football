@@ -449,7 +449,12 @@
     el.clipNote.textContent = V.combined
       ? V.segments.length + " recordings"
       : "1 recording" + (C.hasClock(V.segments) ? "" : " · no camera clock");
-    el.videoChip.title = "Video ID " + V.id + " — click to copy";
+    /* The day inside a video ID is a pinned filename slug, not the shoot day.
+       W13's Tuesday reshoots kept their -MON IDs so saved tags stay attached;
+       shotDay / window / phaseLabel carry the real day. */
+    el.videoChip.title = "Video ID " + V.id + " — click to copy"
+      + (V.shotDay ? " · shot " + V.shotDay + (V.shotTime ? " " + V.shotTime : "")
+                   + " (day in ID is a pinned label)" : "");
   }
 
   function initCutMarks() {

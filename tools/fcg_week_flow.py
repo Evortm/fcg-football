@@ -353,6 +353,16 @@ def clip_id(w, b, d, tm):
                                             age, tm["variant"], day)
 
 
+def resolve_clip_id(prev, w, b, d, tm):
+    """Clip identity is (team, drill) - a reshoot on another day never changes it.
+
+    Without this, W14-W20 (which have no pinned day_tag) would generate a new
+    video_id after a reshoot and every tag saved on a coach's device would be
+    orphaned. The day in the ID is only a pinned filename slug.
+    """
+    return prev["id"] if prev else clip_id(w, b, d, tm)
+
+
 def find_source(cfg, w, stem, drill, day):
     root = Path(cfg["source_root"])
     cands = [root / "CURRENT" / ("%s-%s.mp4" % (stem, drill))]
@@ -374,12 +384,21 @@ def cmd_data(cfg, week, args):
     rows = read_board(cfg, w)
     pilot = load_pilot()
     roster = pilot["roster"]
-    # rosterIds are built from a player's REGISTERED team+group. Players who
-    # trained with another group that day (guests, moved-up kids) must still be
-    # taggable, so each week can list them explicitly per group. Source for
-    # W13 is the week workbook's List tab (day attendance), not the master
-    # player database.
-    additions = w.get("roster_additions") or {}
+    # GROUP is leading, not TEAM+GROUP. One training group can serve two
+    # registered teams (CEL = U06-G + U07-W, MC = U07-G + U08-B, MA =
+    # U09-W + U09-B). Every player of the group must be taggable on every clip
+    # of that group, no matter which of those teams he is registered under.
+    # The old team+group filter silently dropped kids registered on the
+    # "other" team of the same group (Henry 包, Lewis, Henrik, Jacky, Steven).
+    group_roster, group_teams = {}, {}
+    for p in roster:
+        g = str(p.get("group", "")).strip().upper()
+        group_roster.setdefault(g, []).append(p["id"])
+        group_teams.setdefault(g, set()).add(p["team"])
+    # Optional escape hatch: a kid who trained with a DIFFERENT group that day
+    # (source: week workbook List tab attendance) can still be added per group.
+    additions = {str(k).strip().upper(): v
+                 for k, v in (w.get("roster_additions") or {}).items()}
     known_ids = {p["id"] for p in roster}
     for grp, ids in additions.items():
         unknown = [x for x in ids if x not in known_ids]
@@ -391,6 +410,12 @@ def cmd_data(cfg, week, args):
                         week, w.get("focus_file"))
     codes = {f["code"] for f in lib}
     old, templates = load_existing_data(week)
+    # A clip's identity is (team, drill) - NEVER the day it was shot. When a
+    # take is re-recorded on another day, keep the existing id/prefix/filename
+    # so tags already saved on coaches' devices stay attached. W13 pins the
+    # day to MON; W14-W20 have no day_tag, so this matters even more there.
+    prev_by_key = {(c.get("team"), c.get("drill")): c
+                   for c in templates.values()}
     out_dir = REPO / "tagging" / "media" / w["media_dir"]
     out_dir.mkdir(parents=True, exist_ok=True)
     dur_path = TOOLS_DATA / ("%s-durations.json" % week.lower())
@@ -416,9 +441,14 @@ def cmd_data(cfg, week, args):
         if not src:
             skipped.append((b["team"], d["drill"], "no raw take"))
             continue
+        prev = prev_by_key.get((b["team"], d["drill"]))
         name_tpl = w.get("clip_name") or ("%s-%s-{drill}-{stem}-{day}.mp4" % (week, w["topic"]))
         out_name = name_tpl.format(topic=w["topic"], drill=d["drill"],
                                    stem=tm["stem"], day=w.get("day_tag") or d["day"] or "MON")
+        # A reshoot must overwrite the published file, not create a second one
+        # with a new day in its name.
+        if prev and prev.get("file"):
+            out_name = Path(prev["file"]).name
         out = out_dir / out_name
         real_day = (d["day"] or w.get("day_tag") or "MON").upper()
         real_time = d["time"] or ""
@@ -449,16 +479,20 @@ def cmd_data(cfg, week, args):
         durations["%s/%s" % (real_day, src.name)] = round(src_dur, 3)
         manifest[out_name] = {"fp": fp, "duration": round(dur, 3),
                               "day": real_day, "time": real_time}
-        cid = clip_id(w, b, d, tm)
+        cid = resolve_clip_id(prev, w, b, d, tm)
         rating = b["ratings"].get(d["drill"], "").replace("—", "").strip()
         remark = b["remarks"].get(d["drill"], "").replace("—", "").strip()
         day = w.get("day_tag") or d["day"] or "MON"
+        # The day inside the ID is a PINNED slug (legacy filename), not the
+        # shoot day. Keep it as idDay so display/analytics never parse the ID.
+        m_day = re.search(r"-(MON|TUE|WED|THU|FRI|SAT|SUN)-01$", cid)
+        id_day = m_day.group(1) if m_day else day
+        grp = (b["group"] or tm["group"] or "").strip().upper()
         age = int(tm["age"][1:])
         focus_age = (b["objective"] if re.fullmatch(r"U\d+", b["objective"] or "")
                      else tm["age"])
-        is_new = cid not in templates
+        is_new = prev is None
         if is_new:
-            grp = b["group"] or tm["group"]
             c = {"id": cid, "drill": d["drill"], "team": b["team"],
                  "group": grp,
                  "squad": {"label": "%s / %s" % (b["team"], grp),
@@ -473,15 +507,26 @@ def cmd_data(cfg, week, args):
                  "segments": [{"index": 1, "file_start": 0, "file_end": dur,
                                "source_start": None, "clock": "",
                                "note": "Full recording; camera-clock mapping not verified"}],
-                 "rosterIds": [p["id"] for p in roster
-                               if p["team"] == b["team"] and p["group"] == grp]}
+                 "rosterIds": list(group_roster.get(grp, []))}
         else:
             c = json.loads(json.dumps(templates[cid]))   # deep copy
-        # Day-list guests are appended to the registered squad. Doing this for
-        # existing clips too keeps the fix after a data refresh (templates
-        # would otherwise carry the old, filtered rosterIds forward).
-        for pid in additions.get(c["group"], []):
-            if pid not in c.setdefault("rosterIds", []):
+        # GROUP is leading: rebuild on EVERY refresh, also for existing clips
+        # (templates would otherwise carry the old team-filtered list forward).
+        if not group_roster.get(grp):
+            raise RuntimeError("No players for group %s (%s/%s) - check the "
+                               "Video board group against pilot-data.js" %
+                               (grp, b["team"], d["drill"]))
+        c["group"] = grp
+        sq = c.get("squad") or {}
+        sq["label"] = "%s / %s" % (b["team"], grp)
+        # The player picker shows the team instead of the long ID when a
+        # group spans two teams - that is what tells two "Leo" kids apart.
+        sq["teams"] = sorted(group_teams.get(grp) or {b["team"]})
+        c["squad"] = sq
+        c["rosterIds"] = list(group_roster[grp])
+        # Guests from another group (List tab attendance) are appended.
+        for pid in additions.get(grp, []):
+            if pid not in c["rosterIds"]:
                 c["rosterIds"].append(pid)
         # Standard rule: every clip of a team shows the SAME four weekly
         # focus points, taken from the FP tab for the board objective age.
@@ -503,11 +548,15 @@ def cmd_data(cfg, week, args):
                 week, w["topic"], real_day, real_time, rating or "—"),
             "focus": fl,
             # id / prefix / file stay on the pinned day so existing tags and
-            # links survive. The DISPLAY tells when the take was really shot.
+            # links survive. shotDay/shotTime are the real shoot moment; never
+            # parse the ID to learn the day.
+            "shotDay": real_day,
+            "shotTime": real_time,
+            "idDay": id_day,
             "window": ("%s %s" % (real_day, real_time)).strip(),
-            # Keep the richer scheduled-session string for clips still on the
-            # pinned day; a re-recorded clip gets an honest plain label.
-            "session": (c.get("session") if real_day == day
+            # Keep the richer scheduled-session string for clips still on their
+            # pinned ID day; a re-recorded clip gets an honest plain label.
+            "session": (c.get("session") if real_day == id_day
                         else "%s %s · %s take" % (week, w["topic"], real_day)),
             "phaseLabel": "%s · PASS · %s" % (d["drill"], real_day),
         })
