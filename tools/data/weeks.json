@@ -1,0 +1,48 @@
+{
+  "_comment": "FCG weekly video flow registry. W13 is live; W14-W20 are resolved at run time: the week workbook is found by title via manage.search_file, sheets by name, the report detail tab by its -Wnn suffix. Never invent a file_id for a week that does not exist yet.",
+  "source_root": "C:/Users/munni/Documents/Dashboard/SesVid",
+  "report_file_id": "DSmRkY0dwanFqaGZH",
+  "report_title": "FCG Fall 2026 - internal training report",
+  "video_height": 540,
+  "video_crf": 26,
+  "teams": {
+    "U15-G": {"stem": "U15", "age": "U15", "variant": "G", "group": "MU"},
+    "U12-G": {"stem": "U12", "age": "U12", "variant": "G", "group": "RSB"},
+    "U11-G": {"stem": "U11", "age": "U11", "variant": "G", "group": "JUV"},
+    "U10-G": {"stem": "U10", "age": "U10", "variant": "G", "group": "GAL"},
+    "U09-G": {"stem": "U9",  "age": "U9",  "variant": "G", "group": "BEN"},
+    "U11-W": {"stem": "U11W", "age": "U10", "variant": "W", "group": "TWE"},
+    "U09-W": {"stem": "U9W", "age": "U8",  "variant": "W", "group": "MA"},
+    "U08-G": {"stem": "U8",  "age": "U8",  "variant": "G", "group": "FE"},
+    "U07-G": {"stem": "U7",  "age": "U7",  "variant": "G", "group": "MC"},
+    "U09-B": {"stem": "U9B", "age": "U6",  "variant": "B", "group": "PS"},
+    "U06-G": {"stem": "U6",  "age": "U6",  "variant": "G", "group": "CEL"},
+    "U05-G": {"stem": "U5",  "age": "U5",  "variant": "G", "group": "KS"}
+  },
+  "weeks": {
+    "W13": {
+      "state": "active",
+      "title": "W13-2026Fall",
+      "file_id": "DmgGsRneWkZo",
+      "board": "bulh23",
+      "tags": "c2VGzm",
+      "queue": "TAG W13",
+      "report_detail": "D1-W13",
+      "report_compact": "D1-W13-NEW",
+      "topic": "D1",
+      "topic_code": "D1F",
+      "topic_file": "d1-data.json",
+      "day_tag": "MON",
+      "week_folder": "D1-W13",
+      "media_dir": "w13",
+      "clip_name": "W13-D1-{drill}-{stem}-MON.mp4"
+    },
+    "W14": {"state": "planned", "title": "W14-2026Fall", "queue": "TAG W14", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w14", "clip_name": "W14-{topic}-{drill}-{stem}-{day}.mp4"},
+    "W15": {"state": "planned", "title": "W15-2026Fall", "queue": "TAG W15", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w15", "clip_name": "W15-{topic}-{drill}-{stem}-{day}.mp4"},
+    "W16": {"state": "planned", "title": "W16-2026Fall", "queue": "TAG W16", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w16", "clip_name": "W16-{topic}-{drill}-{stem}-{day}.mp4"},
+    "W17": {"state": "planned", "title": "W17-2026Fall", "queue": "TAG W17", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w17", "clip_name": "W17-{topic}-{drill}-{stem}-{day}.mp4"},
+    "W18": {"state": "planned", "title": "W18-2026Fall", "queue": "TAG W18", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w18", "clip_name": "W18-{topic}-{drill}-{stem}-{day}.mp4"},
+    "W19": {"state": "planned", "title": "W19-2026Fall", "queue": "TAG W19", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w19", "clip_name": "W19-{topic}-{drill}-{stem}-{day}.mp4"},
+    "W20": {"state": "planned", "title": "W20-2026Fall", "queue": "TAG W20", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w20", "clip_name": "W20-{topic}-{drill}-{stem}-{day}.mp4"}
+  }
+}

@@ -1,0 +1,4 @@
+# Local backups written by tools/fcg_week_flow.py
+tagging/data/*.js.bak
+__pycache__/
+*.pyc
