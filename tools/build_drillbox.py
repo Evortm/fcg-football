@@ -270,8 +270,11 @@ def build_fields(topic, age, phase, args):
                                   timeslot=slot)
     fields.update(extra)
     # A cell always wins over any JSON/CSV value for these facts.
+    # A cell may override the recording date: a week can contain both Monday
+    # and Tuesday reshoots, and the plate must show the day that take was shot.
     fields.update(team=extra.get("team", age + "-G"), topic=topic, phase=phase,
-                  week=week, season=args.season, date=date)
+                  week=week, season=args.season,
+                  date=extra.get("date") or date)
     if slot:
         fields["timeslot"] = slot
     return fields

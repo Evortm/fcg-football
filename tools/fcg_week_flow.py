@@ -4,6 +4,8 @@
 The chain (process point 2: PASS -> tagging):
 
     status      read-only snapshot of the week
+    tags        pull the week workbook Tags tab into tools/data/wNN-tags-tab.csv
+                (the input for build_drillbox.py --tags: #drillbox opt-ins only)
     focus       extract the 4 standard focus points per age from the week
                 workbook FP tab -> tools/data/wNN-focus.json
     data        refresh tagging/data/wNN-data.js from the LIVE Video board
@@ -893,6 +895,30 @@ def cmd_report(cfg, week, args):
 
 
 # --------------------------------------------------------------------------
+# tags: refresh the local copy of the week workbook Tags tab
+# --------------------------------------------------------------------------
+def cmd_tags(cfg, week, args):
+    """The tagging app's 18-column A-R paste -> tools/data/wNN-tags-tab.csv.
+
+    build_drillbox.py reads this file and cuts only the #drillbox rows. Nothing
+    is written back to Tencent Docs here; the sheet stays the source of truth.
+    """
+    w = resolve_week(cfg, week)
+    rows = grid(w["file_id"], w["tags"], 0, 200, 0, 18)
+    rows = [r[:18] for r in rows if any(str(v).strip() for v in r)]
+    if not rows:
+        raise RuntimeError("Tags tab is empty for %s" % week)
+    out = TOOLS_DATA / ("%s-tags-tab.csv" % week.lower())
+    with out.open("w", encoding="utf-8", newline="") as f:
+        csv.writer(f, lineterminator="\n").writerows(rows)
+    opted = sum(1 for r in rows[1:] if len(r) > 13
+                and re.search(r"(^|\s)#drillbox\b", r[13] or "", re.I))
+    print("TAGS %s -> %s | %d tag rows | %d #drillbox opt-ins"
+          % (week, out, len(rows) - 1, opted))
+    return out
+
+
+# --------------------------------------------------------------------------
 def cmd_status(cfg, week, args):
     w = resolve_week(cfg, week)
     rows = read_board(cfg, w)
@@ -914,7 +940,7 @@ def cmd_status(cfg, week, args):
 def main():
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["weeks", "status", "focus", "data",
+    ap.add_argument("command", choices=["weeks", "status", "tags", "focus", "data",
                                         "clean", "restore", "queue", "report", "all"])
     ap.add_argument("--week", default="W13")
     ap.add_argument("--topic", help="override topic, e.g. D2 (for a new week)")
@@ -940,6 +966,8 @@ def main():
             return
         if args.command == "status":
             cmd_status(cfg, args.week, args)
+        elif args.command == "tags":
+            cmd_tags(cfg, args.week, args)
         elif args.command == "focus":
             cmd_focus(cfg, args.week, args)
         elif args.command == "data":

@@ -138,5 +138,60 @@
     "timeslot": "19:40-19:45",
     "status": "Pass 通过",
     "source": "drillbox.fcgfootball.com/d1/data.json rev 1280"
+  },
+  "U5:ACT": {
+    "team": "U5-G",
+    "phase": "ACT",
+    "drill": "Pullback · free space",
+    "objective": "Learn to pull the ball back and turn into free space.",
+    "success": "The player turns away from the cone and keeps the ball within reach.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "tools/data/d1-data.json rev 1280 (W13 ACT take)",
+    "date": "2026-11-24"
+  },
+  "U5:D1": {
+    "team": "U5-G",
+    "phase": "D1",
+    "drill": "Curved run and press",
+    "objective": "Learn to move towards an opponent with the ball and try to steal it.",
+    "success": "The defender moves towards the attacker and tries to steal the ball.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "tools/data/d1-data.json rev 1280 (W13 D1 take)",
+    "date": "2026-11-24"
+  },
+  "U5:D2": {
+    "team": "U5-G",
+    "phase": "D2",
+    "drill": "Shoot, then press",
+    "objective": "Learn to make a curved run to press the next attacker after shooting.",
+    "success": "After the shot, [G9] makes a curved run and slows down close to [R3].",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "tools/data/d1-data.json rev 1280 (W13 D2 take)",
+    "date": "2026-11-24"
+  },
+  "U11:ACT": {
+    "team": "U11-G",
+    "phase": "ACT",
+    "drill": "Pull Open / Pull the V, pass & sprint",
+    "objective": "Learn to turn and pass, then sprint to the next station.",
+    "success": "The pass reaches the waiting player and the passer sprints through the change of direction to the red cone.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "tools/data/d1-data.json rev 1280 (W13 ACT take)",
+    "date": "2026-11-24"
+  },
+  "U11:D1": {
+    "team": "U11-G",
+    "phase": "D1",
+    "drill": "1v1 · Curved run to press",
+    "objective": "Learn to protect the mini-goal while closing down the receiver.",
+    "success": "The defender blocks the route towards the mini-goal and gets close enough to challenge the ball.",
+    "timeslot": "",
+    "status": "Pass 通过",
+    "source": "tools/data/d1-data.json rev 1280 (W13 D1 take)",
+    "date": "2026-11-24"
   }
 }
