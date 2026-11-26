@@ -3,6 +3,7 @@
   "source_root": "C:/Users/munni/Documents/Dashboard/SesVid",
   "report_file_id": "DSmRkY0dwanFqaGZH",
   "report_title": "FCG Fall 2026 - internal training report",
+  "tag_mark_convention": "Tag comments carry inline marks: #drillbox = Track 2 nomination, #pos=x,y = where the tagged player stands in the frame at t_start (normalised 0-1, one click in /tagging). Both stay INSIDE the 18-column A-R paste; Tags S/T/U hold Weiyun / Drillbox / overview share links. build_tag_moments.py burns a lime ring + name chip at #pos for the first 2.3 s and uses Easy's Track3-BG.png crest plate. Optional: old tags without #pos render unchanged.",
   "video_height": 540,
   "video_crf": 26,
   "weiyun_root_by_topic": {

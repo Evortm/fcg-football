@@ -6,14 +6,14 @@
 <title>FCG · W13 D1 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-group1">
-<link rel="stylesheet" href="assets/app.css?v=20261126-group1">
-<link rel="stylesheet" href="assets/mobile.css?v=20261126-group1">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-pos1">
+<link rel="stylesheet" href="assets/app.css?v=20261126-pos1">
+<link rel="stylesheet" href="assets/mobile.css?v=20261126-pos1">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261126-group1" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261126-pos1" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
@@ -66,6 +66,17 @@
 
     <div class="video-shell">
       <video id="video" preload="metadata" playsinline></video>
+      <!-- One click at the start marker records where the tagged player stands
+           in the frame. The ring is only a visual aid; the coordinate is saved
+           as #pos=x,y inside the tag comment. -->
+      <div class="pos-layer" id="posLayer" hidden aria-hidden="true">
+        <div class="pos-cross" id="posCross"></div>
+      </div>
+      <div class="pos-hint" id="posHint" hidden>Click the player · marks where he stands at the start</div>
+      <div class="pos-tools">
+        <button class="pos-btn" id="markPos" type="button">📍 Mark player</button>
+        <button class="pos-btn subtle" id="clearPos" type="button" hidden>clear</button>
+      </div>
       <div class="video-fallback" id="videoFallback" hidden>
         <strong>Clip could not be played</strong>
         <span>Keep the clip file inside <code>media/</code>, same name. Use Edge or Chrome.</span>
@@ -138,7 +149,7 @@
       <div class="seg-len"><strong id="segLen">—</strong><span>duration</span></div>
     </div>
 
-    <p class="keys"><kbd>Space</kbd> play/pause <span class="dot">·</span> <kbd>S</kbd> start <span class="dot">·</span> <kbd>E</kbd> end <span class="dot">·</span> <kbd>←</kbd><kbd>→</kbd> frame <span class="dot">·</span> <kbd>Shift</kbd> + arrows 1 s</p>
+    <p class="keys"><kbd>Space</kbd> play/pause <span class="dot">·</span> <kbd>S</kbd> start <span class="dot">·</span> <kbd>E</kbd> end <span class="dot">·</span> <kbd>P</kbd> mark player <span class="dot">·</span> <kbd>←</kbd><kbd>→</kbd> frame <span class="dot">·</span> <kbd>Shift</kbd> + arrows 1 s</p>
   </section>
 
   <section class="card tagform" id="tagForm">
@@ -246,12 +257,12 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261126-group1"></script>
-<script src="data/weeks.js?v=20261126-group1"></script>
-<script src="data/w13-data.js?v=20261126-group1"></script>
-<script src="data/reviewers.js?v=20261126-group1"></script>
-<script src="assets/core.js?v=20261126-group1"></script>
-<script src="assets/app.js?v=20261126-group1"></script>
-<script src="assets/mobile.js?v=20261126-group1"></script>
+<script src="data/pilot-data.js?v=20261126-pos1"></script>
+<script src="data/weeks.js?v=20261126-pos1"></script>
+<script src="data/w13-data.js?v=20261126-pos1"></script>
+<script src="data/reviewers.js?v=20261126-pos1"></script>
+<script src="assets/core.js?v=20261126-pos1"></script>
+<script src="assets/app.js?v=20261126-pos1"></script>
+<script src="assets/mobile.js?v=20261126-pos1"></script>
 </body>
 </html>

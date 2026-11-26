@@ -58,6 +58,12 @@
 
   var el = {
     video: $("#video"),
+    videoShell: $(".video-shell"),
+    posLayer: $("#posLayer"),
+    posCross: $("#posCross"),
+    posHint: $("#posHint"),
+    markPos: $("#markPos"),
+    clearPos: $("#clearPos"),
     fallback: $("#videoFallback"),
     curTime: $("#curTime"),
     durTime: $("#durTime"),
@@ -141,6 +147,8 @@
     ratings: {},
     status: "Draft",
     drillbox: false,
+    pos: null,
+    marking: false,
     editing: null,
     replayStop: null,
     duration: V.duration || 0,
@@ -556,6 +564,69 @@
     renderSegment();
   }
 
+  /* ------------------------------------------- player position in the frame
+     One click records where the player stands at t_start, normalised to the
+     video frame (not the letterboxed <video> box). The 540p tagging copy is a
+     straight scale of the 1080p CURRENT take, so the same coordinate is used
+     by the Weiyun renderer. It is a START-only marker: after a camera pan or
+     a run the ring would point at the wrong place. */
+  function framePoint(ev) {
+    var r = el.video.getBoundingClientRect();
+    var vw = el.video.videoWidth || 16;
+    var vh = el.video.videoHeight || 9;
+    if (!r.width || !r.height) return null;
+    var scale = Math.min(r.width / vw, r.height / vh);
+    var dw = vw * scale, dh = vh * scale;
+    var ox = r.left + (r.width - dw) / 2;
+    var oy = r.top + (r.height - dh) / 2;
+    var x = (ev.clientX - ox) / dw;
+    var y = (ev.clientY - oy) / dh;
+    if (x < 0 || x > 1 || y < 0 || y > 1) return null;
+    return { x: C.round3(x), y: C.round3(y) };
+  }
+
+  function renderPos() {
+    var has = !!state.pos;
+    el.posLayer.hidden = !has && !state.marking;
+    el.posCross.style.left = (has ? state.pos.x : 0.5) * 100 + "%";
+    el.posCross.style.top = (has ? state.pos.y : 0.5) * 100 + "%";
+    el.posCross.classList.toggle("placed", has);
+    el.videoShell.classList.toggle("marking", state.marking);
+    el.markPos.classList.toggle("active", state.marking);
+    el.markPos.textContent = state.marking
+      ? "Cancel mark"
+      : (has ? "📍 Move player" : "📍 Mark player");
+    el.markPos.title = has
+      ? "Player marked at " + Math.round(state.pos.x * 100) + "% / " +
+        Math.round(state.pos.y * 100) + "% of the frame. Click to change."
+      : "Click where the player stands at the start (P)";
+    el.clearPos.hidden = !has;
+    el.posHint.hidden = !state.marking;
+  }
+
+  function startMarking() {
+    if (state.marking) { state.marking = false; renderPos(); return; }
+    if (state.start === null) {
+      toast("Set a start marker first, then click the player in the frame.", "bad");
+      return;
+    }
+    state.marking = true;
+    el.video.pause();
+    seekTo(state.start).then(function () { el.video.pause(); });
+    renderPos();
+  }
+
+  function onFrameClick(ev) {
+    if (!state.marking) return;
+    var p = framePoint(ev);
+    if (!p) { toast("Click inside the video frame.", "bad"); return; }
+    state.pos = p;
+    state.marking = false;
+    renderPos();
+    toast("Player marked at " + Math.round(p.x * 100) + "% / " +
+          Math.round(p.y * 100) + "% of the frame", "good");
+  }
+
   function renderSegment() {
     var hasStart = state.start !== null;
     var hasEnd = state.end !== null;
@@ -822,8 +893,8 @@
      flag lives inside `comment` as #drillbox so the 18-column A-R paste into
      the weekfile stays untouched. The offline publisher reads it; this app
      never encodes video. */
-  var DRILLBOX_MARK = "#drillbox";
-  var COMMENT_MAX = 500;
+  /* Marks are composed by C.withMarks() in core.js so #pos and #drillbox
+     never fight over the 500-character comment budget. */
   /* The publisher cuts the tagged segment, so a Drillbox example must be at
      least 20 seconds long (no maximum). Guard the form, the save and the
      event-row star so a short clip can never be nominated. The live timer in
@@ -853,13 +924,8 @@
   }
 
   function withDrillbox(comment, on) {
-    var base = String(comment || "").replace(/\s*#drillbox\b/gi, "").trim();
-    if (!on) return base;
-    var suffix = " " + DRILLBOX_MARK;
-    if (base.length + suffix.length > COMMENT_MAX) {
-      base = base.slice(0, COMMENT_MAX - suffix.length).trim();
-    }
-    return base ? base + suffix : DRILLBOX_MARK;
+    /* Keep an existing #pos=... mark when a star toggles the nomination. */
+    return C.withMarks(comment, on, C.decodePos(comment));
   }
 
   /* VID-FCG-A7F-ACT-U11G-TUE-01 -> A7/U11/ACT, team G. */
@@ -926,11 +992,14 @@
     state.ratings = {};
     state.status = "Draft";
     state.drillbox = false;
+    state.pos = null;
+    state.marking = false;
     state.editing = null;
     if (!keepMarkers) {
       state.start = null;
       state.end = null;
     }
+    renderPos();
     el.playerSearch.value = "";
     el.clearPlayer.hidden = true;
     setPlayerHint(rosterHint(), false);
@@ -965,9 +1034,14 @@
     state.ratings = Object.assign({}, ev.observations || {});
     state.status = ev.confirmation;
     state.drillbox = hasDrillbox(ev);
+    state.pos = C.decodePos(ev.comment);
+    state.marking = false;
     state.editing = ev.event_id;
 
-    el.comment.value = withDrillbox(ev.comment, false);
+    /* Marks live in state, not in the textarea, so the coach sees his own
+       note only. withMarks() re-attaches both on save. */
+    el.comment.value = C.stripMarks(ev.comment);
+    renderPos();
     updateCommentCount();
     renderRatings();
     updateStatusButtons();
@@ -1020,7 +1094,7 @@
       source_segment: state.start === null ? 0 : segmentOf(state.start).index,
       focus: V.focus,
       observations: state.ratings,
-      comment: withDrillbox(el.comment.value, state.drillbox),
+      comment: C.withMarks(el.comment.value, state.drillbox, state.pos),
       reviewer: reviewer,
       confirmation: state.status,
       created_at: existing ? existing.created_at : null
@@ -1150,6 +1224,13 @@
       var pname = document.createElement("div");
       pname.className = "p-name" + (ev.player_known ? "" : " p-unknown");
       pname.textContent = ev.player_display || "Unknown player";
+      if (C.decodePos(ev.comment)) {
+        var pin = document.createElement("span");
+        pin.className = "pos-pin";
+        pin.textContent = "📍";
+        pin.title = "Starting position in the frame is marked";
+        pname.appendChild(pin);
+      }
       var pid = document.createElement("div");
       pid.className = "p-id";
       pid.textContent = ev.player_known ? ev.player_id : "UNKNOWN · no ID";
@@ -1449,6 +1530,13 @@
 
     el.setStart.addEventListener("click", setStartAtPlayhead);
     el.setEnd.addEventListener("click", setEndAtPlayhead);
+    el.markPos.addEventListener("click", startMarking);
+    el.clearPos.addEventListener("click", function () {
+      state.pos = null;
+      state.marking = false;
+      renderPos();
+    });
+    el.video.addEventListener("click", onFrameClick);
     $$("[data-mark]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (btn.dataset.mark === "start") setStartAtPlayhead();
@@ -1588,6 +1676,7 @@
     updateDrillboxToggle();
     renderRatings();
     renderSegment();
+    renderPos();
     renderEvents();
     updateCommentCount();
     updateClock();
@@ -1609,7 +1698,10 @@
   function onKey(ev) {
     var tag = (ev.target.tagName || "").toLowerCase();
     if (tag === "input" || tag === "textarea" || tag === "select" || ev.target.isContentEditable) return;
-    if (ev.key === "Escape") { closeCombo(); toggleMenu(false); return; }
+    if (ev.key === "Escape") {
+      if (state.marking) { state.marking = false; renderPos(); }
+      closeCombo(); toggleMenu(false); return;
+    }
     if (ev.code === "Space") {
       ev.preventDefault();
       el.playBtn.click();
@@ -1618,6 +1710,7 @@
     if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
     if (ev.key === "s" || ev.key === "S") { ev.preventDefault(); setStartAtPlayhead(); }
     if (ev.key === "e" || ev.key === "E") { ev.preventDefault(); setEndAtPlayhead(); }
+    if (ev.key === "p" || ev.key === "P") { ev.preventDefault(); startMarking(); }
     if (ev.key === "ArrowLeft") { ev.preventDefault(); step(ev.shiftKey ? -1 : -1 / 30); }
     if (ev.key === "ArrowRight") { ev.preventDefault(); step(ev.shiftKey ? 1 : 1 / 30); }
   }

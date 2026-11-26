@@ -11,6 +11,17 @@
   var UNKNOWN = "UNKNOWN";
   var COMMENT_MAX = 500;
 
+  /* Where the tagged player stands IN THE FRAME at t_start. Stored inside the
+     comment as #pos=x,y (normalised 0-1) so the 18-column A-R Tags paste is
+     unchanged: columns S/T/U of the weekfile already hold the Weiyun /
+     Drillbox / overview links. The offline publisher reads the mark and burns
+     a ring at that coordinate into the Track 3 clip. Optional: old tags work
+     exactly as before. */
+  var POS_MARK = "#pos=";
+  var POS_RE = /(^|\s)#pos=(\d*\.?\d+),(\d*\.?\d+)(?=\s|$)/i;
+  var ANY_POS_RE = /\s*#pos=\S+/gi;
+  var ANY_DRILLBOX_RE = /\s*#drillbox\b/gi;
+
   /* One generic observations column: "SM=Demonstrated; DC=Needs improvement; ..."
      Codes come from the clip's focus points, so any clip fits the register. */
   var EVENT_HEADERS = [
@@ -239,6 +250,33 @@
     }).join("; ");
   }
 
+  /* ---------------------------------------------------- inline tag marks
+     #drillbox and #pos=... both live in `comment`. One helper owns both so a
+     long coach note can never be truncated in a way that drops a mark. */
+  function decodePos(comment) {
+    var m = POS_RE.exec(String(comment || ""));
+    if (!m) return null;
+    var x = Number(m[2]), y = Number(m[3]);
+    if (!isFinite(x) || !isFinite(y) || x < 0 || x > 1 || y < 0 || y > 1) return null;
+    return { x: round3(x), y: round3(y) };
+  }
+
+  function stripMarks(comment) {
+    return String(comment || "").replace(ANY_POS_RE, "")
+      .replace(ANY_DRILLBOX_RE, "").trim();
+  }
+
+  function withMarks(comment, drillbox, pos) {
+    var base = stripMarks(comment);
+    var suffix = (drillbox ? " #drillbox" : "") +
+      (pos ? " " + POS_MARK + round3(pos.x).toFixed(3) + "," +
+             round3(pos.y).toFixed(3) : "");
+    if (base.length + suffix.length > COMMENT_MAX) {
+      base = base.slice(0, Math.max(0, COMMENT_MAX - suffix.length)).trim();
+    }
+    return (base + suffix).trim();
+  }
+
   function eventRow(ev) {
     return [
       ev.event_id, ev.video_id, ev.player_id, ev.player_display,
@@ -279,7 +317,11 @@
     CONFIRMATIONS: CONFIRMATIONS,
     UNKNOWN: UNKNOWN,
     COMMENT_MAX: COMMENT_MAX,
+    POS_MARK: POS_MARK,
     EVENT_HEADERS: EVENT_HEADERS,
+    decodePos: decodePos,
+    stripMarks: stripMarks,
+    withMarks: withMarks,
     fmtTime: fmtTime,
     fmtClock: fmtClock,
     parseTime: parseTime,

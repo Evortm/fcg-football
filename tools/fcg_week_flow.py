@@ -40,6 +40,10 @@ Rules encoded here (agreed with Easy, Nov 2026):
   * Track 2 (#drillbox opt-ins) is the ONLY tagged footage on GitHub Pages.
     Track 3 player moments + the team week overview go to WEIYUN, never to the
     website repo. `moments` renders outside the repo and uploads from staging.
+  * Player starting position is a one-click mark in the tagging app, stored
+    inline as `#pos=x,y` (normalised 0-1) in the tag comment. It never adds a
+    column to the 18-column A-R Tags paste (S/T/U hold share links). The Track
+    3 renderer burns a ring at that coordinate for the first 2.3 s.
 """
 import argparse
 import base64
@@ -953,7 +957,11 @@ def cmd_moments(cfg, week, args):
         elif getattr(args, "stage_only", False):
             build.append("--stage-only")
         print("MOMENTS %s -> %s" % (week, " ".join(build[1:])))
-        subprocess.run(build, check=True)
+        # Keep rendered/ and weiyun/ staging under the SAME root when the
+        # registry overrides the default (otherwise the uploader looks in a
+        # different folder than the builder wrote to).
+        env = dict(os.environ, FCG_TRACK3_ROOT=str(track3_root))
+        subprocess.run(build, check=True, env=env)
         if args.dry_run:
             return
         up = [sys.executable, str(REPO / "tools" / "upload_moments_weiyun.py"),
