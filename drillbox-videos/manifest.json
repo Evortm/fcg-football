@@ -71,14 +71,6 @@
         "00:22.177"
       ]
     },
-    "D1/U6/D2": {
-      "url": "/drillbox-videos/D1/U6/D2/video.mp4?v=950ac0d3",
-      "seconds": 60.0,
-      "bytes": 3797972,
-      "source": "U6-D2.mp4",
-      "start": 60.0,
-      "updated": "2026-11-24"
-    },
     "D1/U7/ACT": {
       "url": "/drillbox-videos/D1/U7/ACT/video.mp4?v=5818756e",
       "seconds": 29.43,
@@ -210,8 +202,8 @@
     {
       "week": "W13",
       "topic": "D1",
-      "cells": 19,
-      "bytes": 125832714,
+      "cells": 18,
+      "bytes": 122034742,
       "updated": "2026-11-26"
     },
     {
@@ -222,5 +214,5 @@
       "updated": "2026-11-23"
     }
   ],
-  "updated": "2026-11-26T14:04:02"
+  "updated": "2026-11-26T16:03:14"
 }
