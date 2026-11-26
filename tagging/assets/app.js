@@ -87,7 +87,6 @@
     timerValue: $("#timerValue"),
     timerHint: $("#timerHint"),
     timerFill: $("#timerFill"),
-    setEnd20: $("#setEnd20"),
     playerSearch: $("#playerSearch"),
     playerList: $("#playerList"),
     clearPlayer: $("#clearPlayer"),
@@ -605,9 +604,10 @@
   }
 
   /* -------------------------------------------------- 20 s segment timer
-     A live stopwatch from the start marker to the playhead, so nobody has to
-     subtract timestamps to know whether a Drillbox example is long enough.
-     Once the end marker is set the readout freezes on the final length. */
+     A live stopwatch from the start marker to the playhead, shown as a compact
+     chip beside the current/total time. Nobody has to subtract timestamps to
+     know whether a Drillbox example is long enough. Once the end marker is set
+     the readout freezes on the final length. */
   function renderTimer() {
     if (!el.segTimer) return;
     var goal = DRILLBOX_MIN_SECONDS;
@@ -620,38 +620,22 @@
     var mode = "idle";
     if (len === null) {
       el.timerValue.textContent = "0.0 s";
-      el.timerHint.textContent = "Set a start marker to begin.";
+      el.timerHint.textContent = "set start";
     } else if (!fixed) {
       mode = len >= goal ? "ready" : "running";
       el.timerValue.textContent = len.toFixed(1) + " s";
       el.timerHint.textContent = mode === "ready"
-        ? goal.toFixed(0) + " s reached — press E to set the end."
-        : (goal - len).toFixed(1) + " s to go until " + goal.toFixed(0) + " s.";
+        ? goal.toFixed(0) + " s reached · press E"
+        : (goal - len).toFixed(1) + " s to " + goal.toFixed(0) + " s";
     } else {
       mode = len >= goal ? "ok" : "short";
       el.timerValue.textContent = len.toFixed(1) + " s";
       el.timerHint.textContent = mode === "ok"
-        ? "Long enough for a Drillbox example ✓"
-        : (goal - len).toFixed(1) + " s short for Drillbox — move the end marker.";
+        ? goal.toFixed(0) + " s ✓ Drillbox"
+        : (goal - len).toFixed(1) + " s short";
     }
     el.segTimer.dataset.state = mode;
     el.timerFill.style.width = (len === null ? 0 : Math.min(100, len / goal * 100)) + "%";
-    /* Only offer the one-click snap when 20 s actually fits in this clip. */
-    el.setEnd20.hidden = !(state.start !== null &&
-      state.start + goal <= maxClip() - 0.05);
-  }
-
-  function setEndAtPlus20() {
-    if (state.start === null) { toast("Set a start marker first.", "bad"); return; }
-    var end = C.round3(state.start + DRILLBOX_MIN_SECONDS);
-    if (end > maxClip() - 0.05) {
-      toast("Not enough clip left for a 20 s example.", "bad");
-      return;
-    }
-    state.end = end;
-    renderSegment();
-    seekTo(end);
-    toast("End marker set at +20.0 s — Drillbox length reached.", "good");
   }
 
   function seekFromPointer(event) {
@@ -854,7 +838,7 @@
       return "Drillbox examples need a start and end marker spanning at least 20 seconds.";
     }
     if (len < DRILLBOX_MIN_SECONDS) {
-      return "Drillbox clip is " + len.toFixed(1) + " s — examples must be at least 20 s. Extend the end marker or use 'Set end at +20 s'.";
+      return "Drillbox clip is " + len.toFixed(1) + " s — examples must be at least 20 s. Extend the end marker.";
     }
     return "";
   }
@@ -1460,7 +1444,6 @@
 
     el.setStart.addEventListener("click", setStartAtPlayhead);
     el.setEnd.addEventListener("click", setEndAtPlayhead);
-    el.setEnd20.addEventListener("click", setEndAtPlus20);
     $$("[data-mark]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (btn.dataset.mark === "start") setStartAtPlayhead();

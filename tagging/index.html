@@ -6,14 +6,14 @@
 <title>FCG · W13 D1 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-timer1">
-<link rel="stylesheet" href="assets/app.css?v=20261126-timer1">
-<link rel="stylesheet" href="assets/mobile.css?v=20261126-timer1">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-timer2">
+<link rel="stylesheet" href="assets/app.css?v=20261126-timer2">
+<link rel="stylesheet" href="assets/mobile.css?v=20261126-timer2">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261126-timer1" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261126-timer2" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
@@ -88,6 +88,14 @@
         <div class="time-main">
           <code id="curTime">00:00.000</code>
           <span class="muted">/ <code id="durTime">00:22.021</code></span>
+          <!-- Live 20 s segment timer, inline so it costs no extra row.
+               State colours come from renderTimer() in app.js. -->
+          <span class="seg-timer" id="segTimer" data-state="idle" role="timer" aria-live="off"
+                title="Length of the segment from the start marker. Drillbox examples need at least 20 s.">
+            <strong id="timerValue">0.0 s</strong>
+            <span id="timerHint">set start</span>
+            <span class="timer-track" aria-hidden="true"><i id="timerFill"></i></span>
+          </span>
         </div>
         <div class="time-source"><span>source</span> <code id="sourceNow">—</code><span class="rec" id="recLabel">rec 1</span></div>
       </div>
@@ -111,22 +119,6 @@
         <button class="btn small" id="setEnd" type="button">Set end <kbd>E</kbd></button>
         <button class="icon-btn phone-second" id="secondForward" type="button" title="Forward five seconds" aria-label="Forward five seconds">+5s</button>
       </div>
-    </div>
-
-    <!-- Live segment timer. The hidden .segment box below still holds the
-         start/end readouts for mobile.js; this strip is what coaches see. -->
-    <div class="seg-timer" id="segTimer" data-state="idle" role="timer" aria-live="off">
-      <div class="timer-top">
-        <span class="timer-label">Segment timer</span>
-        <span class="timer-goal">Drillbox minimum <strong>20.0 s</strong></span>
-      </div>
-      <div class="timer-readout">
-        <strong id="timerValue">0.0 s</strong>
-        <span id="timerHint">Set a start marker to begin.</span>
-      </div>
-      <div class="timer-track" aria-hidden="true"><i id="timerFill"></i></div>
-      <button class="btn small timer-snap" id="setEnd20" type="button" hidden
-              title="Place the end marker exactly 20 seconds after the start marker">Set end at +20 s</button>
     </div>
 
     <div class="segment">
@@ -254,12 +246,12 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261126-timer1"></script>
-<script src="data/weeks.js?v=20261126-timer1"></script>
-<script src="data/w13-data.js?v=20261126-timer1"></script>
-<script src="data/reviewers.js?v=20261126-timer1"></script>
-<script src="assets/core.js?v=20261126-timer1"></script>
-<script src="assets/app.js?v=20261126-timer1"></script>
-<script src="assets/mobile.js?v=20261126-timer1"></script>
+<script src="data/pilot-data.js?v=20261126-timer2"></script>
+<script src="data/weeks.js?v=20261126-timer2"></script>
+<script src="data/w13-data.js?v=20261126-timer2"></script>
+<script src="data/reviewers.js?v=20261126-timer2"></script>
+<script src="assets/core.js?v=20261126-timer2"></script>
+<script src="assets/app.js?v=20261126-timer2"></script>
+<script src="assets/mobile.js?v=20261126-timer2"></script>
 </body>
 </html>

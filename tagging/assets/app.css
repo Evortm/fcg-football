@@ -317,50 +317,42 @@ kbd {
 .keys { margin: 16px 0 0; font-size: 14px; color: var(--fcg-text-muted); line-height: 1.6; }
 .keys kbd { font-size: 12.5px; }
 
-/* Live 20 s segment timer. The old .segment readout stays hidden; this strip
-   is the visible counterpart and is state-coloured from app.js. */
+/* Live 20 s segment timer: a compact chip behind the current / total time,
+   so it uses no extra row. The old .segment readout stays hidden; the chip's
+   state colours come from renderTimer() in app.js. */
 .seg-timer {
-  margin-top: 12px; padding: 12px 14px 14px;
-  border: 1px solid var(--fcg-border); border-radius: var(--fcg-radius-card);
+  position: relative; display: inline-flex; align-items: baseline; gap: 7px;
+  margin-left: 8px; padding: 2px 9px 5px;
+  border: 1px solid var(--fcg-border); border-radius: 6px;
   background: var(--fcg-surface-raised);
+  font-size: 12px; font-weight: 600; line-height: 1.3;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
 }
-.timer-top {
-  display: flex; justify-content: space-between; align-items: baseline;
-  gap: 10px; flex-wrap: wrap;
-  font-size: 12.5px; color: var(--fcg-text-secondary);
+.seg-timer strong {
+  font-family: var(--fcg-mono); font-size: 14px; color: var(--fcg-text);
 }
-.timer-label { font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
-.timer-goal { color: var(--fcg-text-muted); }
-.timer-goal strong { color: var(--fcg-text); font-family: var(--fcg-mono); }
-.timer-readout {
-  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-  margin: 4px 0 10px;
+.seg-timer > span:not(.timer-track) {
+  font-size: 11.5px; font-weight: 600; color: var(--fcg-text-muted);
 }
-.timer-readout strong {
-  font-family: var(--fcg-mono); font-size: 34px; line-height: 1.15;
-  font-variant-numeric: tabular-nums; color: var(--fcg-text);
-}
-.timer-readout span { font-size: 13.5px; color: var(--fcg-text-secondary); }
 .timer-track {
-  height: 8px; border-radius: 99px; overflow: hidden;
-  background: var(--fcg-surface); border: 1px solid var(--fcg-line-subtle);
+  position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+  overflow: hidden; border-radius: 0 0 5px 5px; background: var(--fcg-surface);
 }
 .timer-track i {
   display: block; width: 0; height: 100%;
   background: var(--fcg-accent); transition: width .12s linear;
 }
-.timer-snap { margin-top: 10px; }
-.seg-timer[data-state="running"] .timer-readout strong { color: var(--fcg-status-warn); }
+.seg-timer[data-state="running"] strong { color: var(--fcg-status-warn); }
 .seg-timer[data-state="running"] .timer-track i { background: var(--fcg-status-warn); }
-.seg-timer[data-state="ready"] .timer-readout strong,
-.seg-timer[data-state="ok"] .timer-readout strong { color: var(--fcg-status-good); }
+.seg-timer[data-state="ready"] strong,
+.seg-timer[data-state="ok"] strong { color: var(--fcg-status-good); }
 .seg-timer[data-state="ready"] .timer-track i,
 .seg-timer[data-state="ok"] .timer-track i { background: var(--fcg-status-good); }
 .seg-timer[data-state="ready"], .seg-timer[data-state="ok"] {
   border-color: var(--fcg-status-good-line);
 }
 .seg-timer[data-state="short"] { border-color: var(--fcg-danger-line); }
-.seg-timer[data-state="short"] .timer-readout strong { color: var(--fcg-danger); }
+.seg-timer[data-state="short"] strong { color: var(--fcg-danger); }
 .seg-timer[data-state="short"] .timer-track i { background: var(--fcg-danger); }
 
 /* Desktop mirrors the phone's seek row: −5s · Set start · Play · Set end · +5s.
