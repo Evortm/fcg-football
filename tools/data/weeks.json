@@ -37,7 +37,11 @@
       "day_tag": "MON",
       "week_folder": "D1-W13",
       "media_dir": "w13",
-      "clip_name": "W13-D1-{drill}-{stem}-MON.mp4"
+      "clip_name": "W13-D1-{drill}-{stem}-MON.mp4",
+      "roster_additions": {
+        "CEL": ["2020-Henry-包锦睿"]
+      },
+      "roster_additions_note": "W13 List tab, 1-MON-JX-17:00--18:35 CEL attendance: Henry 包 trained with CEL that day but his registered team is U07-W, so the team+group filter drops him."
     },
     "W14": {"state": "planned", "title": "W14-2026Fall", "queue": "TAG W14", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w14", "clip_name": "W14-{topic}-{drill}-{stem}-{day}.mp4"},
     "W15": {"state": "planned", "title": "W15-2026Fall", "queue": "TAG W15", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w15", "clip_name": "W15-{topic}-{drill}-{stem}-{day}.mp4"},

@@ -374,6 +374,19 @@ def cmd_data(cfg, week, args):
     rows = read_board(cfg, w)
     pilot = load_pilot()
     roster = pilot["roster"]
+    # rosterIds are built from a player's REGISTERED team+group. Players who
+    # trained with another group that day (guests, moved-up kids) must still be
+    # taggable, so each week can list them explicitly per group. Source for
+    # W13 is the week workbook's List tab (day attendance), not the master
+    # player database.
+    additions = w.get("roster_additions") or {}
+    known_ids = {p["id"] for p in roster}
+    for grp, ids in additions.items():
+        unknown = [x for x in ids if x not in known_ids]
+        if unknown:
+            raise RuntimeError("roster_additions for %s/%s contain IDs missing "
+                               "from pilot-data.js roster: %s" %
+                               (week, grp, ", ".join(unknown)))
     lib = focus_library(w["topic"], args.topic_file or w.get("topic_file"),
                         week, w.get("focus_file"))
     codes = {f["code"] for f in lib}
@@ -464,6 +477,12 @@ def cmd_data(cfg, week, args):
                                if p["team"] == b["team"] and p["group"] == grp]}
         else:
             c = json.loads(json.dumps(templates[cid]))   # deep copy
+        # Day-list guests are appended to the registered squad. Doing this for
+        # existing clips too keeps the fix after a data refresh (templates
+        # would otherwise carry the old, filtered rosterIds forward).
+        for pid in additions.get(c["group"], []):
+            if pid not in c.setdefault("rosterIds", []):
+                c["rosterIds"].append(pid)
         # Standard rule: every clip of a team shows the SAME four weekly
         # focus points, taken from the FP tab for the board objective age.
         fl = ["%s%s%s" % (w["topic"], focus_age, s) for _, s, _ in FOCUS]
