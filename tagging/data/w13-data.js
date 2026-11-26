@@ -2085,193 +2085,193 @@ window.FCG_W13 = {
       "code": "D1U5PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U5",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "Pass with the inside of your foot and stay balanced."
     },
     {
       "code": "D1U5OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U5",
-      "desc": "Makes a curved run towards the attacker and slows down close to the ball."
+      "desc": "Run towards the ball."
     },
     {
       "code": "D1U5TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U5",
-      "desc": "Gives a teammate room to play the ball."
+      "desc": "Play together and follow the rules"
     },
     {
       "code": "D1U5AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U5",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Run and stop in balance and changing directions."
     },
     {
       "code": "D1U6PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U6",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "Take a big step beside the ball, strike its centre with the inside of your foot and stay balanced."
     },
     {
       "code": "D1U6OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U6",
-      "desc": "Makes a curved run towards the attacker and slows down close to the ball."
+      "desc": "Run towards the player with the ball to steal it"
     },
     {
       "code": "D1U6TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U6",
-      "desc": "Moves behind the teammate who presses to cover a forward pass."
+      "desc": "Play together and follow the rules"
     },
     {
       "code": "D1U6AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U6",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Run and stop in balance and changing directions."
     },
     {
       "code": "D1U7PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U7",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "Make a clean inside-foot pass while the ball is rolling."
     },
     {
       "code": "D1U7OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U7",
-      "desc": "Approaches the receiver from the side that closes the return pass."
+      "desc": "Run towards the player with the ball to steal it"
     },
     {
       "code": "D1U7TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U7",
-      "desc": "Moves behind the teammate who presses to cover a forward pass."
+      "desc": "Help your teammates set up the pitch and put the equipment away."
     },
     {
       "code": "D1U7AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U7",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Run and stop in balance and changing directions."
     },
     {
       "code": "D1U8PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U8",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "When time is limited, get ready quickly and pass the rolling ball correctly."
     },
     {
       "code": "D1U8OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U8",
-      "desc": "Approaches the receiver from the side that closes the return pass."
+      "desc": "Run towards the opponent with the ball to steal it while not allowing them to pass back"
     },
     {
       "code": "D1U8TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U8",
-      "desc": "Moves behind the teammate who presses to cover a forward pass."
+      "desc": "Help your teammates set up the pitch and put the equipment away."
     },
     {
       "code": "D1U8AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U8",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Speed up, then shorten your steps to slow down in balance and changing directions."
     },
     {
       "code": "D1U9PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U9",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "When time is limited, get ready quickly and pass the rolling ball accurately over short and longer distances."
     },
     {
       "code": "D1U9OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U9",
-      "desc": "Approaches the receiver from the side that closes the return pass."
+      "desc": "Run towards the opponent with the ball to steal it while not allowing them to pass back"
     },
     {
       "code": "D1U9TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U9",
-      "desc": "Moves behind the teammate who presses to cover a forward pass."
+      "desc": "Help your teammates set up the pitch and put the equipment away."
     },
     {
       "code": "D1U9AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U9",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Speed up, then shorten your steps to slow down in balance and changing directions."
     },
     {
       "code": "D1U10PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U10",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "Time your pass so a [moving] teammate can receive it in stride."
     },
     {
       "code": "D1U10OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U10",
-      "desc": "Approaches the receiver from the side that closes the return pass."
+      "desc": "Striker presses and blocks the pass back, midfielders close the middle, and defenders mark the striker."
     },
     {
       "code": "D1U10TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U10",
-      "desc": "Moves behind the teammate who presses to cover a forward pass."
+      "desc": "Correcting and encouraging teammates."
     },
     {
       "code": "D1U10AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U10",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Speed up, then shorten your steps to slow down in balance and changing directions."
     },
     {
       "code": "D1U11PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U11",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "Time your pass so a [moving] teammate can receive it in stride."
     },
     {
       "code": "D1U11OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U11",
-      "desc": "Approaches the receiver from the side that closes the return pass."
+      "desc": "Striker presses and blocks the pass back, midfielders close the middle, and defenders mark the striker."
     },
     {
       "code": "D1U11TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U11",
-      "desc": "Moves behind the teammate who presses to cover a forward pass."
+      "desc": "Correcting and encouraging teammates."
     },
     {
       "code": "D1U11AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U11",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Repeat quick accelerations, balanced braking Speed up, then shorten your steps to slow down in balance and changing directions, through successive actions."
     },
     {
       "code": "D1U12PA",
       "label": "Actions with ball · Passing",
       "topic": "D1 · W13 · U12",
-      "desc": "Plays the ball within a teammate’s reach."
+      "desc": "Time your pass so a [moving] teammate can receive it in stride."
     },
     {
       "code": "D1U12OB",
       "label": "Actions without ball · Out of possession",
       "topic": "D1 · W13 · U12",
-      "desc": "Approaches the receiver from the side that closes the return pass."
+      "desc": "Striker presses and blocks the pass back, midfielders close the middle, and defenders mark the striker."
     },
     {
       "code": "D1U12TW",
       "label": "Mindset · Teamwork",
       "topic": "D1 · W13 · U12",
-      "desc": "Moves behind the teammate who presses to cover a forward pass."
+      "desc": "Correcting and encouraging teammates."
     },
     {
       "code": "D1U12AE",
       "label": "PD & GK · Agility & Endurance",
       "topic": "D1 · W13 · U12",
-      "desc": "Accelerates towards the ball and slows down in balance as the opponent turns."
+      "desc": "Repeat quick accelerations, balanced braking Speed up, then shorten your steps to slow down in balance and changing directions, through successive actions."
     }
   ],
   "coachCode": "W13D1",

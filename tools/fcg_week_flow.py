@@ -4,6 +4,8 @@
 The chain (process point 2: PASS -> tagging):
 
     status      read-only snapshot of the week
+    focus       extract the 4 standard focus points per age from the week
+                workbook FP tab -> tools/data/wNN-focus.json
     data        refresh tagging/data/wNN-data.js from the LIVE Video board
                 (only Pass clips; encode any missing 540p tagging copies)
     clean       move rejected (Redo) takes out of SesVid/CURRENT into
@@ -15,6 +17,7 @@ The chain (process point 2: PASS -> tagging):
 
 Usage:
     python tools/fcg_week_flow.py status --week W13
+    python tools/fcg_week_flow.py focus  --week W13
     python tools/fcg_week_flow.py all    --week W13
     python tools/fcg_week_flow.py all    --week W14 --topic D2 --topic-file d2-data.json --set-default
 
@@ -26,6 +29,9 @@ Rules encoded here (agreed with Easy, Nov 2026):
     week end. `clean` only quarantines; it never destroys data.
   * Week workbooks that do not exist yet are discovered by title, never by
     guessed file ids.
+  * Focus points come from the WEEK workbook (FP tab, current-topic column),
+    never from the generic observe lines in a topic file. Every clip of a team
+    gets the SAME standard four (PA / OB / TW / AE) for its board objective age.
 """
 import argparse
 import base64
@@ -51,6 +57,10 @@ FOCUS = (("passing", "PA", "Actions with ball · Passing"),
          ("without-ball-out", "OB", "Actions without ball · Out of possession"),
          ("teamwork", "TW", "Mindset · Teamwork"),
          ("agility-endurance", "AE", "PD & GK · Agility & Endurance"))
+# The FP tab marks the four weekly focus blocks in the current-topic column.
+FP_SECTIONS = {"Passing": "passing", "Actions -": "without-ball-out",
+               "Teamwork": "teamwork", "Agility / Endurance": "agility-endurance"}
+FP_ROWS = 122
 
 
 # --------------------------------------------------------------------------
@@ -218,12 +228,77 @@ def load_existing_data(week):
     return obj, {c["id"]: c for c in obj.get("clips", [])}
 
 
-def focus_library(topic, topic_file, week):
+def focus_path(week, focus_file=None):
+    return TOOLS_DATA / (focus_file or ("%s-focus.json" % week.lower()))
+
+
+def cmd_focus(cfg, week, args):
+    """Read the four weekly focus points per age from the week workbook FP tab.
+
+    Column F (`D1` in W13) mirrors the CURRENT topic of the FP matrix. Its
+    section headers (Passing / Actions - / Teamwork / Agility / Endurance)
+    delimit the four standard building blocks; each U5..U12 row holds that
+    week's actual text. This is the single source of truth for tagging focus.
+    """
+    w = resolve_week(cfg, week)
+    sid = w.get("fp_sheet") or sheet_by_name(w["file_id"], "FP")
+    if not sid:
+        raise RuntimeError("Week %s has no FP tab" % week)
+    rows = grid(w["file_id"], sid, 0, FP_ROWS, 0, 7)
+    section, by_age = None, {}
+    for row in rows:
+        cell = lambda i: (row[i].strip() if i < len(row) else "")
+        if cell(5) in FP_SECTIONS and not cell(4):
+            section = FP_SECTIONS[cell(5)]
+            continue
+        m = re.fullmatch(r"U(\d+)", cell(4))
+        if section and m and cell(5):
+            by_age.setdefault(int(m.group(1)), {})[section] = cell(5)
+    ages = {a: v for a, v in by_age.items() if len(v) == len(FOCUS)}
+    missing = sorted(set(range(5, 13)) - set(ages))
+    if missing:
+        raise RuntimeError("FP tab: no complete 4-focus set for U%s" %
+                           ", U".join(map(str, missing)))
+    payload = {
+        "week": week,
+        "topic": w.get("topic"),
+        "source": "%s · FP tab (%s) · current-topic column" % (w["title"], sid),
+        "file_id": w["file_id"],
+        "sheet_id": sid,
+        "sections": FP_SECTIONS,
+        "focus": {str(a): ages[a] for a in sorted(ages)},
+    }
+    p = focus_path(week, w.get("focus_file"))
+    p.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("FOCUS %s | %d ages x %d = %d focus points -> %s" %
+          (week, len(ages), len(FOCUS), len(ages) * len(FOCUS), p.name))
+    for a in sorted(ages):
+        print("  U%-2d %s" % (a, " | ".join(ages[a][f] for f, _, _ in FOCUS)))
+
+
+def focus_library(topic, topic_file, week, focus_file=None):
+    """Four standard focus points per age, from the WEEK workbook FP tab.
+
+    Fallback (only when `focus` has not been run for that week): the topic
+    file's gameAssessment - that is the same FP column. The generic
+    `path.observe` lines are deliberately NOT used as primary text.
+    """
+    out = []
+    fp = focus_path(week, focus_file)
+    if fp.exists():
+        src = json.loads(fp.read_text(encoding="utf-8"))
+        for age, texts in sorted(((int(a), t) for a, t in src["focus"].items())):
+            for fid, suffix, label in FOCUS:
+                out.append({"code": "%sU%d%s" % (topic, age, suffix),
+                            "label": label,
+                            "topic": "%s · %s · U%d" % (topic, week, age),
+                            "desc": texts.get(fid, "")})
+        return out
     p = TOOLS_DATA / (topic_file or ("%s-data.json" % (topic or "").lower()))
     if not p.exists():
-        raise RuntimeError("Topic file missing: %s (needed for focus points)" % p)
+        raise RuntimeError("Focus source missing: run `focus --week %s` "
+                           "or provide %s" % (week, p.name))
     d = json.loads(p.read_text(encoding="utf-8"))
-    out = []
     for entry in d["ages"]:
         age = entry["age"]
         observes = [x.strip() for x in
@@ -231,7 +306,8 @@ def focus_library(topic, topic_file, week):
         assess = {g.get("focusId"): g.get("text", "")
                   for g in entry.get("gameAssessment", [])}
         for i, (fid, suffix, label) in enumerate(FOCUS):
-            desc = observes[i] if i < len(observes) else assess.get(fid, label)
+            desc = (assess.get(fid) or
+                    (observes[i] if i < len(observes) else label))
             out.append({"code": "%sU%d%s" % (topic, age, suffix),
                         "label": label,
                         "topic": "%s · %s · U%d" % (topic, week, age),
@@ -298,7 +374,8 @@ def cmd_data(cfg, week, args):
     rows = read_board(cfg, w)
     pilot = load_pilot()
     roster = pilot["roster"]
-    lib = focus_library(w["topic"], args.topic_file or w.get("topic_file"), week)
+    lib = focus_library(w["topic"], args.topic_file or w.get("topic_file"),
+                        week, w.get("focus_file"))
     codes = {f["code"] for f in lib}
     old, templates = load_existing_data(week)
     out_dir = REPO / "tagging" / "media" / w["media_dir"]
@@ -387,7 +464,12 @@ def cmd_data(cfg, week, args):
                                if p["team"] == b["team"] and p["group"] == grp]}
         else:
             c = json.loads(json.dumps(templates[cid]))   # deep copy
+        # Standard rule: every clip of a team shows the SAME four weekly
+        # focus points, taken from the FP tab for the board objective age.
         fl = ["%s%s%s" % (w["topic"], focus_age, s) for _, s, _ in FOCUS]
+        missing = [x for x in fl if x not in codes]
+        if missing:
+            raise RuntimeError("Focus library is missing %s" % ", ".join(missing))
         c.update({
             "title": "%s / %s · %s · PASS · %s" % (b["team"], c["group"],
                                                    d["drill"], rating or "—"),
@@ -400,7 +482,7 @@ def cmd_data(cfg, week, args):
             "size": out.stat().st_size if out.exists() else c.get("size", 0),
             "origin": "%s %s · %s %s take · Pass · %s" % (
                 week, w["topic"], real_day, real_time, rating or "—"),
-            "focus": [x for x in fl if x in codes] or fl,
+            "focus": fl,
             # id / prefix / file stay on the pinned day so existing tags and
             # links survive. The DISPLAY tells when the take was really shot.
             "window": ("%s %s" % (real_day, real_time)).strip(),
@@ -764,8 +846,8 @@ def cmd_status(cfg, week, args):
 def main():
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["weeks", "status", "data", "clean", "restore",
-                                        "queue", "report", "all"])
+    ap.add_argument("command", choices=["weeks", "status", "focus", "data",
+                                        "clean", "restore", "queue", "report", "all"])
     ap.add_argument("--week", default="W13")
     ap.add_argument("--topic", help="override topic, e.g. D2 (for a new week)")
     ap.add_argument("--topic-file", help="tools/data/<topic>-data.json")
@@ -790,6 +872,8 @@ def main():
             return
         if args.command == "status":
             cmd_status(cfg, args.week, args)
+        elif args.command == "focus":
+            cmd_focus(cfg, args.week, args)
         elif args.command == "data":
             cmd_data(cfg, args.week, args)
         elif args.command in ("clean", "restore"):
@@ -799,6 +883,7 @@ def main():
         elif args.command == "report":
             cmd_report(cfg, args.week, args)
         elif args.command == "all":
+            cmd_focus(cfg, args.week, args)
             cmd_data(cfg, args.week, args)
             if not args.dry_run:
                 cmd_clean(cfg, args.week, args)

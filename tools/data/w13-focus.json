@@ -1,0 +1,63 @@
+{
+  "week": "W13",
+  "topic": "D1",
+  "source": "W13-2026Fall · FP tab (qpi42q) · current-topic column",
+  "file_id": "DmgGsRneWkZo",
+  "sheet_id": "qpi42q",
+  "sections": {
+    "Passing": "passing",
+    "Actions -": "without-ball-out",
+    "Teamwork": "teamwork",
+    "Agility / Endurance": "agility-endurance"
+  },
+  "focus": {
+    "5": {
+      "passing": "Pass with the inside of your foot and stay balanced.",
+      "without-ball-out": "Run towards the ball.",
+      "teamwork": "Play together and follow the rules",
+      "agility-endurance": "Run and stop in balance and changing directions."
+    },
+    "6": {
+      "passing": "Take a big step beside the ball, strike its centre with the inside of your foot and stay balanced.",
+      "without-ball-out": "Run towards the player with the ball to steal it",
+      "teamwork": "Play together and follow the rules",
+      "agility-endurance": "Run and stop in balance and changing directions."
+    },
+    "7": {
+      "passing": "Make a clean inside-foot pass while the ball is rolling.",
+      "without-ball-out": "Run towards the player with the ball to steal it",
+      "teamwork": "Help your teammates set up the pitch and put the equipment away.",
+      "agility-endurance": "Run and stop in balance and changing directions."
+    },
+    "8": {
+      "passing": "When time is limited, get ready quickly and pass the rolling ball correctly.",
+      "without-ball-out": "Run towards the opponent with the ball to steal it while not allowing them to pass back",
+      "teamwork": "Help your teammates set up the pitch and put the equipment away.",
+      "agility-endurance": "Speed up, then shorten your steps to slow down in balance and changing directions."
+    },
+    "9": {
+      "passing": "When time is limited, get ready quickly and pass the rolling ball accurately over short and longer distances.",
+      "without-ball-out": "Run towards the opponent with the ball to steal it while not allowing them to pass back",
+      "teamwork": "Help your teammates set up the pitch and put the equipment away.",
+      "agility-endurance": "Speed up, then shorten your steps to slow down in balance and changing directions."
+    },
+    "10": {
+      "passing": "Time your pass so a [moving] teammate can receive it in stride.",
+      "without-ball-out": "Striker presses and blocks the pass back, midfielders close the middle, and defenders mark the striker.",
+      "teamwork": "Correcting and encouraging teammates.",
+      "agility-endurance": "Speed up, then shorten your steps to slow down in balance and changing directions."
+    },
+    "11": {
+      "passing": "Time your pass so a [moving] teammate can receive it in stride.",
+      "without-ball-out": "Striker presses and blocks the pass back, midfielders close the middle, and defenders mark the striker.",
+      "teamwork": "Correcting and encouraging teammates.",
+      "agility-endurance": "Repeat quick accelerations, balanced braking Speed up, then shorten your steps to slow down in balance and changing directions, through successive actions."
+    },
+    "12": {
+      "passing": "Time your pass so a [moving] teammate can receive it in stride.",
+      "without-ball-out": "Striker presses and blocks the pass back, midfielders close the middle, and defenders mark the striker.",
+      "teamwork": "Correcting and encouraging teammates.",
+      "agility-endurance": "Repeat quick accelerations, balanced braking Speed up, then shorten your steps to slow down in balance and changing directions, through successive actions."
+    }
+  }
+}

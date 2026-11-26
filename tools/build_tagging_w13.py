@@ -112,7 +112,10 @@ def build_focus_library():
         assess = {g.get("focusId"): g.get("text", "")
                   for g in entry.get("gameAssessment", [])}
         for i, (fid, suffix, label) in enumerate(FOCUS):
-            desc = observes[i] if i < len(observes) else assess.get(fid, label)
+            # FP tab (current-topic column) wins; the generic observe lines
+            # from the curriculum path are only a fallback.
+            desc = (assess.get(fid) or
+                    (observes[i] if i < len(observes) else label))
             library.append({
                 "code": "D1U%d%s" % (age, suffix),
                 "label": label,

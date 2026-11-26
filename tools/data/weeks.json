@@ -29,6 +29,8 @@
       "queue": "TAG W13",
       "report_detail": "D1-W13",
       "report_compact": "D1-W13-NEW",
+      "fp_sheet": "qpi42q",
+      "focus_file": "w13-focus.json",
       "topic": "D1",
       "topic_code": "D1F",
       "topic_file": "d1-data.json",
