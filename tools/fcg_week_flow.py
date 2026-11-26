@@ -305,6 +305,12 @@ def cmd_data(cfg, week, args):
     out_dir.mkdir(parents=True, exist_ok=True)
     dur_path = TOOLS_DATA / ("%s-durations.json" % week.lower())
     durations = json.loads(dur_path.read_text(encoding="utf-8")) if dur_path.exists() else {}
+    # Which raw take each 540p copy was encoded from. A re-recording replaces
+    # the CURRENT hardlink; without this, a stale Monday copy survives forever
+    # because the -MON filename already exists.
+    manifest_path = TOOLS_DATA / ("%s-media.json" % week.lower())
+    manifest = (json.loads(manifest_path.read_text(encoding="utf-8"))
+                if manifest_path.exists() else {})
     ff = ffmpeg_exe()
 
     teams = cfg["teams"]
@@ -324,15 +330,35 @@ def cmd_data(cfg, week, args):
         out_name = name_tpl.format(topic=w["topic"], drill=d["drill"],
                                    stem=tm["stem"], day=w.get("day_tag") or d["day"] or "MON")
         out = out_dir / out_name
-        if not out.exists():
+        real_day = (d["day"] or w.get("day_tag") or "MON").upper()
+        real_time = d["time"] or ""
+        src_st = src.stat()
+        fp = {"ino": getattr(src_st, "st_ino", 0), "size": src_st.st_size,
+              "mtime_ns": getattr(src_st, "st_mtime_ns", 0)}
+        src_dur = probe_duration(ff, src)
+        out_st = out.stat() if out.exists() else None
+        out_dur = probe_duration(ff, out) if out_st else None
+        entry = manifest.get(out_name)
+        # Re-recorded take? Catch it even when the duration happens to match
+        # the old take (U9W-D1: MON and TUE are both 172.27 s).
+        stale = (out_st is None
+                 or src_st.st_mtime > out_st.st_mtime + 1
+                 or (entry is not None and entry.get("fp") != fp)
+                 or out_dur is None or abs(out_dur - src_dur) > 0.05)
+        if stale:
             if args.dry_run:
                 encoded.append(out_name)
             else:
-                print("  encoding %s -> %s" % (src.name, out_name), flush=True)
+                print("  encoding %s -> %s (%s take)" %
+                      (src.name, out_name, real_day), flush=True)
                 encode(ff, src, out, cfg["video_height"], cfg["video_crf"])
                 encoded.append(out_name)
-        dur = durations.get(src.name) or probe_duration(ff, src)
-        durations[src.name] = dur
+                out_dur = probe_duration(ff, out)
+        dur = out_dur or src_dur
+        durations[src.name] = round(src_dur, 3)
+        durations["%s/%s" % (real_day, src.name)] = round(src_dur, 3)
+        manifest[out_name] = {"fp": fp, "duration": round(dur, 3),
+                              "day": real_day, "time": real_time}
         cid = clip_id(w, b, d, tm)
         rating = b["ratings"].get(d["drill"], "").replace("—", "").strip()
         remark = b["remarks"].get(d["drill"], "").replace("—", "").strip()
@@ -372,10 +398,17 @@ def cmd_data(cfg, week, args):
             "source_name": src.name,
             "duration": dur,
             "size": out.stat().st_size if out.exists() else c.get("size", 0),
-            "origin": "%s %s · %s take · Pass · %s" % (week, w["topic"],
-                                                      day, rating or "—"),
+            "origin": "%s %s · %s %s take · Pass · %s" % (
+                week, w["topic"], real_day, real_time, rating or "—"),
             "focus": [x for x in fl if x in codes] or fl,
-            "phaseLabel": "%s · PASS · %s" % (d["drill"], day),
+            # id / prefix / file stay on the pinned day so existing tags and
+            # links survive. The DISPLAY tells when the take was really shot.
+            "window": ("%s %s" % (real_day, real_time)).strip(),
+            # Keep the richer scheduled-session string for clips still on the
+            # pinned day; a re-recorded clip gets an honest plain label.
+            "session": (c.get("session") if real_day == day
+                        else "%s %s · %s take" % (week, w["topic"], real_day)),
+            "phaseLabel": "%s · PASS · %s" % (d["drill"], real_day),
         })
         if c.get("segments"):
             c["segments"][0]["file_end"] = dur
@@ -385,8 +418,8 @@ def cmd_data(cfg, week, args):
           (sum(1 for _, d in iter_board(rows) if d["status"] == PASS),
            len(clips), len(encoded), skipped))
     if args.dry_run:
-        for c in clips:
-            print("  ", c["id"], "->", c["file"])
+        for n in encoded:
+            print("  re-encode", n)
         return
 
     payload = {
@@ -414,6 +447,7 @@ def cmd_data(cfg, week, args):
     out.write_text("window.FCG_%s = " % week + body + ";\n" + loader,
                    encoding="utf-8")
     dur_path.write_text(json.dumps(durations, ensure_ascii=False, indent=2), encoding="utf-8")
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # weeks.js: add the week once, keep the current default unless asked
     wp = TAG_DATA / "weeks.js"

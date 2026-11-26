@@ -17,19 +17,19 @@ window.FCG_W13 = {
           "U12-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:25--17:30",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:01",
       "status": "Pass 通过",
       "rating": "4.0",
       "remark": "",
       "file": "media/w13/W13-D1-ACT-U12-MON.mp4",
       "source_name": "U12-ACT.mp4",
-      "duration": 181.29,
+      "duration": 182.13,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 10494105,
-      "origin": "W13 D1 · MON take · Pass · 4.0",
+      "size": 14904979,
+      "origin": "W13 D1 · TUE 19:01 take · Pass · 4.0",
       "file_id": "",
       "focus": [
         "D1U12PA",
@@ -37,12 +37,12 @@ window.FCG_W13 = {
         "D1U12TW",
         "D1U12AE"
       ],
-      "phaseLabel": "ACT · PASS · MON",
+      "phaseLabel": "ACT · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 181.29,
+          "file_end": 182.13,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -92,19 +92,19 @@ window.FCG_W13 = {
           "U12-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:45--17:50",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:17",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
       "file": "media/w13/W13-D1-D1-U12-MON.mp4",
       "source_name": "U12-D1.mp4",
-      "duration": 180.87,
+      "duration": 181.73,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 7865507,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "size": 12941289,
+      "origin": "W13 D1 · TUE 19:17 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U12PA",
@@ -112,12 +112,12 @@ window.FCG_W13 = {
         "D1U12TW",
         "D1U12AE"
       ],
-      "phaseLabel": "D1 · PASS · MON",
+      "phaseLabel": "D1 · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 180.87,
+          "file_end": 181.73,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -167,8 +167,8 @@ window.FCG_W13 = {
           "U12-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "18:05--18:10",
+      "session": "W13 D1 · MON take",
+      "window": "MON 18:12",
       "status": "Pass 通过",
       "rating": "3.0",
       "remark": "",
@@ -179,7 +179,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 7421741,
-      "origin": "W13 D1 · MON take · Pass · 3.0",
+      "origin": "W13 D1 · MON 18:12 take · Pass · 3.0",
       "file_id": "",
       "focus": [
         "D1U12PA",
@@ -242,19 +242,19 @@ window.FCG_W13 = {
           "U11-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:20--17:25",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:09",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
       "file": "media/w13/W13-D1-ACT-U11-MON.mp4",
       "source_name": "U11-ACT.mp4",
-      "duration": 184.47,
+      "duration": 195.7,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 9072452,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "size": 16149756,
+      "origin": "W13 D1 · TUE 19:09 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U11PA",
@@ -262,12 +262,12 @@ window.FCG_W13 = {
         "D1U11TW",
         "D1U11AE"
       ],
-      "phaseLabel": "ACT · PASS · MON",
+      "phaseLabel": "ACT · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 184.47,
+          "file_end": 195.7,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -319,19 +319,19 @@ window.FCG_W13 = {
           "U11-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:40--17:45",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:21",
       "status": "Pass 通过",
       "rating": "3.5",
       "remark": "",
       "file": "media/w13/W13-D1-D1-U11-MON.mp4",
       "source_name": "U11-D1.mp4",
-      "duration": 190.73,
+      "duration": 183.83,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 7653028,
-      "origin": "W13 D1 · MON take · Pass · 3.5",
+      "size": 10004406,
+      "origin": "W13 D1 · TUE 19:21 take · Pass · 3.5",
       "file_id": "",
       "focus": [
         "D1U11PA",
@@ -339,12 +339,12 @@ window.FCG_W13 = {
         "D1U11TW",
         "D1U11AE"
       ],
-      "phaseLabel": "D1 · PASS · MON",
+      "phaseLabel": "D1 · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 190.73,
+          "file_end": 183.83,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -396,8 +396,8 @@ window.FCG_W13 = {
           "U11-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "18:00--18:05",
+      "session": "W13 D1 · MON take",
+      "window": "MON 18:04",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
@@ -408,7 +408,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 8638558,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "origin": "W13 D1 · MON 18:04 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U11PA",
@@ -473,8 +473,8 @@ window.FCG_W13 = {
           "U10-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:35--17:40",
+      "session": "W13 D1 · MON take",
+      "window": "MON 17:38",
       "status": "Pass 通过",
       "rating": "4.0",
       "remark": "",
@@ -485,7 +485,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 9209450,
-      "origin": "W13 D1 · MON take · Pass · 4.0",
+      "origin": "W13 D1 · MON 17:38 take · Pass · 4.0",
       "file_id": "",
       "focus": [
         "D1U10PA",
@@ -541,8 +541,8 @@ window.FCG_W13 = {
           "U10-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:55--18:00",
+      "session": "W13 D1 · MON take",
+      "window": "MON 17:58",
       "status": "Pass 通过",
       "rating": "3.0",
       "remark": "",
@@ -553,7 +553,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 9719645,
-      "origin": "W13 D1 · MON take · Pass · 3.0",
+      "origin": "W13 D1 · MON 17:58 take · Pass · 3.0",
       "file_id": "",
       "focus": [
         "D1U10PA",
@@ -609,8 +609,8 @@ window.FCG_W13 = {
           "U10-G"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "18:15--18:20",
+      "session": "W13 D1 · MON take",
+      "window": "MON 18:20",
       "status": "Pass 通过",
       "rating": "3.0",
       "remark": "",
@@ -621,7 +621,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 6488925,
-      "origin": "W13 D1 · MON take · Pass · 3.0",
+      "origin": "W13 D1 · MON 18:20 take · Pass · 3.0",
       "file_id": "",
       "focus": [
         "D1U10PA",
@@ -677,8 +677,8 @@ window.FCG_W13 = {
           "U09-G"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:00--19:05",
+      "session": "W13 D1 · MON take",
+      "window": "MON 19:03",
       "status": "Pass 通过",
       "rating": "3.5",
       "remark": "",
@@ -689,7 +689,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 11018843,
-      "origin": "W13 D1 · MON take · Pass · 3.5",
+      "origin": "W13 D1 · MON 19:03 take · Pass · 3.5",
       "file_id": "",
       "focus": [
         "D1U9PA",
@@ -744,19 +744,19 @@ window.FCG_W13 = {
           "U09-G"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:20--19:25",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 17:42",
       "status": "Pass 通过",
       "rating": "4.0",
       "remark": "",
       "file": "media/w13/W13-D1-D1-U9-MON.mp4",
       "source_name": "U9-D1.mp4",
-      "duration": 171.97,
+      "duration": 171.6,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 10484084,
-      "origin": "W13 D1 · MON take · Pass · 4.0",
+      "size": 8358656,
+      "origin": "W13 D1 · TUE 17:42 take · Pass · 4.0",
       "file_id": "",
       "focus": [
         "D1U9PA",
@@ -764,12 +764,12 @@ window.FCG_W13 = {
         "D1U9TW",
         "D1U9AE"
       ],
-      "phaseLabel": "D1 · PASS · MON",
+      "phaseLabel": "D1 · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 171.97,
+          "file_end": 171.6,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -811,8 +811,8 @@ window.FCG_W13 = {
           "U09-G"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:40--19:45",
+      "session": "W13 D1 · MON take",
+      "window": "MON 19:43",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
@@ -823,7 +823,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 8746187,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "origin": "W13 D1 · MON 19:43 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U9PA",
@@ -878,19 +878,19 @@ window.FCG_W13 = {
           "U11-W"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:30--17:35",
+      "session": "W13 D1 · MON take",
+      "window": "MON 17:34",
       "status": "Pass 通过",
       "rating": "3.8",
       "remark": "",
       "file": "media/w13/W13-D1-ACT-U11W-MON.mp4",
       "source_name": "U11W-ACT.mp4",
-      "duration": 183.0,
+      "duration": 183.03,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
       "size": 8422379,
-      "origin": "W13 D1 · MON take · Pass · 3.8",
+      "origin": "W13 D1 · MON 17:34 take · Pass · 3.8",
       "file_id": "",
       "focus": [
         "D1U10PA",
@@ -903,7 +903,7 @@ window.FCG_W13 = {
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 183.0,
+          "file_end": 183.03,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -943,19 +943,19 @@ window.FCG_W13 = {
           "U11-W"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "17:50--17:55",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:26",
       "status": "Pass 通过",
       "rating": "3.0",
       "remark": "Players should improve the curved run.",
       "file": "media/w13/W13-D1-D1-U11W-MON.mp4",
       "source_name": "U11W-D1.mp4",
-      "duration": 196.53,
+      "duration": 188.93,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 13314949,
-      "origin": "W13 D1 · MON take · Pass · 3.0",
+      "size": 7919798,
+      "origin": "W13 D1 · TUE 19:26 take · Pass · 3.0",
       "file_id": "",
       "focus": [
         "D1U10PA",
@@ -963,12 +963,12 @@ window.FCG_W13 = {
         "D1U10TW",
         "D1U10AE"
       ],
-      "phaseLabel": "D1 · PASS · MON",
+      "phaseLabel": "D1 · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 196.53,
+          "file_end": 188.93,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -1008,8 +1008,8 @@ window.FCG_W13 = {
           "U11-W"
         ]
       },
-      "session": "1-MON-HB-17:15--18:45",
-      "window": "18:10--18:15",
+      "session": "W13 D1 · MON take",
+      "window": "MON 18:16",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
@@ -1020,7 +1020,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 7478919,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "origin": "W13 D1 · MON 18:16 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U10PA",
@@ -1073,19 +1073,19 @@ window.FCG_W13 = {
           "U09-W"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "18:55--19:00",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 17:24",
       "status": "Pass 通过",
       "rating": "3.8",
       "remark": "",
       "file": "media/w13/W13-D1-ACT-U9W-MON.mp4",
       "source_name": "U9W-ACT.mp4",
-      "duration": 112.83,
+      "duration": 172.4,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 7957240,
-      "origin": "W13 D1 · MON take · Pass · 3.8",
+      "size": 8577399,
+      "origin": "W13 D1 · TUE 17:24 take · Pass · 3.8",
       "file_id": "",
       "focus": [
         "D1U8PA",
@@ -1093,12 +1093,12 @@ window.FCG_W13 = {
         "D1U8TW",
         "D1U8AE"
       ],
-      "phaseLabel": "ACT · PASS · MON",
+      "phaseLabel": "ACT · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 112.83,
+          "file_end": 172.4,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -1132,8 +1132,8 @@ window.FCG_W13 = {
           "U09-W"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:15--19:20",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 17:47",
       "status": "Pass 通过",
       "rating": "4.0",
       "remark": "",
@@ -1143,8 +1143,8 @@ window.FCG_W13 = {
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 7869504,
-      "origin": "W13 D1 · MON take · Pass · 4.0",
+      "size": 11950715,
+      "origin": "W13 D1 · TUE 17:47 take · Pass · 4.0",
       "file_id": "",
       "focus": [
         "D1U8PA",
@@ -1152,7 +1152,7 @@ window.FCG_W13 = {
         "D1U8TW",
         "D1U8AE"
       ],
-      "phaseLabel": "D1 · PASS · MON",
+      "phaseLabel": "D1 · PASS · TUE",
       "segments": [
         {
           "index": 1,
@@ -1191,19 +1191,19 @@ window.FCG_W13 = {
           "U09-W"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:35--19:40",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 18:05",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
       "file": "media/w13/W13-D1-D2-U9W-MON.mp4",
       "source_name": "U9W-D2.mp4",
-      "duration": 172.83,
+      "duration": 172.73,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 7384502,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "size": 11733237,
+      "origin": "W13 D1 · TUE 18:05 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U8PA",
@@ -1211,12 +1211,12 @@ window.FCG_W13 = {
         "D1U8TW",
         "D1U8AE"
       ],
-      "phaseLabel": "D2 · PASS · MON",
+      "phaseLabel": "D2 · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 172.83,
+          "file_end": 172.73,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -1250,8 +1250,8 @@ window.FCG_W13 = {
           "U08-G"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:05--19:10",
+      "session": "W13 D1 · MON take",
+      "window": "MON 19:10",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
@@ -1262,7 +1262,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 10603590,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "origin": "W13 D1 · MON 19:10 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U8PA",
@@ -1310,19 +1310,19 @@ window.FCG_W13 = {
           "U08-G"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:25--19:30",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 18:08",
       "status": "Pass 通过",
       "rating": "4.0",
       "remark": "",
       "file": "media/w13/W13-D1-D1-U8-MON.mp4",
       "source_name": "U8-D1.mp4",
-      "duration": 172.3,
+      "duration": 171.77,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 8679619,
-      "origin": "W13 D1 · MON take · Pass · 4.0",
+      "size": 9755645,
+      "origin": "W13 D1 · TUE 18:08 take · Pass · 4.0",
       "file_id": "",
       "focus": [
         "D1U8PA",
@@ -1330,12 +1330,12 @@ window.FCG_W13 = {
         "D1U8TW",
         "D1U8AE"
       ],
-      "phaseLabel": "D1 · PASS · MON",
+      "phaseLabel": "D1 · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 172.3,
+          "file_end": 171.77,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -1370,19 +1370,19 @@ window.FCG_W13 = {
           "U08-G"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:45--19:50",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 18:22",
       "status": "Pass 通过",
       "rating": "4.0",
       "remark": "",
       "file": "media/w13/W13-D1-D2-U8-MON.mp4",
       "source_name": "U8-D2.mp4",
-      "duration": 175.1,
+      "duration": 173.6,
       "basis": "Clip position",
       "combined": false,
       "hash": "",
-      "size": 7399415,
-      "origin": "W13 D1 · MON take · Pass · 4.0",
+      "size": 10456123,
+      "origin": "W13 D1 · TUE 18:22 take · Pass · 4.0",
       "file_id": "",
       "focus": [
         "D1U8PA",
@@ -1390,12 +1390,12 @@ window.FCG_W13 = {
         "D1U8TW",
         "D1U8AE"
       ],
-      "phaseLabel": "D2 · PASS · MON",
+      "phaseLabel": "D2 · PASS · TUE",
       "segments": [
         {
           "index": 1,
           "file_start": 0,
-          "file_end": 175.1,
+          "file_end": 173.6,
           "source_start": null,
           "clock": "",
           "note": "Full recording; camera-clock mapping not verified"
@@ -1430,8 +1430,8 @@ window.FCG_W13 = {
           "U07-G"
         ]
       },
-      "session": "1-MON-JX-18:35--20:10",
-      "window": "",
+      "session": "W13 D1 · MON take",
+      "window": "MON 21:20",
       "status": "Pass 通过",
       "rating": "3.8",
       "remark": "",
@@ -1442,7 +1442,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 6508246,
-      "origin": "W13 D1 · MON take · Pass · 3.8",
+      "origin": "W13 D1 · MON 21:20 take · Pass · 3.8",
       "file_id": "",
       "focus": [
         "D1U7PA",
@@ -1486,8 +1486,8 @@ window.FCG_W13 = {
           "U07-G"
         ]
       },
-      "session": "1-MON-JX-18:35--20:10",
-      "window": "",
+      "session": "W13 D1 · MON take",
+      "window": "MON 21:08",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
@@ -1498,7 +1498,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 7934387,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "origin": "W13 D1 · MON 21:08 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U7PA",
@@ -1542,8 +1542,8 @@ window.FCG_W13 = {
           "U07-G"
         ]
       },
-      "session": "1-MON-JX-18:35--20:10",
-      "window": "",
+      "session": "W13 D1 · MON take",
+      "window": "MON 21:08",
       "status": "Pass 通过",
       "rating": "3.0",
       "remark": "",
@@ -1554,7 +1554,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 4988581,
-      "origin": "W13 D1 · MON take · Pass · 3.0",
+      "origin": "W13 D1 · MON 21:08 take · Pass · 3.0",
       "file_id": "",
       "focus": [
         "D1U7PA",
@@ -1598,8 +1598,8 @@ window.FCG_W13 = {
           "U09-B"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:10--19:15",
+      "session": "W13 D1 · MON take",
+      "window": "MON 19:14",
       "status": "Pass 通过",
       "rating": "3.3",
       "remark": "",
@@ -1610,7 +1610,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 17290540,
-      "origin": "W13 D1 · MON take · Pass · 3.3",
+      "origin": "W13 D1 · MON 19:14 take · Pass · 3.3",
       "file_id": "",
       "focus": [
         "D1U6PA",
@@ -1674,8 +1674,8 @@ window.FCG_W13 = {
           "U09-B"
         ]
       },
-      "session": "1-MON-HB-18:50--20:20",
-      "window": "19:50--19:55",
+      "session": "W13 D1 · MON take",
+      "window": "MON 19:57",
       "status": "Pass 通过",
       "rating": "3.0",
       "remark": "",
@@ -1686,7 +1686,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 10449419,
-      "origin": "W13 D1 · MON take · Pass · 3.0",
+      "origin": "W13 D1 · MON 19:57 take · Pass · 3.0",
       "file_id": "",
       "focus": [
         "D1U6PA",
@@ -1750,8 +1750,8 @@ window.FCG_W13 = {
           "U06-G"
         ]
       },
-      "session": "1-MON-JX-17:00--18:35",
-      "window": "",
+      "session": "W13 D1 · MON take",
+      "window": "MON 21:29",
       "status": "Pass 通过",
       "rating": "3.8",
       "remark": "",
@@ -1762,7 +1762,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 8022044,
-      "origin": "W13 D1 · MON take · Pass · 3.8",
+      "origin": "W13 D1 · MON 21:29 take · Pass · 3.8",
       "file_id": "",
       "focus": [
         "D1U6PA",
@@ -1807,8 +1807,8 @@ window.FCG_W13 = {
           "U06-G"
         ]
       },
-      "session": "1-MON-JX-17:00--18:35",
-      "window": "",
+      "session": "W13 D1 · MON take",
+      "window": "MON 21:29",
       "status": "Pass 通过",
       "rating": "3.5",
       "remark": "",
@@ -1819,7 +1819,7 @@ window.FCG_W13 = {
       "combined": false,
       "hash": "",
       "size": 6353792,
-      "origin": "W13 D1 · MON take · Pass · 3.5",
+      "origin": "W13 D1 · MON 21:29 take · Pass · 3.5",
       "file_id": "",
       "focus": [
         "D1U6PA",
@@ -1861,8 +1861,8 @@ window.FCG_W13 = {
           "U05-G"
         ]
       },
-      "session": "W13 D1 · MON take",
-      "window": "",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:22",
       "file": "media/w13/W13-D1-ACT-U5-MON.mp4",
       "topic": "D1 — W13",
       "prefix": "D1FU05GACTMON",
@@ -1917,14 +1917,14 @@ window.FCG_W13 = {
       "source_name": "U5-ACT.mp4",
       "duration": 179.78,
       "size": 17699292,
-      "origin": "W13 D1 · MON take · Pass · —",
+      "origin": "W13 D1 · TUE 19:22 take · Pass · —",
       "focus": [
         "D1U5PA",
         "D1U5OB",
         "D1U5TW",
         "D1U5AE"
       ],
-      "phaseLabel": "ACT · PASS · MON"
+      "phaseLabel": "ACT · PASS · TUE"
     },
     {
       "id": "VID-FCG-D1F-D1-U05G-MON-01",
@@ -1937,8 +1937,8 @@ window.FCG_W13 = {
           "U05-G"
         ]
       },
-      "session": "W13 D1 · MON take",
-      "window": "",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:21",
       "file": "media/w13/W13-D1-D1-U5-MON.mp4",
       "topic": "D1 — W13",
       "prefix": "D1FU05GD1MON",
@@ -1993,14 +1993,14 @@ window.FCG_W13 = {
       "source_name": "U5-D1.mp4",
       "duration": 180.05,
       "size": 9741392,
-      "origin": "W13 D1 · MON take · Pass · —",
+      "origin": "W13 D1 · TUE 19:21 take · Pass · —",
       "focus": [
         "D1U5PA",
         "D1U5OB",
         "D1U5TW",
         "D1U5AE"
       ],
-      "phaseLabel": "D1 · PASS · MON"
+      "phaseLabel": "D1 · PASS · TUE"
     },
     {
       "id": "VID-FCG-D1F-D2-U05G-MON-01",
@@ -2013,8 +2013,8 @@ window.FCG_W13 = {
           "U05-G"
         ]
       },
-      "session": "W13 D1 · MON take",
-      "window": "",
+      "session": "W13 D1 · TUE take",
+      "window": "TUE 19:21",
       "file": "media/w13/W13-D1-D2-U5-MON.mp4",
       "topic": "D1 — W13",
       "prefix": "D1FU05GD2MON",
@@ -2069,14 +2069,14 @@ window.FCG_W13 = {
       "source_name": "U5-D2.mp4",
       "duration": 179.78,
       "size": 9539931,
-      "origin": "W13 D1 · MON take · Pass · —",
+      "origin": "W13 D1 · TUE 19:21 take · Pass · —",
       "focus": [
         "D1U5PA",
         "D1U5OB",
         "D1U5TW",
         "D1U5AE"
       ],
-      "phaseLabel": "D2 · PASS · MON"
+      "phaseLabel": "D2 · PASS · TUE"
     }
   ],
   "roster": window.PILOT.roster,
