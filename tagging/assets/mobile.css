@@ -132,3 +132,13 @@ tbody td:first-child,.p-id,.seg-cell small{display:none}
 .compact-phone .video-shell{border-radius:0;border-left:0;border-right:0}
 .compact-phone #video{display:block;width:100%;height:auto;max-height:none;object-fit:contain}
 }
+/* The two-mode switch must stay tappable on phone. This is only sizing for the
+   new control — the phone layout itself is deliberately not rebuilt yet. */
+@media(max-width:700px){
+.compact-phone .tagform>.card-head{flex-wrap:wrap;gap:6px}
+.compact-phone .head-actions{flex:1 1 100%;flex-wrap:wrap}
+.compact-phone .mode-switch{width:100%}
+.compact-phone .mode-switch button{flex:1;height:44px;min-height:44px;font-size:14px}
+.compact-phone .mode-note{margin-top:10px;padding:10px}
+.compact-phone .mode-note>span:not(.mode-len){flex-basis:100%}
+}

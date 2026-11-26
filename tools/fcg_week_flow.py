@@ -40,10 +40,12 @@ Rules encoded here (agreed with Easy, Nov 2026):
   * Track 2 (#drillbox opt-ins) is the ONLY tagged footage on GitHub Pages.
     Track 3 player moments + the team week overview go to WEIYUN, never to the
     website repo. `moments` renders outside the repo and uploads from staging.
-  * Player starting position is a one-click mark in the tagging app, stored
-    inline as `#pos=x,y` (normalised 0-1) in the tag comment. It never adds a
-    column to the 18-column A-R Tags paste (S/T/U hold share links). The Track
-    3 renderer burns a ring at that coordinate for the first 2.3 s.
+  * The tagging app has TWO distinct modes, both writing the same 18-column
+    A-R row (S/T/U hold share links). "Player tag" needs a player, the four
+    quality ratings and a comment; "Drillbox" needs ONLY a >= 20 s window and
+    writes player_id=DRILLBOX, no ratings, no comment, plus the #drillbox
+    mark. build_drillbox.py cuts those rows; build_tag_moments.py skips them.
+    Legacy player tags that carry #drillbox keep their details and their mark.
 """
 import argparse
 import base64
@@ -988,9 +990,11 @@ def cmd_moments(cfg, week, args):
         for r in csv.DictReader(f):
             eid = (r.get("event_id") or "").strip()
             if eid:
-                meta[eid] = {"drillbox": bool(re.search(r"(^|\s)#drillbox\b",
-                                                        r.get("comment") or "", re.I)),
-                             "video_id": r.get("video_id") or ""}
+                meta[eid] = {
+                    "drillbox": bool(re.search(r"(^|\s)#drillbox\b",
+                                               r.get("comment") or "", re.I)),
+                    "bare": (r.get("player_id") or "").strip().upper() == "DRILLBOX",
+                    "video_id": r.get("video_id") or ""}
     cells = grid(w["file_id"], w["tags"], 0, 200, 0, 20, raw=True)
     rows = [(r, c.get(0, "").strip()) for r, c in sorted(cells.items())
             if r > 0 and c.get(0, "").strip()]
@@ -1025,7 +1029,10 @@ def cmd_moments(cfg, week, args):
             db_links += 1
         else:
             put(row, 18, "", "")
-        if ov.get("share_url") and team_of(m.get("video_id")) == args.overview:
+        # A bare Drillbox row is Track 2 only; it is not part of the player
+        # meeting overview. Legacy nominated PLAYER tags still get the link.
+        if (ov.get("share_url") and not m.get("bare")
+                and team_of(m.get("video_id")) == args.overview):
             put(row, 19, "%s overview ☁" % args.overview, ov["share_url"])
             ov_links += 1
         else:

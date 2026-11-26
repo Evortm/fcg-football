@@ -7,7 +7,7 @@
      the save guard and the dropdown can never disagree about "20 seconds". */
   var REVIEWERS = window.FCG_REVIEWERS || [];
   var REVIEWER_ALIASES = window.FCG_REVIEWER_ALIASES || {};
-  var DRILLBOX_MIN_SECONDS = 20;
+  var DRILLBOX_MIN_SECONDS = C.DRILLBOX_MIN_SECONDS;
   var WEEKS = window.FCG_WEEKS || {
     defaultWeek: "W11",
     weeks: [{ id: "W11", short: "W11 · A7", label: "W11 · A7 (pilot)", topic: "A7" }]
@@ -58,12 +58,6 @@
 
   var el = {
     video: $("#video"),
-    videoShell: $(".video-shell"),
-    posLayer: $("#posLayer"),
-    posCross: $("#posCross"),
-    posHint: $("#posHint"),
-    markPos: $("#markPos"),
-    clearPos: $("#clearPos"),
     fallback: $("#videoFallback"),
     curTime: $("#curTime"),
     durTime: $("#durTime"),
@@ -102,7 +96,10 @@
     comment: $("#comment"),
     commentCount: $("#commentCount"),
     confirm: $(".confirm"),
-    drillboxToggle: $("#drillboxToggle"),
+    tagForm: $("#tagForm"),
+    modeSwitch: $("#modeSwitch"),
+    drillboxNote: $("#drillboxNote"),
+    drillboxLen: $("#drillboxLen"),
     saveBtn: $("#saveBtn"),
     sameTimeBtn: $("#sameTimeBtn"),
     clearBtn: $("#clearForm"),
@@ -146,9 +143,10 @@
     end: null,
     ratings: {},
     status: "Draft",
+    /* mode = which form the coach is using; drillbox = this event carries the
+       #drillbox mark (kept separately so legacy nominated player tags survive). */
+    mode: "player",
     drillbox: false,
-    pos: null,
-    marking: false,
     editing: null,
     replayStop: null,
     duration: V.duration || 0,
@@ -160,6 +158,8 @@
   };
 
   var store = loadStore();
+  state.mode = store.mode === "drillbox" ? "drillbox" : "player";
+  state.drillbox = state.mode === "drillbox";
   var toastTimer = null;
 
   /* ------------------------------------------------------------ storage */
@@ -564,69 +564,6 @@
     renderSegment();
   }
 
-  /* ------------------------------------------- player position in the frame
-     One click records where the player stands at t_start, normalised to the
-     video frame (not the letterboxed <video> box). The 540p tagging copy is a
-     straight scale of the 1080p CURRENT take, so the same coordinate is used
-     by the Weiyun renderer. It is a START-only marker: after a camera pan or
-     a run the ring would point at the wrong place. */
-  function framePoint(ev) {
-    var r = el.video.getBoundingClientRect();
-    var vw = el.video.videoWidth || 16;
-    var vh = el.video.videoHeight || 9;
-    if (!r.width || !r.height) return null;
-    var scale = Math.min(r.width / vw, r.height / vh);
-    var dw = vw * scale, dh = vh * scale;
-    var ox = r.left + (r.width - dw) / 2;
-    var oy = r.top + (r.height - dh) / 2;
-    var x = (ev.clientX - ox) / dw;
-    var y = (ev.clientY - oy) / dh;
-    if (x < 0 || x > 1 || y < 0 || y > 1) return null;
-    return { x: C.round3(x), y: C.round3(y) };
-  }
-
-  function renderPos() {
-    var has = !!state.pos;
-    el.posLayer.hidden = !has && !state.marking;
-    el.posCross.style.left = (has ? state.pos.x : 0.5) * 100 + "%";
-    el.posCross.style.top = (has ? state.pos.y : 0.5) * 100 + "%";
-    el.posCross.classList.toggle("placed", has);
-    el.videoShell.classList.toggle("marking", state.marking);
-    el.markPos.classList.toggle("active", state.marking);
-    el.markPos.textContent = state.marking
-      ? "Cancel mark"
-      : (has ? "📍 Move player" : "📍 Mark player");
-    el.markPos.title = has
-      ? "Player marked at " + Math.round(state.pos.x * 100) + "% / " +
-        Math.round(state.pos.y * 100) + "% of the frame. Click to change."
-      : "Click where the player stands at the start (P)";
-    el.clearPos.hidden = !has;
-    el.posHint.hidden = !state.marking;
-  }
-
-  function startMarking() {
-    if (state.marking) { state.marking = false; renderPos(); return; }
-    if (state.start === null) {
-      toast("Set a start marker first, then click the player in the frame.", "bad");
-      return;
-    }
-    state.marking = true;
-    el.video.pause();
-    seekTo(state.start).then(function () { el.video.pause(); });
-    renderPos();
-  }
-
-  function onFrameClick(ev) {
-    if (!state.marking) return;
-    var p = framePoint(ev);
-    if (!p) { toast("Click inside the video frame.", "bad"); return; }
-    state.pos = p;
-    state.marking = false;
-    renderPos();
-    toast("Player marked at " + Math.round(p.x * 100) + "% / " +
-          Math.round(p.y * 100) + "% of the frame", "good");
-  }
-
   function renderSegment() {
     var hasStart = state.start !== null;
     var hasEnd = state.end !== null;
@@ -712,6 +649,18 @@
     }
     el.segTimer.dataset.state = mode;
     el.timerFill.style.width = (len === null ? 0 : Math.min(100, len / goal * 100)) + "%";
+    updateModeNote(len);
+  }
+
+  /* In Drillbox mode the form is nearly empty, so repeat the live window
+     length next to the save button. It uses the same 20 s rule as the timer. */
+  function updateModeNote(len) {
+    if (!el.drillboxLen || state.mode !== "drillbox") return;
+    if (len === undefined || len === null) len = drillboxLength(state.start, state.end);
+    var ok = isFinite(len);
+    el.drillboxLen.textContent = ok ? len.toFixed(1) + " s" : "—";
+    el.drillboxLen.dataset.state = !ok ? "idle"
+      : (len >= DRILLBOX_MIN_SECONDS ? "ok" : "short");
   }
 
   function seekFromPointer(event) {
@@ -892,14 +841,12 @@
      One best example per topic / age / exercise cell, Green team only. The
      flag lives inside `comment` as #drillbox so the 18-column A-R paste into
      the weekfile stays untouched. The offline publisher reads it; this app
-     never encodes video. */
-  /* Marks are composed by C.withMarks() in core.js so #pos and #drillbox
-     never fight over the 500-character comment budget. */
-  /* The publisher cuts the tagged segment, so a Drillbox example must be at
-     least 20 seconds long (no maximum). Guard the form, the save and the
-     event-row star so a short clip can never be nominated. The live timer in
-     the clip card shows the coach exactly how far the segment has come. */
-  /* DRILLBOX_MIN_SECONDS is declared with the other shared constants above. */
+     never encodes video. C.withMarks() re-attaches it on save so a long coach
+     note cannot truncate it. The publisher cuts the tagged segment, so a
+     Drillbox example must be at least 20 seconds (no maximum). The live timer
+     in the clip card shows the coach exactly how far the segment has come. */
+  /* DRILLBOX_MIN_SECONDS comes from core.js so the timer, validateEvent() and
+     the save guard can never disagree about "20 seconds". */
 
   function drillboxLength(start, end) {
     if (start == null || end == null) return NaN;
@@ -920,12 +867,11 @@
   }
 
   function hasDrillbox(ev) {
-    return /(^|\s)#drillbox\b/i.test(ev.comment || "");
+    return C.isDrillboxTag(ev);
   }
 
   function withDrillbox(comment, on) {
-    /* Keep an existing #pos=... mark when a star toggles the nomination. */
-    return C.withMarks(comment, on, C.decodePos(comment));
+    return C.withMarks(comment, on);
   }
 
   /* VID-FCG-A7F-ACT-U11G-TUE-01 -> A7/U11/ACT, team G. */
@@ -938,14 +884,35 @@
     };
   }
 
-  function updateDrillboxToggle() {
-    el.drillboxToggle.setAttribute("aria-pressed", String(state.drillbox));
-    el.drillboxToggle.title = state.drillbox
-      ? "Nominated as the Drillbox example for " + clipCell(V.id).cell
-      : "Nominate this tag as the Drillbox example for this topic / age / exercise";
+  /* ------------------------------------------------------ two tag modes
+     Player tag -> player, four quality ratings, free comment.
+     Drillbox   -> ONLY the >= 20 s window. No player, no ratings, no comment.
+     The mode is a workspace preference (remembered in the store); the saved
+     row uses C.DRILLBOX_PLAYER_ID as a sentinel so the publisher and the
+     Tags sheet can tell the two apart without a 19th column. */
+  function updateSaveButton() {
+    var drillbox = state.mode === "drillbox";
     el.saveBtn.textContent = state.editing
-      ? (state.drillbox ? "Update + Drillbox" : "Update tag")
-      : (state.drillbox ? "Tag + Drillbox" : "Save tag");
+      ? (drillbox ? "Update Drillbox" : "Update tag")
+      : (drillbox ? "Save Drillbox example" : "Save tag");
+    el.saveBtn.title = drillbox
+      ? "Save a window of at least 20 s as the Drillbox example for " + clipCell(V.id).cell
+      : "Save this player tag with its ratings and comment";
+  }
+
+  function applyMode() {
+    var drillbox = state.mode === "drillbox";
+    el.tagForm.dataset.mode = state.mode;
+    $$("#modeSwitch button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.dataset.mode === state.mode));
+    });
+    el.formTitle.textContent = state.editing
+      ? (drillbox ? "Edit Drillbox example" : "Edit player tag")
+      : (drillbox ? "Drillbox example" : "Tag a player");
+    el.drillboxNote.hidden = !drillbox;
+    updateSaveButton();
+    updateModeNote();
+    showError("");
   }
 
   function clearOtherNominations(keepId, videoId) {
@@ -959,17 +926,16 @@
     });
   }
 
+  /* Legacy escape hatch only: older player tags could be nominated with the
+     star. New examples are created in Drillbox mode, never promoted from a
+     player tag. The row action therefore only ever REMOVES a nomination. */
   function toggleDrillbox(id) {
     var target = store.events.filter(function (ev) { return ev.event_id === id; })[0];
     if (!target) return;
     var on = !hasDrillbox(target), info = clipCell(target.video_id);
-    if (on && !info.green) {
-      toast("Drillbox examples are Green-team only.", "bad");
-      return;
-    }
     if (on) {
-      var shortErr = drillboxTimeError(target.t_start, target.t_end);
-      if (shortErr) { toast(shortErr, "bad"); return; }
+      toast("Use Drillbox mode to create a new example.", "bad");
+      return;
     }
     store.events = store.events.map(function (ev) {
       if (ev.event_id !== id) return ev;
@@ -982,7 +948,7 @@
     renderEvents();
     if (state.editing === id) {
       state.drillbox = on;
-      updateDrillboxToggle();
+      updateSaveButton();
     }
     toast(on ? "Drillbox example for " + info.cell : "Drillbox nomination removed", "good");
   }
@@ -991,15 +957,12 @@
     state.player = null;
     state.ratings = {};
     state.status = "Draft";
-    state.drillbox = false;
-    state.pos = null;
-    state.marking = false;
+    state.drillbox = state.mode === "drillbox";
     state.editing = null;
     if (!keepMarkers) {
       state.start = null;
       state.end = null;
     }
-    renderPos();
     el.playerSearch.value = "";
     el.clearPlayer.hidden = true;
     setPlayerHint(rosterHint(), false);
@@ -1009,49 +972,53 @@
     updateStatusButtons();
     renderSegment();
     showError("");
-    el.formTitle.textContent = "Tag an action";
     el.modeBadge.textContent = "New";
     el.modeBadge.classList.remove("editing");
-    updateDrillboxToggle();
+    applyMode();
     el.deleteBtn.hidden = true;
     el.eventBody.querySelectorAll("tr.editing").forEach(function (tr) { tr.classList.remove("editing"); });
   }
 
   function loadEventIntoForm(ev) {
-    var player = ev.player_id === C.UNKNOWN
-      ? unknownPlayer()
-      : allPlayers().filter(function (p) { return p.id === ev.player_id; })[0] || {
-          id: ev.player_id, nickname: ev.player_display.replace(/\s+\S+$/, ""), cn: "", year: ""
-        };
+    var drillbox = C.eventMode(ev) === "drillbox";
+    if (drillbox) {
+      state.player = null;
+      el.playerSearch.value = "";
+      el.clearPlayer.hidden = true;
+      setPlayerHint("Drillbox example — no player", false);
+    } else {
+      var player = ev.player_id === C.UNKNOWN
+        ? unknownPlayer()
+        : allPlayers().filter(function (p) { return p.id === ev.player_id; })[0] || {
+            id: ev.player_id, nickname: ev.player_display.replace(/\s+\S+$/, ""), cn: "", year: ""
+          };
+      state.player = player;
+      el.playerSearch.value = playerDisplay(player);
+      el.clearPlayer.hidden = false;
+      setPlayerHint(player.id === C.UNKNOWN ? "Unknown identity — no player ID stored" : player.id, true);
+    }
 
-    state.player = player;
-    el.playerSearch.value = playerDisplay(player);
-    el.clearPlayer.hidden = false;
-    setPlayerHint(player.id === C.UNKNOWN ? "Unknown identity — no player ID stored" : player.id, true);
-
+    state.mode = drillbox ? "drillbox" : "player";
+    store.mode = state.mode;
     state.start = ev.t_start;
     state.end = ev.t_end;
     state.ratings = Object.assign({}, ev.observations || {});
     state.status = ev.confirmation;
     state.drillbox = hasDrillbox(ev);
-    state.pos = C.decodePos(ev.comment);
-    state.marking = false;
     state.editing = ev.event_id;
 
-    /* Marks live in state, not in the textarea, so the coach sees his own
-       note only. withMarks() re-attaches both on save. */
+    /* #drillbox lives in state, not in the textarea, so the coach sees his
+       own words only. withMarks() re-attaches it on save. */
     el.comment.value = C.stripMarks(ev.comment);
-    renderPos();
     updateCommentCount();
     renderRatings();
     updateStatusButtons();
     renderSegment();
     showError("");
 
-    el.formTitle.textContent = "Edit " + ev.event_id;
     el.modeBadge.textContent = "Editing";
     el.modeBadge.classList.add("editing");
-    updateDrillboxToggle();
+    applyMode();
     el.deleteBtn.hidden = false;
 
     highlightEditingRow(ev.event_id);
@@ -1065,8 +1032,13 @@
   }
 
   function saveEvent() {
-    if (!state.player) { showError("Select a player, or choose Unknown player."); el.playerSearch.focus(); return false; }
-    if (state.drillbox) {
+    var drillbox = state.mode === "drillbox";
+    if (!drillbox && !state.player) {
+      showError("Select a player, or choose Unknown player.");
+      el.playerSearch.focus();
+      return false;
+    }
+    if (drillbox) {
       /* Never let a short segment slip through as a Drillbox example — the
          publisher would cut an invalid video from these markers. */
       var drillboxErr = drillboxTimeError(state.start, state.end);
@@ -1085,16 +1057,16 @@
     var ev = C.buildEvent({
       event_id: existing ? existing.event_id : "",
       video_id: V.id,
-      player_id: state.player.id,
-      player_display: playerDisplay(state.player),
+      player_id: drillbox ? C.DRILLBOX_PLAYER_ID : state.player.id,
+      player_display: drillbox ? "Drillbox example" : playerDisplay(state.player),
       t_start: state.start === null ? NaN : state.start,
       t_end: state.end === null ? NaN : state.end,
       source_start: state.start === null ? "" : clockValue(state.start),
       source_end: state.end === null ? "" : clockValue(state.end),
       source_segment: state.start === null ? 0 : segmentOf(state.start).index,
-      focus: V.focus,
-      observations: state.ratings,
-      comment: C.withMarks(el.comment.value, state.drillbox, state.pos),
+      focus: drillbox ? [] : V.focus,
+      observations: drillbox ? {} : state.ratings,
+      comment: C.withMarks(drillbox ? "" : el.comment.value, drillbox || state.drillbox),
       reviewer: reviewer,
       confirmation: state.status,
       created_at: existing ? existing.created_at : null
@@ -1118,9 +1090,10 @@
       store.seqs[V.id] = seq;
       store.events.push(ev);
     }
-    var nominated = state.drillbox;
+    var nominated = drillbox || state.drillbox;
     if (nominated) clearOtherNominations(ev.event_id, V.id);
     store.reviewer = reviewer;
+    store.mode = state.mode;
     store.events.sort(function (a, b) { return String(b.event_id).localeCompare(String(a.event_id)); });
     saveStore();
     renderEvents();
@@ -1134,6 +1107,10 @@
      points. Save the current tag, keep exactly the same start/end markers and
      open a fresh form for the next player. No schema, export or storage change. */
   function saveAndSameTime() {
+    if (state.mode === "drillbox") {
+      toast("Same time is for tagging several players on one repetition.", "bad");
+      return;
+    }
     if (state.start === null || state.end === null) {
       showError("Mark a start and end first, then tag another player on the same repetition.");
       return;
@@ -1219,21 +1196,25 @@
       sub.textContent = (ev.created_at || "").slice(0, 10);
       tdEvent.appendChild(id);
       tdEvent.appendChild(sub);
+      var bare = C.eventMode(ev) === "drillbox";
+      if (bare || hasDrillbox(ev)) {
+        var typeChip = document.createElement("span");
+        typeChip.className = "type-chip" + (bare ? " drillbox" : " legacy");
+        typeChip.textContent = bare ? "DRILLBOX" : "★ DRILLBOX · player tag";
+        typeChip.title = bare
+          ? "Bare Drillbox example — window only, no player / ratings / comment"
+          : "Older player tag that was nominated as a Drillbox example";
+        tdEvent.appendChild(typeChip);
+      }
 
       var tdPlayer = document.createElement("td");
       var pname = document.createElement("div");
       pname.className = "p-name" + (ev.player_known ? "" : " p-unknown");
       pname.textContent = ev.player_display || "Unknown player";
-      if (C.decodePos(ev.comment)) {
-        var pin = document.createElement("span");
-        pin.className = "pos-pin";
-        pin.textContent = "📍";
-        pin.title = "Starting position in the frame is marked";
-        pname.appendChild(pin);
-      }
       var pid = document.createElement("div");
       pid.className = "p-id";
-      pid.textContent = ev.player_known ? ev.player_id : "UNKNOWN · no ID";
+      pid.textContent = bare ? "no player · window only"
+        : (ev.player_known ? ev.player_id : "UNKNOWN · no ID");
       tdPlayer.appendChild(pname);
       tdPlayer.appendChild(pid);
 
@@ -1271,14 +1252,6 @@
       var actions = document.createElement("div");
       actions.className = "actions";
 
-      var star = document.createElement("button");
-      star.type = "button";
-      star.className = "act drillbox-star" + (hasDrillbox(ev) ? " drillbox-on" : "");
-      star.title = hasDrillbox(ev) ? "Drillbox · on" : "Drillbox";
-      star.setAttribute("aria-label", (hasDrillbox(ev) ? "Remove Drillbox nomination from " : "Nominate as Drillbox example: ") + ev.event_id);
-      star.innerHTML = ICON.star;
-      star.addEventListener("click", function () { toggleDrillbox(ev.event_id); });
-
       var replay = document.createElement("button");
       replay.type = "button";
       replay.className = "act";
@@ -1303,7 +1276,18 @@
       del.innerHTML = ICON.trash;
       del.addEventListener("click", function () { deleteEvent(ev.event_id); });
 
-      actions.appendChild(star);
+      /* Legacy only: a nominated PLAYER tag can drop its nomination here.
+         New examples are made in Drillbox mode, never promoted from a row. */
+      if (!bare && hasDrillbox(ev)) {
+        var star = document.createElement("button");
+        star.type = "button";
+        star.className = "act drillbox-star drillbox-on";
+        star.title = "Remove Drillbox nomination";
+        star.setAttribute("aria-label", "Remove Drillbox nomination from " + ev.event_id);
+        star.innerHTML = ICON.star;
+        star.addEventListener("click", function () { toggleDrillbox(ev.event_id); });
+        actions.appendChild(star);
+      }
       actions.appendChild(replay);
       actions.appendChild(edit);
       actions.appendChild(del);
@@ -1530,13 +1514,6 @@
 
     el.setStart.addEventListener("click", setStartAtPlayhead);
     el.setEnd.addEventListener("click", setEndAtPlayhead);
-    el.markPos.addEventListener("click", startMarking);
-    el.clearPos.addEventListener("click", function () {
-      state.pos = null;
-      state.marking = false;
-      renderPos();
-    });
-    el.video.addEventListener("click", onFrameClick);
     $$("[data-mark]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (btn.dataset.mark === "start") setStartAtPlayhead();
@@ -1615,23 +1592,24 @@
       });
     });
 
-    el.drillboxToggle.addEventListener("click", function () {
-      if (!state.drillbox) {
-        if (!clipCell(V.id).green) {
+    $$("#modeSwitch button").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var next = btn.dataset.mode;
+        if (next === state.mode) return;
+        if (next === "drillbox" && !clipCell(V.id).green) {
           toast("Drillbox examples are Green-team only.", "bad");
           return;
         }
-        /* Markers may already be stamped at this point. Fail early, but still
-           allow nominating before stamping — the save guard catches that. */
-        var len = drillboxLength(state.start, state.end);
-        if (isFinite(len) && len < DRILLBOX_MIN_SECONDS) {
-          var shortErr = drillboxTimeError(state.start, state.end);
-          showError(shortErr); toast(shortErr, "bad");
-          return;
-        }
-      }
-      state.drillbox = !state.drillbox;
-      updateDrillboxToggle();
+        state.mode = next;
+        state.drillbox = next === "drillbox";
+        store.mode = next;
+        saveStore();
+        applyMode();
+        renderSegment();
+        toast(next === "drillbox"
+          ? "Drillbox: just mark a window of at least 20 s."
+          : "Player tag: pick a player, rate the focus points, add a comment.", "good");
+      });
     });
 
     el.saveBtn.addEventListener("click", saveEvent);
@@ -1673,10 +1651,9 @@
 
     document.addEventListener("keydown", onKey);
     updateStatusButtons();
-    updateDrillboxToggle();
+    applyMode();
     renderRatings();
     renderSegment();
-    renderPos();
     renderEvents();
     updateCommentCount();
     updateClock();
@@ -1698,10 +1675,7 @@
   function onKey(ev) {
     var tag = (ev.target.tagName || "").toLowerCase();
     if (tag === "input" || tag === "textarea" || tag === "select" || ev.target.isContentEditable) return;
-    if (ev.key === "Escape") {
-      if (state.marking) { state.marking = false; renderPos(); }
-      closeCombo(); toggleMenu(false); return;
-    }
+    if (ev.key === "Escape") { closeCombo(); toggleMenu(false); return; }
     if (ev.code === "Space") {
       ev.preventDefault();
       el.playBtn.click();
@@ -1710,7 +1684,6 @@
     if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
     if (ev.key === "s" || ev.key === "S") { ev.preventDefault(); setStartAtPlayhead(); }
     if (ev.key === "e" || ev.key === "E") { ev.preventDefault(); setEndAtPlayhead(); }
-    if (ev.key === "p" || ev.key === "P") { ev.preventDefault(); startMarking(); }
     if (ev.key === "ArrowLeft") { ev.preventDefault(); step(ev.shiftKey ? -1 : -1 / 30); }
     if (ev.key === "ArrowRight") { ev.preventDefault(); step(ev.shiftKey ? 1 : 1 / 30); }
   }

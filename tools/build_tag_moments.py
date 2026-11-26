@@ -15,11 +15,12 @@ Output : <FCG_TRACK3_ROOT>/rendered/<WEEK>/<event_id>.mp4   one clip per tag
          tools/data/wNN-weiyun-staging.json                  uploader input
 
 Unlike the Drillbox (one >= 20 s ideal example per cell), Track 3 keeps EVERY
-tagged moment, however short, with the player name and the coach comment burned
-in. Only NON-#drillbox moments are staged for Weiyun; the #drillbox rows are
-rendered solely to build the team week overview (and stay on the site as
-Drillbox cuts). Duplicate / overlapping windows on the same source take are
-merged in the overview so a player is not shown the same action three times.
+PLAYER tag, however short, with the player name and the coach comment burned
+in. Bare Drillbox rows (player_id == "DRILLBOX") are Track 2 only and are
+skipped here. Only NON-#drillbox moments are staged for Weiyun; older player
+tags that carry #drillbox are still rendered for the team week overview.
+Duplicate / overlapping windows on the same source take are merged in the
+overview so a player is not shown the same action three times.
 
 Examples:
   python tools/build_tag_moments.py --week W13 --dry-run
@@ -71,9 +72,9 @@ YELLOW = (255, 237, 0, 255)
 VIDEO_ID_RE = re.compile(
     r"^VID-FCG-([A-Z]\d+)[A-Z]?-(ACT|D1|D2|D3|TG)-U(\d+)([A-Z])-", re.IGNORECASE)
 DRILLBOX_RE = re.compile(r"(^|\s)#drillbox\b", re.IGNORECASE)
-# Click-to-mark: #pos=x,y normalised 0-1 inside the tag comment. Keeping it
-# inline avoids a 19th/20th Tags column (S/T/U already hold the share links).
-POS_RE = re.compile(r"#pos=(\d*\.?\d+),(\d*\.?\d+)\b", re.IGNORECASE)
+DRILLBOX_PLAYER_ID = "DRILLBOX"
+# Legacy only: a short-lived build wrote #pos=x,y. Keep stripping it from
+# captions so those old rows still read cleanly; nothing writes it any more.
 TAG_MARK_RE = re.compile(r"\s*#(?:drillbox|pos=[\d.]+,[\d.]+)\b", re.IGNORECASE)
 PHASE_ORDER = {"ACT": 0, "D1": 1, "D2": 2, "D3": 3, "TG": 4}
 PHASE_LABEL = {"ACT": "Activation", "D1": "Drill 1", "D2": "Drill 2",
@@ -104,24 +105,13 @@ def clean_text(text):
 
 
 def display_comment(text):
-    """Coach words only; #drillbox / #pos=... are instructions, not captions."""
+    """Coach words only; inline marks are instructions, not captions."""
     return clean_text(TAG_MARK_RE.sub("", str(text or "")))
 
 
-def parse_pos(text):
-    """#pos=0.423,0.611 -> (x, y), or None. Out-of-range marks are ignored."""
-    m = POS_RE.search(str(text or ""))
-    if not m:
-        return None
-    try:
-        x, y = float(m.group(1)), float(m.group(2))
-    except ValueError:
-        return None
-    return (x, y) if 0 <= x <= 1 and 0 <= y <= 1 else None
-
-
 def load_tags(path):
-    """Return every valid tag row. #drillbox is a flag, NOT a filter here."""
+    """Return every valid PLAYER tag. #drillbox is a flag, NOT a filter here;
+    bare Drillbox rows (Track 2) are skipped and left to build_drillbox.py."""
     text = Path(path).read_text(encoding="utf-8-sig")
     rows = list(csv.reader(io.StringIO(text),
                            delimiter="\t" if "\t" in text.splitlines()[0] else ","))
@@ -147,6 +137,9 @@ def load_tags(path):
         if not any(str(v).strip() for v in row):
             continue
         event_id = clean_text(cell(row, "event_id"))
+        if clean_text(cell(row, "player_id")).upper() == DRILLBOX_PLAYER_ID:
+            print("  NOTE: %s is a bare Drillbox row -> Track 2 only, skipped" % event_id)
+            continue
         video_id = cell(row, "video_id").strip()
         m = VIDEO_ID_RE.match(video_id)
         if not m:
@@ -169,7 +162,6 @@ def load_tags(path):
             "reviewer": clean_text(cell(row, "reviewer")),
             "comment": clean_text(raw_comment),
             "words": display_comment(raw_comment),
-            "pos": parse_pos(raw_comment),
             "observations": clean_text(cell(row, "observations")),
             "confirmation": clean_text(cell(row, "confirmation")),
             "t_start": cell(row, "t_start").strip(),
@@ -179,8 +171,6 @@ def load_tags(path):
             "seconds": round(end - start, 3),
             "drillbox": bool(DRILLBOX_RE.search(raw_comment or "")),
         })
-    if not out:
-        raise RuntimeError("No valid tags in %s" % path)
     return out
 
 
@@ -312,44 +302,6 @@ def make_moment_caption(tag, clip, week, path):
     return path
 
 
-def short_name(player):
-    text = clean_text(player)
-    return (text.split() or ["Player"])[0][:18]
-
-
-def make_pos_marker(items, path):
-    """Transparent 1080p layer: lime ring + name chip at each #pos coordinate.
-
-    Burned for the first ~2 s only. A start-only marker is deliberate: after a
-    camera pan or a run the same pixel no longer points at the player.
-    """
-    im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    d = ImageDraw.Draw(im)
-    for it in items:
-        pos = it.get("pos")
-        if not pos:
-            continue
-        cx, cy = int(round(pos[0] * W)), int(round(pos[1] * H))
-        r = 48
-        d.ellipse([cx - r - 7, cy - r - 7, cx + r + 7, cy + r + 7],
-                  outline=(6, 40, 43, 235), width=6)
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=LIME, width=8)
-        d.ellipse([cx - 5, cy - 5, cx + 5, cy + 5], fill=YELLOW)
-        name = short_name(it.get("player"))
-        f = cjk_font(30)
-        bb = d.textbbox((0, 0), name, font=f)
-        tw, th = bb[2] - bb[0], bb[3] - bb[1]
-        bx = max(10, min(W - tw - 34, cx - tw // 2 - 12))
-        by = cy - r - th - 30
-        if by < 8:
-            by = min(cy + r + 14, H - 290)
-        d.rectangle([bx, by, bx + tw + 24, by + th + 16],
-                    fill=(6, 40, 43, 242), outline=LIME, width=2)
-        d.text((bx + 12, by + 6), name, font=f, fill=WHITE)
-    im.save(path)
-    return path
-
-
 def make_card(title, subtitle, detail, path, accent=LIME):
     """Full-screen title card used between overview segments."""
     im = Image.new("RGBA", (W, H), DARK)
@@ -385,32 +337,21 @@ def run(cmd):
     return result
 
 
-def encode_moment(src, dst, start, seconds, caption, crf, marker=None):
-    head = ("[0:v]scale=%d:%d:force_original_aspect_ratio=decrease,"
+def encode_moment(src, dst, start, seconds, caption, crf):
+    filt = ("[0:v]scale=%d:%d:force_original_aspect_ratio=decrease,"
             "pad=%d:%d:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=30[bg];"
-            "[1:v]scale=%d:%d[ol];" % (W, H, W, H, W, H))
-    if marker:
-        # Third input = transparent ring layer, faded in/out and enabled only
-        # for the first 2.3 s so the footage is unobstructed afterwards.
-        filt = (head + "[bg][ol]overlay=0:0[base];"
-                "[2:v]format=rgba,fade=t=in:st=0:d=0.15:alpha=1,"
-                "fade=t=out:st=1.75:d=0.5:alpha=1[ring];"
-                "[base][ring]overlay=0:0:enable='between(t,0,2.3)'[out]")
-    else:
-        filt = head + "[bg][ol]overlay=0:0[out]"
+            "[1:v]scale=%d:%d[ol];[bg][ol]overlay=0:0[out]"
+            % (W, H, W, H, W, H))
     # -t must be an OUTPUT option (after every -i); placing it between two
     # inputs makes it an input option and the clip runs to the end of the take.
     cmd = [FFMPEG, "-y", "-hide_banner", "-loglevel", "error",
-           "-ss", str(start), "-i", str(src), "-i", str(caption)]
-    if marker:
-        cmd += ["-loop", "1", "-framerate", "30",
-                "-t", str(min(round(seconds, 3), 2.4)), "-i", str(marker)]
-    cmd += ["-filter_complex", filt,
-            "-map", "[out]", "-map", "0:a:0?", "-t", str(seconds),
-            "-c:v", "libx264", "-preset", "veryfast", "-crf", str(crf),
-            "-pix_fmt", "yuv420p", "-r", "30",
-            "-c:a", "aac", "-b:a", "64k", "-ar", "48000", "-ac", "2",
-            "-movflags", "+faststart", str(dst)]
+           "-ss", str(start), "-i", str(src),
+           "-i", str(caption), "-filter_complex", filt,
+           "-map", "[out]", "-map", "0:a:0?", "-t", str(seconds),
+           "-c:v", "libx264", "-preset", "veryfast", "-crf", str(crf),
+           "-pix_fmt", "yuv420p", "-r", "30",
+           "-c:a", "aac", "-b:a", "64k", "-ar", "48000", "-ac", "2",
+           "-movflags", "+faststart", str(dst)]
     run(cmd)
     return dst
 
@@ -467,7 +408,6 @@ def merge_windows(tags):
                 cur["players"].append(t["player"])
                 cur["comments"].append(t["words"])
                 cur["event_ids"].append(t["event_id"])
-                cur["positions"].append({"player": t["player"], "pos": t["pos"]})
                 cur["drillbox"] = cur["drillbox"] or t["drillbox"]
                 cur["tags"] += 1
             else:
@@ -476,21 +416,12 @@ def merge_windows(tags):
                        "players": [t["player"]],
                        "comments": [t["words"]],
                        "event_ids": [t["event_id"]],
-                       "positions": [{"player": t["player"], "pos": t["pos"]}],
                        "drillbox": t["drillbox"], "tags": 1}
                 groups.append(cur)
     for g in groups:
         g["players"] = list(dict.fromkeys(g["players"]))
         g["seconds"] = round(g["end"] - g["start"], 3)
         g["comment"] = next((c for c in g["comments"] if c), "")
-        # One ring per distinct player position, not one per duplicate tag.
-        seen, uniq = set(), []
-        for p in g["positions"]:
-            key = (p["player"], p["pos"])
-            if p["pos"] and key not in seen:
-                seen.add(key)
-                uniq.append(p)
-        g["positions"] = uniq
     groups.sort(key=lambda g: (PHASE_ORDER.get(g["phase"], 9), g["start"]))
     return groups
 
@@ -529,12 +460,8 @@ def build_overview(team, tags, dataset, source_root, out_dir, week, topic,
                 "words": g["comment"],
                 "observations": "", "drillbox": g["drillbox"]}
         make_moment_caption(fake, {"topic": topic}, week, caption)
-        marker = None
-        if g["positions"]:
-            marker = Path(tmpdir) / ("pos-%02d.png" % i)
-            make_pos_marker(g["positions"], marker)
         seg = Path(tmpdir) / ("p%02d-footage.mp4" % i)
-        encode_moment(src, seg, g["start"], g["seconds"], caption, crf, marker)
+        encode_moment(src, seg, g["start"], g["seconds"], caption, crf)
         parts.append(seg)
 
     outro = Path(tmpdir) / "card-outro.png"
@@ -619,6 +546,11 @@ def main():
     tags_path = Path(args.tags) if args.tags else REPO / "tools" / "data" / ("%s-tags-tab.csv" % wk.lower())
     data_path = Path(args.data) if args.data else REPO / "tagging" / "data" / ("%s-data.js" % wk.lower())
     tags = load_tags(tags_path)
+    if not tags:
+        print("WEEK %s | no Track 3 PLAYER tags (Drillbox-only week) — nothing for Weiyun" % wk)
+        Path(stage_json).parent.mkdir(parents=True, exist_ok=True)
+        Path(stage_json).write_text("{}\n", encoding="utf-8")
+        return
     dataset = load_dataset(data_path)
     source_root = Path(args.source)
     out_dir = Path(args.out) / wk
@@ -647,13 +579,10 @@ def main():
     print("OVERVIEW %s | %d tags -> %d merged windows: %s"
           % (overview_team or "(none)", len(ov_tags), len(groups),
              ", ".join("%s %.1fs" % (g["phase"], g["seconds"]) for g in groups)))
-    print("POSITION markers: %d of %d tags have a #pos=x,y click mark"
-          % (sum(1 for t in tags if t["pos"]), len(tags)))
     if args.dry_run:
         for t in tags:
-            print("  %-42s %-9s -> %-9s %6.2fs  %-14s %s" % (
-                t["event_id"], t["t_start"], t["t_end"], t["seconds"], t["player"],
-                ("#pos=%.3f,%.3f" % t["pos"]) if t["pos"] else ""))
+            print("  %-42s %-9s -> %-9s %6.2fs  %s" % (
+                t["event_id"], t["t_start"], t["t_end"], t["seconds"], t["player"]))
         return
 
     if args.stage_only:
@@ -679,16 +608,10 @@ def main():
             dst = out_dir / ("%s.mp4" % t["event_id"])
             caption = Path(tmp.name) / ("caption-%02d.png" % i)
             make_moment_caption(t, {"topic": topic}, wk, caption)
-            marker = None
-            if t["pos"]:
-                marker = Path(tmp.name) / ("pos-%02d.png" % i)
-                make_pos_marker([t], marker)
             src = source_root / t["source"]
-            print("  [%2d/%d] %-42s %6.2fs  %s%s" % (
-                i, len(tags), t["event_id"], t["seconds"], t["player"],
-                "  #pos=%.3f,%.3f" % t["pos"] if t["pos"] else ""))
-            encode_moment(src, dst, t["start"], t["seconds"], caption,
-                          args.crf, marker)
+            print("  [%2d/%d] %-42s %6.2fs  %s" % (
+                i, len(tags), t["event_id"], t["seconds"], t["player"]))
+            encode_moment(src, dst, t["start"], t["seconds"], caption, args.crf)
             seconds, size = duration_of(dst), dst.stat().st_size
             total += size
             manifest["entries"][t["event_id"]] = {
@@ -702,7 +625,6 @@ def main():
                 "start": t["start"], "seconds": round(seconds, 2),
                 "bytes": size, "file": "%s/%s.mp4" % (wk, dst.name),
                 "sha": sha(dst), "drillbox": t["drillbox"],
-                "pos": list(t["pos"]) if t["pos"] else None,
                 "plate": "Track3-BG.png" if _plate() is not None else "classic",
                 "updated": dt.date.today().isoformat(),
             }

@@ -10,17 +10,18 @@
   var CONFIRMATIONS = ["Draft", "Confirmed"];
   var UNKNOWN = "UNKNOWN";
   var COMMENT_MAX = 500;
-
-  /* Where the tagged player stands IN THE FRAME at t_start. Stored inside the
-     comment as #pos=x,y (normalised 0-1) so the 18-column A-R Tags paste is
-     unchanged: columns S/T/U of the weekfile already hold the Weiyun /
-     Drillbox / overview links. The offline publisher reads the mark and burns
-     a ring at that coordinate into the Track 3 clip. Optional: old tags work
-     exactly as before. */
-  var POS_MARK = "#pos=";
-  var POS_RE = /(^|\s)#pos=(\d*\.?\d+),(\d*\.?\d+)(?=\s|$)/i;
-  var ANY_POS_RE = /\s*#pos=\S+/gi;
+  var DRILLBOX_MIN_SECONDS = 20;
+  var DRILLBOX_PLAYER_ID = "DRILLBOX";
+  var DRILLBOX_MARK = "#drillbox";
   var ANY_DRILLBOX_RE = /\s*#drillbox\b/gi;
+  /* A short-lived build stored #pos=x,y in comments. Nothing writes it now,
+     but keep stripping it so tags saved during that build still read cleanly. */
+  var LEGACY_POS_RE = /\s*#pos=\S+/gi;
+
+  /* Two distinct workflows, one 18-column row:
+       player   -> player, quality ratings and a coach comment are required
+       drillbox -> only a >= 20 s window; no player, no ratings, no comment
+     The sentinel player_id is how a bare Drillbox row is recognised later. */
 
   /* One generic observations column: "SM=Demonstrated; DC=Needs improvement; ..."
      Codes come from the clip's focus points, so any clip fits the register. */
@@ -179,6 +180,7 @@
       version: 1,
       reviewer: typeof src.reviewer === "string" ? src.reviewer : "",
       activeClip: LEGACY_CLIP_IDS[activeClip] || activeClip,
+      mode: src.mode === "drillbox" ? "drillbox" : "player",
       seqs: seqs,
       events: events
     };
@@ -194,7 +196,7 @@
       video_id: input.video_id,
       player_id: input.player_id,
       player_display: input.player_display,
-      player_known: input.player_id !== UNKNOWN,
+      player_known: input.player_id !== UNKNOWN && input.player_id !== DRILLBOX_PLAYER_ID,
       t_start: round3(input.t_start),
       t_end: round3(input.t_end),
       source_start: input.source_start || "",
@@ -210,16 +212,32 @@
     };
   }
 
+  function isDrillboxTag(ev) {
+    return /(^|\s)#drillbox\b/i.test((ev && ev.comment) || "");
+  }
+
+  /* A bare Drillbox row is identified by its sentinel player id. Older
+     player tags that were nominated with the star stay "player" so their
+     details and their #drillbox mark are never lost. */
+  function eventMode(ev) {
+    return ev && ev.player_id === DRILLBOX_PLAYER_ID ? "drillbox" : "player";
+  }
+
   function validateEvent(ev, duration, focus) {
     var errors = [];
+    var drillbox = eventMode(ev) === "drillbox";
     var codes = (focus && focus.length ? focus : ev.focus || Object.keys(ev.observations || {}));
-    if (!ev.player_id) errors.push("Select a player (or Unknown player).");
+    if (!drillbox) {
+      if (!ev.player_id) errors.push("Select a player (or Unknown player).");
+      codes.forEach(function (code) {
+        if (RATINGS.indexOf((ev.observations || {})[code]) < 0) {
+          errors.push("Rate every focus point (use Cannot assess where needed).");
+        }
+      });
+    } else if (!isDrillboxTag(ev)) {
+      errors.push("Drillbox row is missing its " + DRILLBOX_MARK + " mark.");
+    }
     if (!ev.reviewer || ev.reviewer.length < 2) errors.push("Reviewer name is required.");
-    codes.forEach(function (code) {
-      if (RATINGS.indexOf((ev.observations || {})[code]) < 0) {
-        errors.push("Rate every focus point (use Cannot assess where needed).");
-      }
-    });
     if (!isFinite(ev.t_start) || !isFinite(ev.t_end)) {
       errors.push("Set both a start and an end marker.");
     } else {
@@ -227,6 +245,10 @@
       if (ev.t_end <= ev.t_start + 0.04) errors.push("End marker must come after the start marker.");
       if (isFinite(duration) && duration > 0 && ev.t_end > duration + 0.05) {
         errors.push("End marker is past the end of the clip.");
+      }
+      if (drillbox && ev.t_end - ev.t_start < DRILLBOX_MIN_SECONDS - 0.001) {
+        errors.push("Drillbox examples need at least " + DRILLBOX_MIN_SECONDS +
+                    " s. Extend the end marker.");
       }
     }
     if (ev.comment.length > COMMENT_MAX) errors.push("Comment is longer than " + COMMENT_MAX + " characters.");
@@ -251,26 +273,16 @@
   }
 
   /* ---------------------------------------------------- inline tag marks
-     #drillbox and #pos=... both live in `comment`. One helper owns both so a
-     long coach note can never be truncated in a way that drops a mark. */
-  function decodePos(comment) {
-    var m = POS_RE.exec(String(comment || ""));
-    if (!m) return null;
-    var x = Number(m[2]), y = Number(m[3]);
-    if (!isFinite(x) || !isFinite(y) || x < 0 || x > 1 || y < 0 || y > 1) return null;
-    return { x: round3(x), y: round3(y) };
-  }
-
+     Only #drillbox lives in `comment` now. It is kept out of the textarea and
+     re-attached on save, so a long coach note can never truncate the mark. */
   function stripMarks(comment) {
-    return String(comment || "").replace(ANY_POS_RE, "")
+    return String(comment || "").replace(LEGACY_POS_RE, "")
       .replace(ANY_DRILLBOX_RE, "").trim();
   }
 
-  function withMarks(comment, drillbox, pos) {
+  function withMarks(comment, drillbox) {
     var base = stripMarks(comment);
-    var suffix = (drillbox ? " #drillbox" : "") +
-      (pos ? " " + POS_MARK + round3(pos.x).toFixed(3) + "," +
-             round3(pos.y).toFixed(3) : "");
+    var suffix = drillbox ? " " + DRILLBOX_MARK : "";
     if (base.length + suffix.length > COMMENT_MAX) {
       base = base.slice(0, Math.max(0, COMMENT_MAX - suffix.length)).trim();
     }
@@ -317,9 +329,12 @@
     CONFIRMATIONS: CONFIRMATIONS,
     UNKNOWN: UNKNOWN,
     COMMENT_MAX: COMMENT_MAX,
-    POS_MARK: POS_MARK,
+    DRILLBOX_MIN_SECONDS: DRILLBOX_MIN_SECONDS,
+    DRILLBOX_PLAYER_ID: DRILLBOX_PLAYER_ID,
+    DRILLBOX_MARK: DRILLBOX_MARK,
     EVENT_HEADERS: EVENT_HEADERS,
-    decodePos: decodePos,
+    isDrillboxTag: isDrillboxTag,
+    eventMode: eventMode,
     stripMarks: stripMarks,
     withMarks: withMarks,
     fmtTime: fmtTime,

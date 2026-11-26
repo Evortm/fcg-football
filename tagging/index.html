@@ -6,14 +6,14 @@
 <title>FCG · W13 D1 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-pos1">
-<link rel="stylesheet" href="assets/app.css?v=20261126-pos1">
-<link rel="stylesheet" href="assets/mobile.css?v=20261126-pos1">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-modes1">
+<link rel="stylesheet" href="assets/app.css?v=20261126-modes1">
+<link rel="stylesheet" href="assets/mobile.css?v=20261126-modes1">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261126-pos1" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261126-modes1" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
@@ -66,17 +66,6 @@
 
     <div class="video-shell">
       <video id="video" preload="metadata" playsinline></video>
-      <!-- One click at the start marker records where the tagged player stands
-           in the frame. The ring is only a visual aid; the coordinate is saved
-           as #pos=x,y inside the tag comment. -->
-      <div class="pos-layer" id="posLayer" hidden aria-hidden="true">
-        <div class="pos-cross" id="posCross"></div>
-      </div>
-      <div class="pos-hint" id="posHint" hidden>Click the player · marks where he stands at the start</div>
-      <div class="pos-tools">
-        <button class="pos-btn" id="markPos" type="button">📍 Mark player</button>
-        <button class="pos-btn subtle" id="clearPos" type="button" hidden>clear</button>
-      </div>
       <div class="video-fallback" id="videoFallback" hidden>
         <strong>Clip could not be played</strong>
         <span>Keep the clip file inside <code>media/</code>, same name. Use Edge or Chrome.</span>
@@ -149,20 +138,30 @@
       <div class="seg-len"><strong id="segLen">—</strong><span>duration</span></div>
     </div>
 
-    <p class="keys"><kbd>Space</kbd> play/pause <span class="dot">·</span> <kbd>S</kbd> start <span class="dot">·</span> <kbd>E</kbd> end <span class="dot">·</span> <kbd>P</kbd> mark player <span class="dot">·</span> <kbd>←</kbd><kbd>→</kbd> frame <span class="dot">·</span> <kbd>Shift</kbd> + arrows 1 s</p>
+    <p class="keys"><kbd>Space</kbd> play/pause <span class="dot">·</span> <kbd>S</kbd> start <span class="dot">·</span> <kbd>E</kbd> end <span class="dot">·</span> <kbd>←</kbd><kbd>→</kbd> frame <span class="dot">·</span> <kbd>Shift</kbd> + arrows 1 s</p>
   </section>
 
-  <section class="card tagform" id="tagForm">
+  <section class="card tagform" id="tagForm" data-mode="player">
     <div class="card-head">
-      <h2 id="formTitle">Tag an action</h2>
+      <h2 id="formTitle">Tag a player</h2>
       <div class="head-actions">
-        <button class="btn ghost drillbox-toggle" id="drillboxToggle" type="button" aria-pressed="false"
-                title="Nominate this tag as the Drillbox example for this topic / age / exercise"><span class="db-dot" aria-hidden="true"></span>Drillbox</button>
+        <div class="mode-switch" id="modeSwitch" role="group" aria-label="Tag type">
+          <button type="button" data-mode="player" aria-pressed="true">Player tag</button>
+          <button type="button" data-mode="drillbox" aria-pressed="false">Drillbox</button>
+        </div>
         <span class="mode" id="modeBadge">New</span>
       </div>
     </div>
 
-    <div class="group">
+    <!-- Two different jobs. Drillbox needs only the window; the player form
+         drops all of its detail fields so nothing has to be filled in. -->
+    <div class="mode-note" id="drillboxNote" hidden>
+      <strong>Drillbox example</strong>
+      <span>Mark one clean window of at least 20 s. No player, no quality ratings, no comment — the clip itself is the example.</span>
+      <span class="mode-len" id="drillboxLen" data-state="idle">—</span>
+    </div>
+
+    <div class="group player-group">
       <label class="group-label" for="playerSearch">Player</label>
       <div class="combo">
         <input id="playerSearch" type="text" placeholder="Search name or player ID…" autocomplete="off" spellcheck="false"
@@ -181,7 +180,7 @@
       <div class="obs" id="obs" role="group" aria-label="Observations"><!-- one row per clip focus point, built by the app --></div>
     </div>
 
-    <div class="group grow">
+    <div class="group grow comment-group">
       <label class="group-label" for="comment">Comment <span class="optional">optional</span></label>
       <textarea id="comment" rows="2" maxlength="500" placeholder="What did you see? Keep it factual."></textarea>
       <div class="counter"><span id="commentCount">0</span>/500</div>
@@ -229,7 +228,7 @@
       </table>
       <div class="empty" id="emptyState">
         <strong>No tags yet</strong>
-        <span>Set a start and end marker, pick a player, rate the focus points, then save.</span>
+        <span>Choose Player tag or Drillbox, then set start and end. Drillbox needs only a 20 s window.</span>
       </div>
     </div>
     <div class="store-note">
@@ -243,10 +242,10 @@
     <details>
       <summary>Quick start</summary>
       <ol>
-        <li><span class="num">1</span><span>Choose the reviewer name.</span></li>
+        <li><span class="num">1</span><span>Choose the reviewer name and a mode: <strong>Player tag</strong> or <strong>Drillbox</strong>.</span></li>
         <li><span class="num">2</span><span>Mark start (<kbd>S</kbd>) and end (<kbd>E</kbd>).</span></li>
-        <li><span class="num">3</span><span>Pick a player, or <em>Unknown player</em>.</span></li>
-        <li><span class="num">4</span><span>Rate the focus points, then save.</span></li>
+        <li><span class="num">3</span><span><strong>Drillbox:</strong> just a 20 s+ window — no player, ratings or comment. Save it.</span></li>
+        <li><span class="num">4</span><span><strong>Player tag:</strong> pick a player, rate the focus points, add a comment, then save.</span></li>
         <li><span class="num">5</span><span>Replay, then export for the overview.</span></li>
       </ol>
       <p class="guardrail">Manual observation only — no automatic judgments, scores or training use. Unknown identity is allowed; never guess.</p>
@@ -257,12 +256,12 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261126-pos1"></script>
-<script src="data/weeks.js?v=20261126-pos1"></script>
-<script src="data/w13-data.js?v=20261126-pos1"></script>
-<script src="data/reviewers.js?v=20261126-pos1"></script>
-<script src="assets/core.js?v=20261126-pos1"></script>
-<script src="assets/app.js?v=20261126-pos1"></script>
-<script src="assets/mobile.js?v=20261126-pos1"></script>
+<script src="data/pilot-data.js?v=20261126-modes1"></script>
+<script src="data/weeks.js?v=20261126-modes1"></script>
+<script src="data/w13-data.js?v=20261126-modes1"></script>
+<script src="data/reviewers.js?v=20261126-modes1"></script>
+<script src="assets/core.js?v=20261126-modes1"></script>
+<script src="assets/app.js?v=20261126-modes1"></script>
+<script src="assets/mobile.js?v=20261126-modes1"></script>
 </body>
 </html>

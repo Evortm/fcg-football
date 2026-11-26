@@ -208,45 +208,6 @@ kbd {
 }
 .video-badge code { color: var(--fcg-text); font-size: 12px; }
 
-/* Player position marker: one click in the frame at t_start, never a separate
-   column. The ring is a visual aid only; #pos=x,y is kept in the tag comment. */
-.pos-tools {
-  position: absolute; right: 10px; top: 10px; z-index: 3;
-  display: flex; gap: 6px;
-}
-.pos-btn {
-  padding: 5px 10px; border-radius: 6px;
-  border: 1px solid var(--fcg-border-strong);
-  background: rgba(6, 40, 43, .86); color: var(--fcg-text);
-  font-size: 11.5px; font-weight: 700; cursor: pointer;
-  backdrop-filter: blur(3px);
-}
-.pos-btn:hover { border-color: var(--fcg-accent); }
-.pos-btn.subtle { font-weight: 400; opacity: .8; }
-.pos-btn.active { background: var(--fcg-accent); color: var(--fcg-accent-ink); border-color: var(--fcg-accent); }
-.pos-hint {
-  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
-  z-index: 3; padding: 6px 13px; border-radius: 20px;
-  background: rgba(144, 191, 29, .95); color: #06282b;
-  font-size: 12px; font-weight: 700; white-space: nowrap; pointer-events: none;
-}
-.pos-layer { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
-.pos-cross {
-  position: absolute; width: 76px; height: 76px; margin: -38px 0 0 -38px;
-  border: 3px solid var(--fcg-accent); border-radius: 50%;
-  box-shadow: 0 0 0 3px rgba(6, 40, 43, .55), 0 0 24px rgba(144, 191, 29, .6);
-  opacity: .4; transition: left .12s, top .12s, opacity .12s;
-}
-.pos-cross.placed { opacity: 1; }
-.pos-cross::after {
-  content: ""; position: absolute; left: 50%; top: 50%;
-  width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px;
-  border-radius: 50%; background: #ffed00;
-}
-.video-shell.marking video { cursor: crosshair; }
-.video-shell.marking { outline: 2px solid var(--fcg-accent); outline-offset: -2px; }
-.pos-pin { margin-left: 6px; font-size: 12px; opacity: .85; }
-
 .timeline-wrap { margin-top: 16px; }
 .timeline { position: relative; height: 28px; cursor: pointer; touch-action: none; }
 .timeline:focus-visible { outline-offset: 3px; border-radius: 6px; }
@@ -589,24 +550,64 @@ textarea:hover { border-color: var(--fcg-border-strong); }
   font-size: 13px; font-weight: 600; color: var(--fcg-text-muted);
 }
 .confirm button[aria-pressed="true"] { background: var(--fcg-hover); color: var(--fcg-text); border: 1px solid var(--fcg-border-strong); padding: 5px 11px; }
-/* Drillbox nomination: a compact pill in the card head, so the approved
-   single balanced action row and the equal-height cards stay untouched. */
+/* Two mutually exclusive tag types in the card head. The selected one gets
+   the lime fill; the other stays a quiet surface. */
 .head-actions { display: flex; align-items: center; gap: 8px; }
-.drillbox-toggle {
-  min-height: 0; height: 28px; padding: 0 10px;
-  font-size: 12px; white-space: nowrap;
+.mode-switch {
+  display: inline-flex; border: 1px solid var(--fcg-border-strong);
+  border-radius: var(--fcg-radius-control); overflow: hidden;
 }
-.drillbox-toggle .db-dot {
-  width: 8px; height: 8px; flex: none; border-radius: 50%;
-  border: 1px solid var(--fcg-border-strong); background: transparent;
+.mode-switch button {
+  min-height: 0; height: 28px; padding: 0 12px;
+  border: 0; border-right: 1px solid var(--fcg-border-strong);
+  background: var(--fcg-bg); color: var(--fcg-text-secondary);
+  font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer;
 }
-.drillbox-toggle[aria-pressed="true"] {
-  background: rgba(144, 231, 1, .14);
-  border-color: var(--fcg-accent); color: var(--fcg-accent);
+.mode-switch button:last-child { border-right: 0; }
+.mode-switch button:hover { color: var(--fcg-text); background: var(--fcg-hover); }
+.mode-switch button[aria-pressed="true"] {
+  background: var(--fcg-accent); color: var(--fcg-accent-ink);
 }
-.drillbox-toggle[aria-pressed="true"] .db-dot {
-  background: var(--fcg-accent); border-color: var(--fcg-accent);
+.mode-switch button[aria-pressed="true"]:hover { background: var(--fcg-accent-hover); }
+
+/* Drillbox mode is deliberately almost empty: hide every field that belongs
+   to an individual player. The 18-column export is unchanged either way. */
+/* The hidden mode-note sits between card-head and the first group, so the
+   old `.card-head + .group` rule no longer matches. Keep the tight spacing. */
+#tagForm .player-group { margin-top: 0; }
+#tagForm[data-mode="drillbox"] .player-group,
+#tagForm[data-mode="drillbox"] .obs-group,
+#tagForm[data-mode="drillbox"] .comment-group,
+#tagForm[data-mode="drillbox"] .same-time { display: none !important; }
+#tagForm[data-mode="drillbox"] .context { margin-top: 4px; }
+#tagForm[data-mode="drillbox"] .form-footer { margin-top: 12px; }
+.mode-note {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px;
+  margin-top: 14px; padding: 12px 14px;
+  border: 1px solid var(--fcg-border); border-left: 3px solid var(--fcg-accent);
+  border-radius: var(--fcg-radius-control); background: var(--fcg-surface);
+  font-size: 13px; color: var(--fcg-text-secondary);
 }
+.mode-note strong { color: var(--fcg-accent); font-size: 13.5px; }
+.mode-note > span:not(.mode-len) { flex: 1 1 320px; line-height: 1.45; }
+.mode-len {
+  font-variant-numeric: tabular-nums; font-weight: 700; font-size: 15px;
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--fcg-hover); color: var(--fcg-text-secondary);
+  border: 1px solid var(--fcg-border);
+}
+.mode-len[data-state="ok"] {
+  background: rgba(144, 231, 1, .14); color: var(--fcg-accent);
+  border-color: var(--fcg-accent);
+}
+.mode-len[data-state="short"] { color: var(--fcg-status-warn); border-color: var(--fcg-status-warn-line); }
+.type-chip {
+  display: inline-block; margin-top: 4px; padding: 2px 7px;
+  border-radius: 999px; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .03em; border: 1px solid var(--fcg-accent);
+  color: var(--fcg-accent); background: rgba(144, 231, 1, .12);
+}
+.type-chip.legacy { border-color: var(--fcg-status-warn-line); color: var(--fcg-status-warn); background: var(--fcg-status-warn-surface); }
 .act.drillbox-on {
   color: var(--fcg-accent); border-color: var(--fcg-accent);
   background: rgba(144, 231, 1, .12);
