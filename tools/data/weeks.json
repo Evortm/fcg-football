@@ -5,6 +5,9 @@
   "report_title": "FCG Fall 2026 - internal training report",
   "video_height": 540,
   "video_crf": 26,
+  "weiyun_root_by_topic": {
+    "D1": "1b0a7d04186ef3088f9a3d6bf4330527"
+  },
   "teams": {
     "U15-G": {"stem": "U15", "age": "U15", "variant": "G", "group": "MU"},
     "U12-G": {"stem": "U12", "age": "U12", "variant": "G", "group": "RSB"},
@@ -39,7 +42,10 @@
       "media_dir": "w13",
       "clip_name": "W13-D1-{drill}-{stem}-MON.mp4",
       "roster_note": "GROUP is leading: rosterIds = every pilot-roster player whose group equals the Video board group, across all registered teams of that group. W13 List tab 1-MON-JX-17:00--18:35 CEL (Henry 包, Lewis, Henrik, Jacky, Steven) is now covered automatically - no per-week guest list needed. roster_additions is only for kids who trained with a DIFFERENT group that day.",
-      "id_day_note": "MON in the W13 clip IDs/filenames is a pinned legacy slug (all original takes lived in D1-W13/MON). Real shoot day is clip.shotDay / clip.window / clip.phaseLabel. IDs are kept stable so saved tags never orphan."
+      "id_day_note": "MON in the W13 clip IDs/filenames is a pinned legacy slug (all original takes lived in D1-W13/MON). Real shoot day is clip.shotDay / clip.window / clip.phaseLabel. IDs are kept stable so saved tags never orphan.",
+      "weiyun_dir_key": "1b0a7d047abb5de6f58ae402e48d9816",
+      "weiyun_parent_dir_key": "1b0a7d04186ef3088f9a3d6bf4330527",
+      "weiyun_note": "Track 3 (non-#drillbox player moments + U11-G week overview) lives in Weiyun D1/W13. Never publish these under the website repo. Folder share: https://share.weiyun.com/lp6dcmoC"
     },
     "W14": {"state": "planned", "title": "W14-2026Fall", "queue": "TAG W14", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w14", "clip_name": "W14-{topic}-{drill}-{stem}-{day}.mp4"},
     "W15": {"state": "planned", "title": "W15-2026Fall", "queue": "TAG W15", "topic": null, "topic_code": null, "day_tag": null, "week_folder": null, "media_dir": "w15", "clip_name": "W15-{topic}-{drill}-{stem}-{day}.mp4"},

@@ -6,6 +6,9 @@ The chain (process point 2: PASS -> tagging):
     status      read-only snapshot of the week
     tags        pull the week workbook Tags tab into tools/data/wNN-tags-tab.csv
                 (the input for build_drillbox.py --tags: #drillbox opt-ins only)
+    moments     render EVERY tagged moment + a team week overview (Track 3),
+                upload the non-#drillbox ones to WEIYUN (never the website),
+                then link them from the Tags tab (columns S, T, U)
     focus       extract the 4 standard focus points per age from the week
                 workbook FP tab -> tools/data/wNN-focus.json
     data        refresh tagging/data/wNN-data.js from the LIVE Video board
@@ -34,6 +37,9 @@ Rules encoded here (agreed with Easy, Nov 2026):
   * Focus points come from the WEEK workbook (FP tab, current-topic column),
     never from the generic observe lines in a topic file. Every clip of a team
     gets the SAME standard four (PA / OB / TW / AE) for its board objective age.
+  * Track 2 (#drillbox opt-ins) is the ONLY tagged footage on GitHub Pages.
+    Track 3 player moments + the team week overview go to WEIYUN, never to the
+    website repo. `moments` renders outside the repo and uploads from staging.
 """
 import argparse
 import base64
@@ -918,6 +924,108 @@ def cmd_tags(cfg, week, args):
     return out
 
 
+def team_of(video_id):
+    m = re.search(r"-U(\d+)([A-Z])-", video_id or "")
+    return "U%d-%s" % (int(m.group(1)), m.group(2)) if m else ""
+
+
+def cmd_moments(cfg, week, args):
+    """Track 3 -> WEIYUN. Player-tagged moments are NEVER published on Pages.
+
+    Chain: refresh Tags tab -> render every moment + team overview outside the
+    repo -> stage readable filenames -> upload non-#drillbox clips to Weiyun ->
+    write Weiyun share links into Tags S/T (and the folder link in U).
+    #drillbox rows keep their website Drillbox link; they are not Track 3.
+    """
+    w = resolve_week(cfg, week)
+    tags_csv = cmd_tags(cfg, week, args)
+    links_path = TOOLS_DATA / ("%s-weiyun-links.json" % week.lower())
+
+    if not getattr(args, "links_only", False):
+        track3_root = Path(cfg.get("track3_root") or (REPO.parent / "track3-staging"))
+        build = [sys.executable, str(REPO / "tools" / "build_tag_moments.py"),
+                 "--week", week, "--tags", str(tags_csv),
+                 "--data", str(TAG_DATA / ("%s-data.js" % week.lower())),
+                 "--source", str(Path(cfg["source_root"]) / "CURRENT"),
+                 "--overview", args.overview, "--out", str(track3_root / "rendered")]
+        if args.dry_run:
+            build.append("--dry-run")
+        elif getattr(args, "stage_only", False):
+            build.append("--stage-only")
+        print("MOMENTS %s -> %s" % (week, " ".join(build[1:])))
+        subprocess.run(build, check=True)
+        if args.dry_run:
+            return
+        up = [sys.executable, str(REPO / "tools" / "upload_moments_weiyun.py"),
+              "--week", week]
+        if w.get("weiyun_dir_key"):
+            up += ["--dir-key", w["weiyun_dir_key"]]
+        parent = (w.get("weiyun_parent_dir_key") or
+                  cfg.get("weiyun_root_by_topic", {}).get(w.get("topic") or "", ""))
+        if parent:
+            up += ["--parent-dir-key", parent]
+        print("UPLOAD %s -> Weiyun" % week)
+        subprocess.run(up, check=True)
+
+    links = json.loads(links_path.read_text(encoding="utf-8"))
+    base = "https://" + (REPO / "CNAME").read_text(encoding="utf-8").strip()
+    db_by_tag = {}
+    db_path = REPO / "drillbox-videos" / "manifest.json"
+    if db_path.exists():
+        for e in json.loads(db_path.read_text(encoding="utf-8")).get("entries", {}).values():
+            if e.get("tag") and e.get("url"):
+                db_by_tag[e["tag"]] = e["url"]
+    meta = {}
+    with open(tags_csv, encoding="utf-8-sig", newline="") as f:
+        for r in csv.DictReader(f):
+            eid = (r.get("event_id") or "").strip()
+            if eid:
+                meta[eid] = {"drillbox": bool(re.search(r"(^|\s)#drillbox\b",
+                                                        r.get("comment") or "", re.I)),
+                             "video_id": r.get("video_id") or ""}
+    cells = grid(w["file_id"], w["tags"], 0, 200, 0, 20, raw=True)
+    rows = [(r, c.get(0, "").strip()) for r, c in sorted(cells.items())
+            if r > 0 and c.get(0, "").strip()]
+
+    def put(row, col, text, url=""):
+        p = {"file_id": w["file_id"], "sheet_id": w["tags"],
+             "row": row, "col": col}
+        try:
+            call("clear_link", dict(p))
+        except RuntimeError as e:
+            # clear_link fails harmlessly when the cell has no link yet.
+            if "not link type" not in str(e) and "cell is empty" not in str(e):
+                raise
+        call("set_cell_value", dict(p, value_type="STRING", string_value=text))
+        if url:
+            call("set_link", dict(p, url=url))
+
+    folder = links.get("folder_share_url", "")
+    ov = links.get("overview") or {}
+    put(0, 18, "clip (Weiyun / Drillbox)")
+    put(0, 19, "week overview (Weiyun)")
+    put(0, 20, "all %s clips (Weiyun)" % week, folder)
+    weiyun_links = db_links = ov_links = 0
+    for row, event_id in rows:
+        rec = (links.get("files") or {}).get(event_id) or {}
+        m = meta.get(event_id, {})
+        if rec.get("share_url"):
+            put(row, 18, "☁ Weiyun", rec["share_url"])
+            weiyun_links += 1
+        elif m.get("drillbox") and db_by_tag.get(event_id):
+            put(row, 18, "▶ Drillbox", base + db_by_tag[event_id])
+            db_links += 1
+        else:
+            put(row, 18, "", "")
+        if ov.get("share_url") and team_of(m.get("video_id")) == args.overview:
+            put(row, 19, "%s overview ☁" % args.overview, ov["share_url"])
+            ov_links += 1
+        else:
+            put(row, 19, "", "")
+    print("MOMENTS %s | %d Weiyun clips + %d Drillbox links + %d overview links"
+          " | folder %s" % (week, weiyun_links, db_links, ov_links, folder or "-"))
+
+
 # --------------------------------------------------------------------------
 def cmd_status(cfg, week, args):
     w = resolve_week(cfg, week)
@@ -940,8 +1048,14 @@ def cmd_status(cfg, week, args):
 def main():
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["weeks", "status", "tags", "focus", "data",
-                                        "clean", "restore", "queue", "report", "all"])
+    ap.add_argument("command", choices=["weeks", "status", "tags", "moments", "focus",
+                                        "data", "clean", "restore", "queue", "report", "all"])
+    ap.add_argument("--overview", default="U11-G",
+                    help="moments: team to build the meeting overview for")
+    ap.add_argument("--links-only", action="store_true",
+                    help="moments: only rewrite the Tags tab links (no render/upload)")
+    ap.add_argument("--stage-only", action="store_true",
+                    help="moments: stage already-rendered clips for Weiyun")
     ap.add_argument("--week", default="W13")
     ap.add_argument("--topic", help="override topic, e.g. D2 (for a new week)")
     ap.add_argument("--topic-file", help="tools/data/<topic>-data.json")
@@ -968,6 +1082,8 @@ def main():
             cmd_status(cfg, args.week, args)
         elif args.command == "tags":
             cmd_tags(cfg, args.week, args)
+        elif args.command == "moments":
+            cmd_moments(cfg, args.week, args)
         elif args.command == "focus":
             cmd_focus(cfg, args.week, args)
         elif args.command == "data":

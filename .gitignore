@@ -3,3 +3,12 @@ tagging/data/*.js.bak
 tools/data/*-media.json
 __pycache__/
 *.pyc
+
+# Track 3 player moments are Weiyun-only - NEVER publish them on GitHub Pages.
+# Rendered output lives outside the repo in <repo>/../track3-staging/.
+tagged-videos/
+_*.png
+
+# Weiyun share links + local staging paths are private (player footage).
+tools/data/*-weiyun-links.json
+tools/data/*-weiyun-staging.json
