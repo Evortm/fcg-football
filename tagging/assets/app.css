@@ -44,12 +44,16 @@ button:disabled, input:disabled, select:disabled { opacity: .5; cursor: not-allo
 
 .reviewer-field { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .reviewer-field label { font-size: 12.5px; color: var(--fcg-text-secondary); font-weight: 600; }
-.reviewer-field input {
+.reviewer-field input, .reviewer-field select {
   width: 180px; height: var(--fcg-control-height); padding: 0 12px;
   border: 1px solid var(--fcg-border); border-radius: var(--fcg-radius-control);
   background: var(--fcg-surface); color: var(--fcg-text); font-size: 14px;
 }
-.reviewer-field input:hover { border-color: var(--fcg-border-strong); }
+.reviewer-field select {
+  padding-right: 8px; cursor: pointer;
+  font-weight: 600;
+}
+.reviewer-field input:hover, .reviewer-field select:hover { border-color: var(--fcg-border-strong); }
 
 /* Week selector: one dataset per week, loaded by ?week= on reload. */
 .week-field { display: flex; align-items: center; gap: 8px; min-width: 0; }
@@ -312,6 +316,52 @@ kbd {
 }
 .keys { margin: 16px 0 0; font-size: 14px; color: var(--fcg-text-muted); line-height: 1.6; }
 .keys kbd { font-size: 12.5px; }
+
+/* Live 20 s segment timer. The old .segment readout stays hidden; this strip
+   is the visible counterpart and is state-coloured from app.js. */
+.seg-timer {
+  margin-top: 12px; padding: 12px 14px 14px;
+  border: 1px solid var(--fcg-border); border-radius: var(--fcg-radius-card);
+  background: var(--fcg-surface-raised);
+}
+.timer-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 10px; flex-wrap: wrap;
+  font-size: 12.5px; color: var(--fcg-text-secondary);
+}
+.timer-label { font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+.timer-goal { color: var(--fcg-text-muted); }
+.timer-goal strong { color: var(--fcg-text); font-family: var(--fcg-mono); }
+.timer-readout {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  margin: 4px 0 10px;
+}
+.timer-readout strong {
+  font-family: var(--fcg-mono); font-size: 34px; line-height: 1.15;
+  font-variant-numeric: tabular-nums; color: var(--fcg-text);
+}
+.timer-readout span { font-size: 13.5px; color: var(--fcg-text-secondary); }
+.timer-track {
+  height: 8px; border-radius: 99px; overflow: hidden;
+  background: var(--fcg-surface); border: 1px solid var(--fcg-line-subtle);
+}
+.timer-track i {
+  display: block; width: 0; height: 100%;
+  background: var(--fcg-accent); transition: width .12s linear;
+}
+.timer-snap { margin-top: 10px; }
+.seg-timer[data-state="running"] .timer-readout strong { color: var(--fcg-status-warn); }
+.seg-timer[data-state="running"] .timer-track i { background: var(--fcg-status-warn); }
+.seg-timer[data-state="ready"] .timer-readout strong,
+.seg-timer[data-state="ok"] .timer-readout strong { color: var(--fcg-status-good); }
+.seg-timer[data-state="ready"] .timer-track i,
+.seg-timer[data-state="ok"] .timer-track i { background: var(--fcg-status-good); }
+.seg-timer[data-state="ready"], .seg-timer[data-state="ok"] {
+  border-color: var(--fcg-status-good-line);
+}
+.seg-timer[data-state="short"] { border-color: var(--fcg-danger-line); }
+.seg-timer[data-state="short"] .timer-readout strong { color: var(--fcg-danger); }
+.seg-timer[data-state="short"] .timer-track i { background: var(--fcg-danger); }
 
 /* Desktop mirrors the phone's seek row: −5s · Set start · Play · Set end · +5s.
    The time readout and frame-stepping buttons sit on a second line, so both
@@ -691,7 +741,7 @@ tbody tr.editing { background: var(--fcg-status-warn-surface); }
 /* The supplied #456579 hairline is 2.38:1 on the card surface. Interactive
    boundaries use the supplied stronger border (#58778C, 3.11:1) instead;
    #456579 stays on decorative separators, cards and table rules. */
-.reviewer-field input, .video-chip, .clip-select-wrap select,
+.reviewer-field input, .reviewer-field select, .video-chip, .clip-select-wrap select,
 .combo input, textarea, .events-tools input, .btn.ghost,
 .rate, .act, .badge, .combo-clear, .confirm {
   border-color: var(--fcg-border-strong);
@@ -705,7 +755,7 @@ tbody tr.editing { background: var(--fcg-status-warn-surface); }
   .topbar { flex-wrap: wrap; padding: 12px 16px; gap: 12px; }
   .top-actions { width: 100%; justify-content: space-between; }
   .reviewer-field { flex: 1; }
-  .reviewer-field input { width: 100%; }
+  .reviewer-field input, .reviewer-field select { width: 100%; }
   /* No horizontal table scroll at tablet widths; columns wrap instead. */
   table { min-width: 0; }
   .events-tools input { width: 150px; }

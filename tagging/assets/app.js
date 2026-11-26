@@ -3,6 +3,11 @@
 
   var C = window.FCG;
   var DATA = window.PILOT;
+  /* Canonical reviewer names + the Drillbox minimum live here so the timer,
+     the save guard and the dropdown can never disagree about "20 seconds". */
+  var REVIEWERS = window.FCG_REVIEWERS || [];
+  var REVIEWER_ALIASES = window.FCG_REVIEWER_ALIASES || {};
+  var DRILLBOX_MIN_SECONDS = 20;
   var WEEKS = window.FCG_WEEKS || {
     defaultWeek: "W11",
     weeks: [{ id: "W11", short: "W11 · A7", label: "W11 · A7 (pilot)", topic: "A7" }]
@@ -77,6 +82,12 @@
     segEndSource: $("#segEndSource"),
     segLen: $("#segLen"),
     reviewer: $("#reviewer"),
+    reviewerOther: $("#reviewerOther"),
+    segTimer: $("#segTimer"),
+    timerValue: $("#timerValue"),
+    timerHint: $("#timerHint"),
+    timerFill: $("#timerFill"),
+    setEnd20: $("#setEnd20"),
     playerSearch: $("#playerSearch"),
     playerList: $("#playerList"),
     clearPlayer: $("#clearPlayer"),
@@ -197,6 +208,57 @@
 
   function maxClip() {
     return state.duration || V.duration || 0;
+  }
+
+  /* ---------------------------------------------------- reviewer dropdown
+     A fixed list keeps "Johan" from becoming "johan" / "Jonah" in the Tags
+     tab. "Other name…" stays as a guarded escape hatch for guest reviewers. */
+  function canonicalReviewer(name) {
+    var n = String(name || "").trim();
+    if (!n) return "";
+    var hit = REVIEWERS.filter(function (r) {
+      return r.toLowerCase() === n.toLowerCase();
+    })[0];
+    return hit || REVIEWER_ALIASES[n.toLowerCase()] || "";
+  }
+
+  function currentReviewer() {
+    if (el.reviewer.value === "__other__") return el.reviewerOther.value.trim();
+    return canonicalReviewer(el.reviewer.value);
+  }
+
+  function syncReviewerField(persist) {
+    var other = el.reviewer.value === "__other__";
+    el.reviewerOther.hidden = !other;
+    if (other && persist) el.reviewerOther.focus();
+    if (persist) {
+      store.reviewer = currentReviewer();
+      saveStore();
+    }
+  }
+
+  function initReviewer() {
+    var sel = el.reviewer;
+    $$("option[data-canonical]", sel).forEach(function (o) { o.remove(); });
+    var other = sel.querySelector('option[value="__other__"]');
+    REVIEWERS.forEach(function (name) {
+      var opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      opt.dataset.canonical = "1";
+      if (other) sel.insertBefore(opt, other);
+      else sel.appendChild(opt);
+    });
+    var saved = canonicalReviewer(store.reviewer);
+    if (saved) {
+      sel.value = saved;
+    } else if (String(store.reviewer || "").trim()) {
+      sel.value = "__other__";
+      el.reviewerOther.value = String(store.reviewer).trim();
+    } else {
+      sel.value = "";
+    }
+    syncReviewerField(false);
   }
 
   function segmentOf(fileTime) {
@@ -441,6 +503,8 @@
       state.replayStop = null;
       el.video.pause();
     }
+    /* Live stopwatch: only while a start marker exists and no end is stamped. */
+    if (state.start !== null && state.end === null) renderTimer();
   }
 
   function setPlayIcon() {
@@ -537,6 +601,57 @@
     } else {
       el.tlRegion.classList.remove("on");
     }
+    renderTimer();
+  }
+
+  /* -------------------------------------------------- 20 s segment timer
+     A live stopwatch from the start marker to the playhead, so nobody has to
+     subtract timestamps to know whether a Drillbox example is long enough.
+     Once the end marker is set the readout freezes on the final length. */
+  function renderTimer() {
+    if (!el.segTimer) return;
+    var goal = DRILLBOX_MIN_SECONDS;
+    var fixed = state.end !== null;
+    var len = null;
+    if (state.start !== null) {
+      var to = fixed ? state.end : Math.max(state.start, clipNow());
+      len = Math.max(0, C.round3(to - state.start));
+    }
+    var mode = "idle";
+    if (len === null) {
+      el.timerValue.textContent = "0.0 s";
+      el.timerHint.textContent = "Set a start marker to begin.";
+    } else if (!fixed) {
+      mode = len >= goal ? "ready" : "running";
+      el.timerValue.textContent = len.toFixed(1) + " s";
+      el.timerHint.textContent = mode === "ready"
+        ? goal.toFixed(0) + " s reached — press E to set the end."
+        : (goal - len).toFixed(1) + " s to go until " + goal.toFixed(0) + " s.";
+    } else {
+      mode = len >= goal ? "ok" : "short";
+      el.timerValue.textContent = len.toFixed(1) + " s";
+      el.timerHint.textContent = mode === "ok"
+        ? "Long enough for a Drillbox example ✓"
+        : (goal - len).toFixed(1) + " s short for Drillbox — move the end marker.";
+    }
+    el.segTimer.dataset.state = mode;
+    el.timerFill.style.width = (len === null ? 0 : Math.min(100, len / goal * 100)) + "%";
+    /* Only offer the one-click snap when 20 s actually fits in this clip. */
+    el.setEnd20.hidden = !(state.start !== null &&
+      state.start + goal <= maxClip() - 0.05);
+  }
+
+  function setEndAtPlus20() {
+    if (state.start === null) { toast("Set a start marker first.", "bad"); return; }
+    var end = C.round3(state.start + DRILLBOX_MIN_SECONDS);
+    if (end > maxClip() - 0.05) {
+      toast("Not enough clip left for a 20 s example.", "bad");
+      return;
+    }
+    state.end = end;
+    renderSegment();
+    seekTo(end);
+    toast("End marker set at +20.0 s — Drillbox length reached.", "good");
   }
 
   function seekFromPointer(event) {
@@ -722,8 +837,9 @@
   var COMMENT_MAX = 500;
   /* The publisher cuts the tagged segment, so a Drillbox example must be at
      least 20 seconds long (no maximum). Guard the form, the save and the
-     event-row star so a short clip can never be nominated. */
-  var DRILLBOX_MIN_SECONDS = 20;
+     event-row star so a short clip can never be nominated. The live timer in
+     the clip card shows the coach exactly how far the segment has come. */
+  /* DRILLBOX_MIN_SECONDS is declared with the other shared constants above. */
 
   function drillboxLength(start, end) {
     if (start == null || end == null) return NaN;
@@ -738,7 +854,7 @@
       return "Drillbox examples need a start and end marker spanning at least 20 seconds.";
     }
     if (len < DRILLBOX_MIN_SECONDS) {
-      return "Drillbox clip is " + len.toFixed(1) + " s — examples must be at least 20 s. Extend the end marker.";
+      return "Drillbox clip is " + len.toFixed(1) + " s — examples must be at least 20 s. Extend the end marker or use 'Set end at +20 s'.";
     }
     return "";
   }
@@ -893,7 +1009,12 @@
       var drillboxErr = drillboxTimeError(state.start, state.end);
       if (drillboxErr) { showError(drillboxErr); toast(drillboxErr, "bad"); return false; }
     }
-    var reviewer = el.reviewer.value.trim();
+    var reviewer = currentReviewer();
+    if (reviewer.length < 2) {
+      showError("Choose a reviewer from the list, or pick 'Other name…' and type it.");
+      el.reviewer.focus();
+      return false;
+    }
     var existing = state.editing
       ? store.events.filter(function (ev) { return ev.event_id === state.editing; })[0]
       : null;
@@ -1301,8 +1422,7 @@
     state.remoteTried = null;
     el.video.src = V.file;
 
-    el.reviewer.value = store.reviewer || "";
-    if (store.reviewer) el.reviewer.dataset.saved = "1";
+    initReviewer();
     setPlayerHint(rosterHint(), false);
 
     el.video.addEventListener("loadedmetadata", onMeta);
@@ -1340,6 +1460,7 @@
 
     el.setStart.addEventListener("click", setStartAtPlayhead);
     el.setEnd.addEventListener("click", setEndAtPlayhead);
+    el.setEnd20.addEventListener("click", setEndAtPlus20);
     $$("[data-mark]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         if (btn.dataset.mark === "start") setStartAtPlayhead();
@@ -1360,10 +1481,8 @@
       if (ev.key === "ArrowRight") { ev.preventDefault(); step(1 / 30); }
     });
 
-    el.reviewer.addEventListener("input", function () {
-      store.reviewer = el.reviewer.value.trim();
-      saveStore();
-    });
+    el.reviewer.addEventListener("change", function () { syncReviewerField(true); });
+    el.reviewerOther.addEventListener("input", function () { syncReviewerField(true); });
 
     el.playerSearch.addEventListener("focus", openCombo);
     el.playerSearch.addEventListener("click", openCombo);

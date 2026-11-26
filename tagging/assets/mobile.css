@@ -26,12 +26,12 @@ body{font-size:15px}
 .phone-settings:not([open])>.phone-settings-panel{display:none}
 .compact-phone .top-actions{display:flex;flex-wrap:wrap;width:100%;gap:8px}
 .compact-phone .video-chip{display:inline-flex!important;max-width:100%}
-.compact-phone .reviewer-field{flex:1 1 100%;min-width:0}
+.compact-phone .reviewer-field{flex:1 1 100%;min-width:0;flex-wrap:wrap}
 .compact-phone .week-field{flex:0 0 auto;min-width:0;display:flex;align-items:center;gap:4px}
 .compact-phone .week-field label{font-size:12.5px;flex:0 0 auto}
 .compact-phone .week-field select{width:auto;min-width:0;max-width:150px;height:44px;font-size:14px}
 .compact-phone .reviewer-field label{font-size:12.5px}
-.compact-phone .reviewer-field input{width:100%;font-size:16px}
+.compact-phone .reviewer-field input,.compact-phone .reviewer-field select{width:100%;font-size:16px}
 .compact-phone .help{display:block;margin-top:12px;padding:0;border:0;background:transparent}
 .compact-phone .help summary{font-size:15px}
 .compact-phone .help ol{grid-template-columns:1fr;gap:8px;margin-top:8px}
@@ -59,6 +59,12 @@ body{font-size:15px}
 .transport-buttons>button,.transport-buttons>.speed{height:44px;min-height:44px;flex:1;max-width:96px;font-size:14px}
 .marker-actions{display:flex;width:100%;gap:8px}
 .marker-actions>button{flex:1;min-width:0;min-height:44px;padding:5px;font-size:14px;font-variant-numeric:tabular-nums}
+/* Keep the 20 s timer readable in the compact phone frame. */
+.compact-phone .seg-timer{padding:10px 12px;margin-top:8px;border-radius:10px}
+.compact-phone .timer-top{font-size:11.5px}
+.compact-phone .timer-readout strong{font-size:28px}
+.compact-phone .timer-readout span{font-size:12.5px}
+.compact-phone .timer-snap{width:100%}
 .compact-phone .keys{display:none!important}
 kbd{display:none}
 .tagform>.card-head{padding:4px 0;min-height:0}

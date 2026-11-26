@@ -6,14 +6,14 @@
 <title>FCG · W13 D1 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261124-dbmin20">
-<link rel="stylesheet" href="assets/app.css?v=20261124-dbmin20">
-<link rel="stylesheet" href="assets/mobile.css?v=20261124-dbmin20">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-timer1">
+<link rel="stylesheet" href="assets/app.css?v=20261126-timer1">
+<link rel="stylesheet" href="assets/mobile.css?v=20261126-timer1">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261124-dbmin20" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261126-timer1" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
@@ -26,7 +26,12 @@
     </div>
     <div class="reviewer-field">
       <label for="reviewer">Reviewer</label>
-      <input id="reviewer" type="text" placeholder="Reviewer name or coach code" autocomplete="off" maxlength="40" spellcheck="false">
+      <select id="reviewer" aria-label="Reviewer name">
+        <option value="">Select reviewer…</option>
+        <option value="__other__">Other name…</option>
+      </select>
+      <input id="reviewerOther" type="text" placeholder="Type your name" aria-label="Other reviewer name"
+             autocomplete="off" maxlength="40" spellcheck="false" hidden>
     </div>
     <button class="video-chip" id="videoChip" title="Copy video ID" type="button">
       <span>Video</span><code id="videoIdLabel">—</code>
@@ -106,6 +111,22 @@
         <button class="btn small" id="setEnd" type="button">Set end <kbd>E</kbd></button>
         <button class="icon-btn phone-second" id="secondForward" type="button" title="Forward five seconds" aria-label="Forward five seconds">+5s</button>
       </div>
+    </div>
+
+    <!-- Live segment timer. The hidden .segment box below still holds the
+         start/end readouts for mobile.js; this strip is what coaches see. -->
+    <div class="seg-timer" id="segTimer" data-state="idle" role="timer" aria-live="off">
+      <div class="timer-top">
+        <span class="timer-label">Segment timer</span>
+        <span class="timer-goal">Drillbox minimum <strong>20.0 s</strong></span>
+      </div>
+      <div class="timer-readout">
+        <strong id="timerValue">0.0 s</strong>
+        <span id="timerHint">Set a start marker to begin.</span>
+      </div>
+      <div class="timer-track" aria-hidden="true"><i id="timerFill"></i></div>
+      <button class="btn small timer-snap" id="setEnd20" type="button" hidden
+              title="Place the end marker exactly 20 seconds after the start marker">Set end at +20 s</button>
     </div>
 
     <div class="segment">
@@ -219,7 +240,7 @@
     <details>
       <summary>Quick start</summary>
       <ol>
-        <li><span class="num">1</span><span>Enter the reviewer name.</span></li>
+        <li><span class="num">1</span><span>Choose the reviewer name.</span></li>
         <li><span class="num">2</span><span>Mark start (<kbd>S</kbd>) and end (<kbd>E</kbd>).</span></li>
         <li><span class="num">3</span><span>Pick a player, or <em>Unknown player</em>.</span></li>
         <li><span class="num">4</span><span>Rate the focus points, then save.</span></li>
@@ -233,11 +254,12 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261124-dbmin20"></script>
-<script src="data/weeks.js?v=20261124-dbmin20"></script>
-<script src="data/w13-data.js?v=20261124-dbmin20"></script>
-<script src="assets/core.js?v=20261124-dbmin20"></script>
-<script src="assets/app.js?v=20261124-dbmin20"></script>
-<script src="assets/mobile.js?v=20261124-dbmin20"></script>
+<script src="data/pilot-data.js?v=20261126-timer1"></script>
+<script src="data/weeks.js?v=20261126-timer1"></script>
+<script src="data/w13-data.js?v=20261126-timer1"></script>
+<script src="data/reviewers.js?v=20261126-timer1"></script>
+<script src="assets/core.js?v=20261126-timer1"></script>
+<script src="assets/app.js?v=20261126-timer1"></script>
+<script src="assets/mobile.js?v=20261126-timer1"></script>
 </body>
 </html>
