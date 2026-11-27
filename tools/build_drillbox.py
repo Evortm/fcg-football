@@ -40,6 +40,10 @@ import imageio_ffmpeg
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from compose_overlay import (draw_plate, resolve_from_csv,  # noqa: E402
                             timeslot_text)
+from compose_drillbox_cards import (card_schedule,  # noqa: E402
+                                    load_config as load_cards_config,
+                                    make_plates as make_card_plates,
+                                    resolve_fields as resolve_card_fields)
 
 REPO = Path(__file__).resolve().parents[1]
 OUT_ROOT = REPO / "drillbox-videos"
@@ -123,6 +127,48 @@ def encode(src, dst, start, seconds, crf, overlay=None, height=540):
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(result.stderr.strip()[-500:] or "ffmpeg failed")
+    return dst
+
+
+def encode_cards(src, dst, start, seconds, crf, plates, height=1080):
+    """Burn a sequence of Track 2 cards, exactly one visible at any moment.
+
+    Each still PNG is a full 1920x1080 transparent layer (crest + header +
+    one lower card). ffmpeg's overlay `enable` expression switches layers at
+    the configured times; gte/lt (not `between`) keeps the boundaries
+    exclusive so two panels can never darken the same frame. A still input
+    repeats its last frame for the whole clip.
+    """
+    width = int(round(height * 16 / 9))
+    cmd = [FFMPEG, "-y", "-hide_banner", "-loglevel", "error"]
+    if start:
+        cmd += ["-ss", str(start)]
+    cmd += ["-i", str(src)]
+    for path, _, _, _ in plates:
+        cmd += ["-i", str(path)]
+    if seconds:
+        # Output option: must come AFTER every -i (see Track 3 rule).
+        cmd += ["-t", str(seconds)]
+    chain = ["[0:v]scale=%d:%d:force_original_aspect_ratio=decrease,"
+             "pad=%d:%d:(ow-iw)/2:(oh-ih)/2,setsar=1[bg]"
+             % (width, height, width, height)]
+    prev = "bg"
+    for i, (_, a, b, _) in enumerate(plates, 1):
+        chain.append("[%d:v]scale=%d:%d[ol%d]" % (i, width, height, i))
+        end = b if b is not None else 1e9
+        expr = "gte(t,%g)*lt(t,%g)" % (a, end)
+        chain.append("[%s][ol%d]overlay=0:0:enable='%s'[v%d]"
+                     % (prev, i, expr, i))
+        prev = "v%d" % i
+    cmd += ["-filter_complex", ";".join(chain),
+            "-map", "[%s]" % prev, "-map", "0:a:0?",
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", str(crf),
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac", "-b:a", "64k", "-ac", "2",
+            "-movflags", "+faststart", str(dst)]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip()[-500:] or "ffmpeg cards failed")
     return dst
 
 
@@ -308,12 +354,23 @@ def main():
     ap.add_argument("--tags", default="",
                     help="Tags-tab CSV/TSV (18-column A-R paste): #drillbox rows become the exact published segments")
     ap.add_argument("--crf", type=int, default=28)
-    ap.add_argument("--height", type=int, default=540, choices=(540, 720, 1080),
-                    help="output height; 1080 keeps overlay text at its designed size")
+    ap.add_argument("--height", type=int, default=None, choices=(540, 720, 1080),
+                    help="output height; cards default to 1080 (their authored size)")
     ap.add_argument("--activation-alias", action="store_true",
                     help="also write activation/video.mp4 alongside ACT/video.mp4")
-    ap.add_argument("--overlay", choices=("none", "library", "coaching"), default="none",
-                    help="burn Track2-OL (library) or Track3-BG (coaching) plate into the video")
+    ap.add_argument("--overlay", choices=("none", "library", "coaching", "cards"),
+                    default="none",
+                    help="none | Track2-OL (library) | Track3-BG (coaching) | new Track 2 cards")
+    ap.add_argument("--cards-config", default="",
+                    help="Track 2 card config JSON (default: tools/data/<topic>-drillbox-cards.json)")
+    ap.add_argument("--switch-at", type=float, default=0,
+                    help="cards: second where OBJECTIVE becomes SUCCESS (default per cell)")
+    ap.add_argument("--successful", type=int, default=-1,
+                    help="cards: VERIFIED successful repetitions (requires --attempts)")
+    ap.add_argument("--attempts", type=int, default=0,
+                    help="cards: number of assessed attempts, enables the RESULT card")
+    ap.add_argument("--result-at", type=float, default=0,
+                    help="cards: second where SUCCESS becomes RESULT (default near the end)")
     ap.add_argument("--overlay-fields", default="",
                     help="JSON file or inline object overriding team/topic/phase/drill/objective/etc.")
     ap.add_argument("--squad", default="",
@@ -326,6 +383,12 @@ def main():
                     help="JSON file/object with per-cell Windows, e.g. {\"U11:D1\": \"17:35--17:40\"}")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    # Track 2 cards are authored at 1920x1080; keep the type at designed size.
+    args.height = args.height or (1080 if args.overlay == "cards" else 540)
+    verified = {}
+    if args.successful >= 0 and args.attempts > 0:
+        verified = {"successful": args.successful, "attempts": args.attempts,
+                    "at": args.result_at or 0}
     args.timeslot_map = load_timeslot_map(args.timeslot_map)
     args.cells_map = load_cells_map(args.cells_map)
     args.tags = load_tags(args.tags) if args.tags else {}
@@ -335,6 +398,17 @@ def main():
         sys.exit("--mid-excerpt must be >= %.0f s" % MIN_SECONDS)
 
     topic = args.topic.upper()
+    cards_cfg = {}
+    if args.overlay == "cards":
+        if args.cards_config:
+            p = Path(args.cards_config)
+            cards_cfg = (json.loads(p.read_text(encoding="utf-8"))
+                         if p.exists() else json.loads(args.cards_config))
+        else:
+            cards_cfg = load_cards_config(topic)
+        print("cards config: %s (%d cells)"
+              % (args.cards_config or "tools/data/%s-drillbox-cards.json" % topic.lower(),
+                 len(cards_cfg.get("cells", {}))))
     phases = tuple(p.strip().upper() for p in args.phases.split(",") if p.strip())
     if not args.source.exists():
         sys.exit("Source folder not found: %s" % args.source)
@@ -373,8 +447,17 @@ def main():
         cell = "%s/%s/%s" % (topic, age, phase)
         dst_dir = OUT_ROOT / topic / age / phase
         dst = dst_dir / "video.mp4"
-        fields = build_fields(topic, age, phase, args) if args.overlay != "none" else None
-        missing = [k for k in ("objective",) if fields and not fields.get(k)]
+        fields = (build_fields(topic, age, phase, args)
+                  if args.overlay not in ("none", "cards") else None)
+        card_fields = None
+        if args.overlay == "cards":
+            card_fields = resolve_card_fields(
+                topic, age, phase, src, args.week, cards_cfg,
+                {"date": args.date or None, "switch_at": args.switch_at or None,
+                 "verified": verified or None})
+        required = ("objective",) if fields else ("objective", "success")
+        missing = [k for k in required
+                   if (fields or card_fields) and not (fields or card_fields).get(k)]
         tag = args.tags.get((age, phase))
         if tag:
             start, seconds = tag["start"], tag["seconds"]
@@ -386,22 +469,38 @@ def main():
         window = "  %.1fs @ %.1fs" % (seconds, start) if seconds else "  full take"
         if tag:
             window += "  [tag %s]" % tag["event_id"]
-        print("  %-14s <- %s" % (cell, src.name)
-              + ("  [%s%s]" % (args.overlay,
-                 " missing " + ",".join(missing) if missing else "") if fields else "")
-              + window)
+        note = ("  [%s%s]" % (args.overlay,
+                " missing " + ",".join(missing) if missing else "")
+                if (fields or card_fields) else "")
+        print("  %-14s <- %s" % (cell, src.name) + note + window)
+        if card_fields:
+            span = seconds or duration_of(src)
+            print("    header: %s · %s  |  %s · %s · %s · %s"
+                  % (card_fields["format"] or "-", card_fields["title"],
+                     card_fields["team"], card_fields["topic"],
+                     card_fields["phase_label"], card_fields["date"]))
+            for label, sentence, a, b in card_schedule(card_fields, span):
+                print("    %-9s %5.1fs -> %-6s  %s"
+                      % (label, a, "end" if b is None else "%.1fs" % b,
+                         sentence[:88]))
         if args.dry_run:
             continue
         if seconds and seconds < MIN_SECONDS:
             print("    SKIP: would be only %.1f s (< %.0f s)" % (seconds, MIN_SECONDS))
             continue
         dst_dir.mkdir(parents=True, exist_ok=True)
-        overlay = None
-        if fields:
-            plate, _, _ = draw_plate(args.overlay, fields)
-            overlay = Path(tmpdir.name) / ("%s-%s-%s.png" % (topic, age, phase))
-            plate.save(overlay)
-        encode(src, dst, start, seconds, args.crf, overlay, args.height)
+        if card_fields:
+            plates = make_card_plates(
+                card_fields, seconds or duration_of(src),
+                Path(tmpdir.name) / ("cards-%s-%s-%s" % (topic, age, phase)))
+            encode_cards(src, dst, start, seconds, args.crf, plates, args.height)
+        else:
+            overlay = None
+            if fields:
+                plate, _, _ = draw_plate(args.overlay, fields)
+                overlay = Path(tmpdir.name) / ("%s-%s-%s.png" % (topic, age, phase))
+                plate.save(overlay)
+            encode(src, dst, start, seconds, args.crf, overlay, args.height)
         seconds, size = duration_of(dst), dst.stat().st_size
         if seconds < MIN_SECONDS:
             dst.unlink(missing_ok=True)
@@ -420,6 +519,11 @@ def main():
         if tag:
             entry["tag"] = tag["event_id"]
             entry["tag_window"] = [tag["t_start"], tag["t_end"]]
+        if card_fields:
+            entry.update({"overlay": "cards",
+                          "filming_date": card_fields["date"],
+                          "card_switch_at": card_schedule(card_fields, seconds)[0][3],
+                          "card_labels": [c[0] for c in card_schedule(card_fields, seconds)]})
         entries["entries"][cell] = entry
         if args.activation_alias and phase == "ACT":
             alias_dir = OUT_ROOT / topic / age / "activation"

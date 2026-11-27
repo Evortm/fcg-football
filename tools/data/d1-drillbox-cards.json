@@ -1,0 +1,33 @@
+{
+  "_comment": "Track 2 Drillbox cards. Wording comes from the supplied drill information: tools/drillbox-w13-pass.json (per-cell objective/success approved for W13) and tools/data/d1-data.json (rev 1280 goal/success/title). Only cells listed here override that data. switch_at is the editorial second where the first clear repetition begins; it is measured from the START OF THE PUBLISHED CLIP, not from the raw take. To show a third RESULT card, add to a cell: \"verified\": {\"successful\": 4, \"attempts\": 6, \"at\": 16.0} - only supply a count that was actually assessed. No season code, week number, timecode or internal ID is ever rendered.",
+  "topic": "D1",
+  "week": "W13",
+  "source": "tools/drillbox-w13-pass.json + tools/data/d1-data.json rev 1280",
+  "default_switch_at": 8.0,
+  "cells": {
+    "U5:ACT":  {"switch_at": 10.0},
+    "U5:D1":   {"switch_at": 7.0, "format": "1v1", "title": "Curved run and press"},
+    "U5:D2":   {"switch_at": 8.0},
+    "U6:ACT":  {"switch_at": 7.0},
+    "U7:ACT":  {"switch_at": 9.0},
+    "U7:D1":   {"switch_at": 20.0},
+    "U7:D2":   {"switch_at": 20.0},
+    "U8:ACT":  {"switch_at": 20.0},
+    "U8:D1":   {"switch_at": 20.0},
+    "U9:ACT":  {"switch_at": 20.0},
+    "U9:D2":   {"switch_at": 20.0, "format": "Game", "title": "Press the goalkeeper build-up"},
+    "U10:ACT": {"switch_at": 20.0},
+    "U10:D1":  {"switch_at": 20.0},
+    "U10:D2":  {"switch_at": 20.0, "format": "Game", "title": "Press the goalkeeper build-up"},
+    "U11:ACT": {"switch_at": 7.0},
+    "U11:D1":  {
+      "switch_at": 8.0,
+      "format": "1v1",
+      "title": "Curved run to press",
+      "objective": "Close down the receiver with a curved run while protecting the mini-goal.",
+      "success": "The defender blocks the direct route to the mini-goal as they close down the receiver."
+    },
+    "U11:D2":  {"switch_at": 20.0, "format": "Game", "title": "Press the goalkeeper build-up"},
+    "U12:D2":  {"switch_at": 20.0, "format": "Game", "title": "Press the goalkeeper build-up"}
+  }
+}
