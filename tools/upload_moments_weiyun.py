@@ -67,6 +67,19 @@ def share(u, url, headers, dir_key, file_id, name):
     return r.get("short_url", "")
 
 
+def delete_file(u, url, headers, dir_key, file_id, name):
+    """Retire a superseded cloud copy (recycle bin, never a hard delete)."""
+    r = u.mcp_call(url, headers, "weiyun.delete",
+                   {"file_list": [{"file_id": file_id, "pdir_key": dir_key}],
+                    "delete_completely": False})
+    if r.get("error"):
+        raise RuntimeError("delete failed for %s: %s" % (name, r["error"]))
+    code = r.get("retcode", r.get("code", 0))
+    if code not in (0, None, "0"):
+        raise RuntimeError("delete failed for %s: %s"
+                           % (name, json.dumps(r, ensure_ascii=False)[:300]))
+
+
 def ensure_week_folder(u, url, headers, parent_dir_key, week):
     """Find or create <topic>/<WEEK> in Weiyun. Returns (dir_key, parent_key)."""
     if not parent_dir_key:
@@ -101,6 +114,8 @@ def main():
                     help="topic folder dir_key; used to find/create <WEEK> and to share the folder")
     ap.add_argument("--staging", default="")
     ap.add_argument("--out", default="")
+    ap.add_argument("--replace", action="store_true",
+                    help="retire cloud copies whose size differs from the new staged file")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     wk = args.week.upper()
@@ -132,6 +147,14 @@ def main():
         if args.dry_run:
             print("  %-42s %8d B  %s" % (name, size, "exists" if found else "UPLOAD"))
             continue
+        if found and found["size"] != size and args.replace and not args.dry_run:
+            print("  retiring superseded %s (cloud %d B != local %d B)" % (
+                name, found["size"], size))
+            delete_file(u, url, headers, dir_key, found["file_id"], name)
+            existing = list_files(u, url, headers, dir_key)
+            found = existing.get(name)
+            if found:
+                print("  NOTE: cloud copy still listed; uploading alongside it")
         if not found or found["size"] != size:
             print("  uploading %s (%.1f MB)" % (name, size / 1048576))
             u.upload_file(str(p), url, headers, pdir_key=dir_key)

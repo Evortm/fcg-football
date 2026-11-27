@@ -250,6 +250,220 @@ def _crest():
     return plate.crop((65, 10, 230, 220))   # FCG shield, transparent surround
 
 
+# --------------------------------------------------------------------------
+# Track 3 feedback caption (Easy, 2026-11-27)
+#
+# Top left    : standalone FCG crest + compact dark-forest panel, lime rule,
+#               player name (bold) and week/topic/team/block (soft).
+# Bottom left : one short English sentence per ASSESSED focus point, aligned
+#               with the top panel. Cannot assess is omitted. A coach comment
+#               is appended only when present. No heading, no timecodes, no
+#               clip/event IDs, no "Player Moment" chip. If there is nothing
+#               to say, the whole lower panel is omitted.
+# --------------------------------------------------------------------------
+PANEL_BG = (6, 40, 43, 214)
+PANEL_RULE = (144, 191, 29, 255)
+ORANGE = (255, 158, 43, 255)
+SOFT_WHITE = (219, 231, 232, 238)
+FOCUS_SECTION = {"PA": "passing", "OB": "without-ball-out",
+                 "TW": "teamwork", "AE": "agility-endurance"}
+OBS_RE = re.compile(r"U(\d+)(PA|OB|TW|AE)\s*=\s*([^;]+)", re.I)
+CREST_ASSET = REPO / "tools" / "overlays" / "FCG-crest.png"
+
+
+def bold_cjk(size):
+    p = Path(r"C:\Windows\Fonts\msyhbd.ttc")
+    return ImageFont.truetype(str(p if p.exists() else FONT_CJK), size, index=0)
+
+
+def latin(size, bold=False):
+    p = Path(r"C:\Windows\Fonts\arialbd.ttf" if bold else r"C:\Windows\Fonts\arial.ttf")
+    return ImageFont.truetype(str(p if p.exists() else FONT_LATIN), size)
+
+
+def crest_asset():
+    """Standalone FCG shield, transparent background (no dark bar behind it)."""
+    if CREST_ASSET.exists():
+        return Image.open(CREST_ASSET).convert("RGBA")
+    plate = _plate()
+    if plate is None:
+        return None
+    px = plate.load()
+    xs, ys = [], []
+    for y in range(260):
+        for x in range(320):
+            c = px[x, y]
+            if c[3] > 0 and not (abs(c[0] - 6) < 10 and abs(c[1] - 40) < 10
+                                 and abs(c[2] - 43) < 10 and 200 <= c[3] <= 240):
+                xs.append(x)
+                ys.append(y)
+    if not xs:
+        return None
+    im = plate.crop((min(xs) - 4, min(ys) - 4, max(xs) + 5, max(ys) + 5))
+    cleaned = []
+    for c in list(im.getdata()):
+        cleaned.append((0, 0, 0, 0)
+                       if (abs(c[0] - 6) < 12 and abs(c[1] - 40) < 12
+                           and abs(c[2] - 43) < 12 and 190 <= c[3] <= 245)
+                       else c)
+    im.putdata(cleaned)
+    return im
+
+
+def phrase_lib(week):
+    p = REPO / "tools" / "data" / ("%s-feedback.json" % week.lower())
+    return json.loads(p.read_text(encoding="utf-8")).get("phrases", {}) if p.exists() else {}
+
+
+def focus_lib(week):
+    p = REPO / "tools" / "data" / ("%s-focus.json" % week.lower())
+    return json.loads(p.read_text(encoding="utf-8")).get("focus", {}) if p.exists() else {}
+
+
+_PAST_VERBS = (("Take a big step", "Took a big step"), ("Run towards", "Ran towards"),
+               ("Play together", "Played together"), ("Help your", "Helped"),
+               ("Make a clean", "Made a clean"), ("Time your", "Timed the"),
+               ("Speed up", "Sped up"), ("Repeat quick", "Repeated quick"),
+               ("Correcting and encouraging", "Corrected and encouraged"),
+               ("Pass with", "Passed with"), ("Run and stop", "Ran and stopped"))
+
+
+def fallback_sentence(age, code, kind, focus):
+    """Week files without curated phrases still get a readable English line."""
+    raw = clean_text(focus.get(str(age), {}).get(FOCUS_SECTION[code], "")).rstrip(".")
+    if not raw:
+        return None
+    if kind == "needs improvement":
+        return "Needs to %s%s." % (raw[0].lower(), raw[1:])
+    for present, past in _PAST_VERBS:
+        if raw.startswith(present):
+            raw = past + raw[len(present):]
+            break
+    return "%s%s." % (raw[0].upper(), raw[1:])
+
+
+def feedback_lines(tag, week):
+    """One short English sentence per assessed focus point; omit Cannot assess."""
+    phrases, focus = phrase_lib(week), focus_lib(week)
+    out = []
+    for m in OBS_RE.finditer(tag.get("observations") or ""):
+        age, code = int(m.group(1)), m.group(2).upper()
+        status = m.group(3).strip().lower()
+        if status.startswith("cannot"):
+            continue
+        kind = "needs improvement" if status.startswith("needs") else "demonstrated"
+        label = "Needs improvement" if kind == "needs improvement" else "Demonstrated"
+        sentence = (phrases.get("%d|%s|%s" % (age, code, label))
+                    or fallback_sentence(age, code, kind, focus))
+        if sentence:
+            out.append({"kind": kind, "text": clean_text(sentence)})
+    return out
+
+
+def wrap_words(d, text, fnt, max_w):
+    lines, cur = [], ""
+    for word in text.split():
+        trial = (cur + " " + word).strip()
+        if cur and d.textbbox((0, 0), trial, font=fnt)[2] > max_w:
+            lines.append(cur)
+            cur = word
+        else:
+            cur = trial
+    if cur:
+        lines.append(cur)
+    return lines
+
+
+def _mark(d, x, y, size, kind):
+    """Lime checkmark / orange exclamation, drawn so no font glyph is needed."""
+    if kind == "demonstrated":
+        d.line([(x, y + size * .52), (x + size * .36, y + size * .86),
+                (x + size, y + size * .06)], fill=LIME,
+               width=max(4, size // 6), joint="curve")
+    else:
+        d.line([(x + size * .45, y + size * .04), (x + size * .45, y + size * .62)],
+               fill=ORANGE, width=max(4, size // 6))
+        r = size * .11
+        d.ellipse([x + size * .45 - r, y + size * .78 - r,
+                   x + size * .45 + r, y + size * .78 + r], fill=ORANGE)
+
+
+def make_feedback_caption(tag, clip, week, path):
+    """New Track 3 look: crest + name panel, and assessed-focus feedback panel."""
+    im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    name = tag.get("player") or "Unknown player"
+    meta = "%s · %s · %s · %s" % (
+        week, clip.get("topic", ""), tag.get("team", ""),
+        PHASE_LABEL.get(tag.get("phase"), tag.get("phase", "")))
+
+    # --- top left: crest next to a compact dark-forest panel ---------------
+    f_name, f_meta = bold_cjk(42), latin(24)
+    LEFT, TOP, CREST_H, PANEL_Y, PANEL_H = 56, 46, 150, 48, 132
+    crest = crest_asset()
+    crest_w = 126
+    if crest is not None:
+        crest_w = round(crest.width * CREST_H / crest.height)
+        im.alpha_composite(crest.resize((crest_w, CREST_H), Image.LANCZOS), (LEFT, TOP))
+    px = LEFT + crest_w + 22
+    tx = px + 54
+    text_w = max(d.textbbox((0, 0), name, font=f_name)[2],
+                 d.textbbox((0, 0), meta, font=f_meta)[2])
+    d.rounded_rectangle([px, PANEL_Y, tx + text_w + 30, PANEL_Y + PANEL_H],
+                        radius=18, fill=PANEL_BG)
+    d.rectangle([px + 26, PANEL_Y + 22, px + 29, PANEL_Y + PANEL_H - 22],
+                fill=PANEL_RULE)
+    d.text((tx, PANEL_Y + 20), name, font=f_name, fill=WHITE)
+    d.text((tx, PANEL_Y + 82), meta, font=f_meta, fill=SOFT_WHITE)
+
+    # --- bottom left: feedback only ---------------------------------------
+    blocks = [dict(line) for line in feedback_lines(tag, week)]
+    comment = tag.get("words") or ""
+    if comment:
+        blocks.append({"kind": "comment", "text": comment})
+    if not blocks:
+        im.save(path)
+        return path
+
+    f_body, f_comment = latin(26), latin(23)
+    avail = W - 2 * px - 130
+    rendered, max_w = [], 0
+    for blk in blocks:
+        fnt = f_comment if blk["kind"] == "comment" else f_body
+        parts = wrap_words(d, blk["text"], fnt, avail)
+        rendered.append((blk["kind"], parts, fnt))
+        for s in parts:
+            max_w = max(max_w, d.textbbox((0, 0), s, font=fnt)[2])
+
+    height = 24
+    for kind, parts, _ in rendered:
+        if kind == "comment":
+            height += 16
+        height += len(parts) * (36 if kind == "comment" else 44)
+    height += 24
+    bottom = H - 56
+    top = bottom - height
+    right = px + 66 + max_w + 30
+    d.rounded_rectangle([px, top, right, bottom], radius=18, fill=PANEL_BG)
+
+    y = top + 24
+    for kind, parts, fnt in rendered:
+        if kind == "comment":
+            d.line([(px + 26, y - 6), (right - 26, y - 6)],
+                   fill=(144, 191, 29, 150), width=2)
+            y += 10
+        for s in parts:
+            if kind == "comment":
+                d.text((px + 26, y), s, font=fnt, fill=SOFT_WHITE)
+                y += 36
+            else:
+                _mark(d, px + 26, y + 8, 24, kind)
+                d.text((px + 66, y), s, font=fnt, fill=WHITE)
+                y += 44
+    im.save(path)
+    return path
+
+
 def make_moment_caption(tag, clip, week, path):
     """Track 3 caption, drawn into Easy's FCG crest plate (Track3-BG.png).
 
@@ -537,8 +751,11 @@ def main():
                     help="wNN-weiyun-staging.json (defaults to tools/data/)")
     ap.add_argument("--stage-only", action="store_true",
                     help="skip rendering; stage already-rendered clips for Weiyun")
+    ap.add_argument("--style", choices=("feedback", "plate"), default="feedback",
+                    help="moment caption: feedback panels (default) or the legacy crest plate")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    caption_fn = make_feedback_caption if args.style == "feedback" else make_moment_caption
 
     wk = args.week.strip().upper()
     stage_json = (Path(args.stage_json) if args.stage_json else
@@ -607,7 +824,7 @@ def main():
         for i, t in enumerate(tags, 1):
             dst = out_dir / ("%s.mp4" % t["event_id"])
             caption = Path(tmp.name) / ("caption-%02d.png" % i)
-            make_moment_caption(t, {"topic": topic}, wk, caption)
+            caption_fn(t, {"topic": topic}, wk, caption)
             src = source_root / t["source"]
             print("  [%2d/%d] %-42s %6.2fs  %s" % (
                 i, len(tags), t["event_id"], t["seconds"], t["player"]))
@@ -625,6 +842,7 @@ def main():
                 "start": t["start"], "seconds": round(seconds, 2),
                 "bytes": size, "file": "%s/%s.mp4" % (wk, dst.name),
                 "sha": sha(dst), "drillbox": t["drillbox"],
+                "caption_style": args.style,
                 "plate": "Track3-BG.png" if _plate() is not None else "classic",
                 "updated": dt.date.today().isoformat(),
             }

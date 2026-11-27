@@ -967,7 +967,7 @@ def cmd_moments(cfg, week, args):
         if args.dry_run:
             return
         up = [sys.executable, str(REPO / "tools" / "upload_moments_weiyun.py"),
-              "--week", week]
+              "--week", week, "--replace"]
         if w.get("weiyun_dir_key"):
             up += ["--dir-key", w["weiyun_dir_key"]]
         parent = (w.get("weiyun_parent_dir_key") or

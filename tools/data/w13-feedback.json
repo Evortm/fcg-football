@@ -1,0 +1,42 @@
+{
+  "_comment": "W13 Track 3 feedback sentences. Key = <age>|<focus code>|<status>. Written from the FP tab focus text in w13-focus.json, never from internal codes. 'Cannot assess' is never listed - the renderer omits those points. Weeks without this file fall back to a light past-tense rewrite of the FP text.",
+  "week": "W13",
+  "source": "tools/data/w13-focus.json (W13-2026Fall FP tab, current-topic column)",
+  "phrases": {
+    "5|PA|Demonstrated": "Passed with the inside of the foot and stayed balanced.",
+    "5|PA|Needs improvement": "Needs to pass with the inside of the foot while staying balanced.",
+    "5|OB|Demonstrated": "Ran towards the ball as soon as it was played.",
+    "5|OB|Needs improvement": "Needs to move towards the ball earlier.",
+    "5|TW|Demonstrated": "Played together with the group and followed the rules.",
+    "5|TW|Needs improvement": "Needs to play together with the group and follow the rules.",
+    "5|AE|Demonstrated": "Ran, stopped in balance and changed direction well.",
+    "5|AE|Needs improvement": "Needs better balance when stopping and changing direction.",
+
+    "6|PA|Demonstrated": "Used a big step and a clean inside-foot strike while staying balanced.",
+    "6|PA|Needs improvement": "Needs a bigger step beside the ball and a balanced inside-foot strike.",
+    "6|OB|Demonstrated": "Ran towards the player on the ball to win it back.",
+    "6|OB|Needs improvement": "Needs to close the player on the ball sooner to win it back.",
+    "6|TW|Demonstrated": "Played together with the group and followed the rules of the exercise.",
+    "6|TW|Needs improvement": "Needs to play together with the group and follow the rules.",
+    "6|AE|Demonstrated": "Ran, stopped in balance and changed direction well.",
+    "6|AE|Needs improvement": "Needs better balance when stopping and changing direction.",
+
+    "7|PA|Demonstrated": "Made a clean inside-foot pass while the ball was rolling.",
+    "7|PA|Needs improvement": "Needs a cleaner inside-foot pass while the ball is rolling.",
+    "7|OB|Demonstrated": "Ran towards the player on the ball to win it back.",
+    "7|OB|Needs improvement": "Needs to close the player on the ball sooner to win it back.",
+    "7|TW|Demonstrated": "Helped teammates set up the pitch and put the equipment away.",
+    "7|TW|Needs improvement": "Needs to help teammates set up the pitch and put equipment away.",
+    "7|AE|Demonstrated": "Ran, stopped in balance and changed direction well.",
+    "7|AE|Needs improvement": "Needs better balance when stopping and changing direction.",
+
+    "11|PA|Demonstrated": "Timed the pass so a moving teammate could receive it in stride.",
+    "11|PA|Needs improvement": "Needs to time the pass so a moving teammate receives it in stride.",
+    "11|OB|Demonstrated": "Pressed the ball, blocked the back pass and closed the middle with the team.",
+    "11|OB|Needs improvement": "Needs to press earlier and block the back pass while the team closes the middle.",
+    "11|TW|Demonstrated": "Corrected and encouraged teammates during the action.",
+    "11|TW|Needs improvement": "Needs to correct and encourage teammates more during the action.",
+    "11|AE|Demonstrated": "Repeated quick accelerations and balanced braking through successive actions.",
+    "11|AE|Needs improvement": "Needs quicker acceleration and balanced braking through successive actions."
+  }
+}

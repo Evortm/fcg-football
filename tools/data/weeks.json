@@ -3,7 +3,7 @@
   "source_root": "C:/Users/munni/Documents/Dashboard/SesVid",
   "report_file_id": "DSmRkY0dwanFqaGZH",
   "report_title": "FCG Fall 2026 - internal training report",
-  "tag_mark_convention": "Two tagging modes share ONE 18-column A-R row. #drillbox in the comment = Track 2 nomination; Tags S/T/U hold Weiyun / Drillbox / overview share links. Player tag = player + 4 quality ratings + free comment. Drillbox = ONLY a >=20 s window, player_id=DRILLBOX, no ratings, no comment. Bare Drillbox rows are cut by build_drillbox.py and skipped by build_tag_moments.py; legacy player tags carrying #drillbox keep their details. Track 3 captions use Easy's Track3-BG.png crest plate. The short-lived #pos=x,y click mark was removed; old comments are still stripped of it.",
+  "tag_mark_convention": "Two tagging modes share ONE 18-column A-R row. #drillbox in the comment = Track 2 nomination; Tags S/T/U hold Weiyun / Drillbox / overview share links. Player tag = player + 4 quality ratings + free comment. Drillbox = ONLY a >=20 s window, player_id=DRILLBOX, no ratings, no comment. Bare Drillbox rows are cut by build_drillbox.py and skipped by build_tag_moments.py; legacy player tags carrying #drillbox keep their details. Track 3 captions use the 2026-11-27 feedback panels (standalone FCG crest + player name panel, assessed-focus feedback panel; wNN-feedback.json). --style plate keeps the old Track3-BG.png lower-third. The short-lived #pos=x,y click mark was removed; old comments are still stripped of it.",
   "video_height": 540,
   "video_crf": 26,
   "weiyun_root_by_topic": {
