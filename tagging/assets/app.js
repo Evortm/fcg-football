@@ -42,6 +42,9 @@
   var STORE_KEY = "fcg.tagging.sanitized.v1"
     + (coachCode() ? "." + coachCode() : "")
     + (WEEK_ID === "W11" ? "" : "." + WEEK_ID.toLowerCase());
+  /* One-step undo for Clear: a snapshot of the store taken just before the
+     wipe. Scoped to this week + coach, exactly like the live store. */
+  var CLEAR_BACKUP_KEY = STORE_KEY + ".beforeClear";
 
   function eventPrefix() {
     return V.prefix + (coachCode() ? "-" + coachCode() : "");
@@ -112,6 +115,16 @@
     emptyState: $("#emptyState"),
     filter: $("#filter"),
     verifyAll: $("#verifyAll"),
+    clearTagsBtn: $("#clearTags"),
+    clearPanel: $("#clearPanel"),
+    clearWeekName: $("#clearWeekName"),
+    clearScopeWeek: $("#clearScopeWeek"),
+    clearWeekCount: $("#clearWeekCount"),
+    clearClipCount: $("#clearClipCount"),
+    clearConfirm: $("#clearConfirm"),
+    clearBackup: $("#clearBackup"),
+    clearRestore: $("#clearRestore"),
+    clearCancel: $("#clearCancel"),
     storeNote: $("#storeNote"),
     toast: $("#toast"),
     exportBtn: $("#exportBtn"),
@@ -1315,6 +1328,135 @@
       : "Storage unavailable — export before closing";
     el.storeNote.textContent = base;
     el.verifyAll.disabled = mine === 0;
+    if (el.clearTagsBtn) {
+      /* Keep Clear reachable with zero tags when an undo snapshot exists —
+         otherwise the panel (and its Undo button) could never be opened. */
+      var undo = hasUndo();
+      el.clearTagsBtn.disabled = n === 0 && !undo;
+      el.clearTagsBtn.title = n
+        ? "Erase saved tags from this device so you can start a fresh tagging round"
+        : (undo ? "Undo the last Clear" : "No saved tags to clear");
+      if (!n && !undo && el.clearPanel) toggleClearPanel(false);
+      else if (el.clearPanel && !el.clearPanel.hidden) updateClearPanel();
+    }
+  }
+
+  /* ------------------------------------------------------------- clear */
+  /* Tags live in this browser's localStorage (one store per week + coach),
+     not on a server. Clear gives a coach an empty slate after a tagging round
+     has been exported. It is deliberately two-step and ALWAYS downloads a
+     backup first; the weekfile > Tags sheet and published videos are never
+     touched. The seqs counters are kept so new event IDs cannot collide with
+     rows that were already pasted into the weekfile. */
+  function snapshot() {
+    return {
+      version: 1, week: WEEK_ID, coach: coachCode(),
+      reviewer: store.reviewer, seqs: store.seqs, mode: store.mode,
+      activeClip: V.id, events: store.events
+    };
+  }
+
+  function backupJson(prefix) {
+    var name = prefix + "-" + WEEK_ID.toLowerCase() + "-" + fileTag() + ".json";
+    download(name, JSON.stringify(snapshot(), null, 2), "application/json");
+    return name;
+  }
+
+  function clearBackupSnapshot() {
+    try {
+      var raw = localStorage.getItem(CLEAR_BACKUP_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (err) { return null; }
+  }
+
+  function hasUndo() {
+    var snap = clearBackupSnapshot();
+    return !!(snap && snap.store && snap.store.events && snap.store.events.length);
+  }
+
+  function restoreClear() {
+    var snap = clearBackupSnapshot();
+    if (!snap || !snap.store || !Array.isArray(snap.store.events)
+        || !snap.store.events.length) {
+      toast("No cleared tags to restore on this device.", "bad");
+      return;
+    }
+    store.events = C.mergeEvents(store.events, snap.store.events);
+    store.seqs = C.normalizeStore({ events: store.events, seqs: snap.store.seqs }).seqs;
+    saveStore();
+    renderEvents();
+    updateClearPanel();
+    toast("Restored " + snap.store.events.length + " tags.", "good");
+  }
+
+  function clearScope() {
+    var checked = document.querySelector('input[name="clearScope"]:checked');
+    return checked && checked.value === "clip" ? "clip" : "week";
+  }
+
+  function clearTargetCount(scope) {
+    return scope === "clip" ? eventsOfClip().length : store.events.length;
+  }
+
+  function updateClearPanel() {
+    var scope = clearScope();
+    var all = store.events.length, mine = eventsOfClip().length;
+    var n = clearTargetCount(scope);
+    el.clearWeekName.textContent = WEEK_ID + " · " + (coachCode() || "master screen");
+    el.clearScopeWeek.textContent = WEEK_ID;
+    el.clearWeekCount.textContent = String(all);
+    el.clearClipCount.textContent = String(mine);
+    el.clearConfirm.textContent = "Clear " + n + (n === 1 ? " tag" : " tags");
+    el.clearConfirm.disabled = n === 0;
+    el.clearBackup.disabled = all === 0;
+    var snap = clearBackupSnapshot();
+    var undo = hasUndo();
+    el.clearRestore.hidden = !undo;
+    if (undo) {
+      var at = String(snap.clearedAt || "").slice(0, 16).replace("T", " ");
+      el.clearRestore.title = "Put back " + snap.store.events.length
+        + " tags from the last Clear" + (at ? " (" + at + ")" : "");
+    }
+    return { scope: scope, count: n };
+  }
+
+  function toggleClearPanel(force) {
+    if (!el.clearPanel) return;
+    var open = typeof force === "boolean" ? force : el.clearPanel.hidden;
+    el.clearPanel.hidden = !open;
+    el.clearTagsBtn.setAttribute("aria-expanded", String(open));
+    if (open) {
+      /* Never inherit a narrow scope from the previous clear: each new Clear
+         starts at the documented default (all clips of this week). */
+      var weekRadio = document.querySelector('input[name="clearScope"][value="week"]');
+      if (weekRadio) weekRadio.checked = true;
+      updateClearPanel();
+    }
+  }
+
+  function clearTags() {
+    var target = updateClearPanel();
+    if (!target.count) { toast("No tags to clear.", "bad"); return; }
+    var snap = snapshot();
+    var name = backupJson("tagging-ui-trial-before-clear");
+    try {
+      localStorage.setItem(CLEAR_BACKUP_KEY, JSON.stringify({
+        clearedAt: new Date().toISOString(), scope: target.scope, store: snap
+      }));
+    } catch (err) { /* the downloaded JSON remains the fallback */ }
+    store.events = target.scope === "clip"
+      ? store.events.filter(function (ev) { return ev.video_id !== V.id; })
+      : [];
+    /* seqs stay high on purpose: a fresh tag must not reuse an event ID that
+       already exists in the weekfile. */
+    state.editing = null;
+    el.filter.value = "";
+    saveStore();
+    resetForm(false);
+    renderEvents();
+    toggleClearPanel(false);
+    toast("Cleared " + target.count + (target.count === 1 ? " tag" : " tags")
+      + " · backup " + name, "good");
   }
 
   /* ------------------------------------------------------------ replay */
@@ -1622,6 +1764,25 @@
     el.filter.addEventListener("input", renderEvents);
     el.verifyAll.addEventListener("click", checkAll);
 
+    /* Clear is two-step: the panel states the scope, a backup is downloaded
+       and kept locally, then the tags are wiped from this device only. */
+    el.clearTagsBtn.addEventListener("click", function () { toggleClearPanel(); });
+    $$('input[name="clearScope"]').forEach(function (radio) {
+      radio.addEventListener("change", updateClearPanel);
+    });
+    el.clearBackup.addEventListener("click", function () {
+      if (!store.events.length) { toast("No tags to back up.", "bad"); return; }
+      toast("Backup saved: " + backupJson("tagging-ui-trial-backup"), "good");
+    });
+    el.clearRestore.addEventListener("click", restoreClear);
+    el.clearCancel.addEventListener("click", function () { toggleClearPanel(false); });
+    el.clearConfirm.addEventListener("click", clearTags);
+    document.addEventListener("click", function (ev) {
+      if (el.clearPanel.hidden) return;
+      if (el.clearPanel.contains(ev.target) || el.clearTagsBtn.contains(ev.target)) return;
+      toggleClearPanel(false);
+    });
+
     el.exportBtn.addEventListener("click", function () { toggleMenu(); });
     $$("#exportMenu [data-action]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -1673,9 +1834,10 @@
   }
 
   function onKey(ev) {
+    /* Escape closes overlays even when a Clear radio or form field has focus. */
+    if (ev.key === "Escape") { closeCombo(); toggleMenu(false); toggleClearPanel(false); return; }
     var tag = (ev.target.tagName || "").toLowerCase();
     if (tag === "input" || tag === "textarea" || tag === "select" || ev.target.isContentEditable) return;
-    if (ev.key === "Escape") { closeCombo(); toggleMenu(false); return; }
     if (ev.code === "Space") {
       ev.preventDefault();
       el.playBtn.click();

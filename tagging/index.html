@@ -6,14 +6,14 @@
 <title>FCG · W13 D1 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261126-modes1">
-<link rel="stylesheet" href="assets/app.css?v=20261126-modes1">
-<link rel="stylesheet" href="assets/mobile.css?v=20261126-modes1">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261127-clear1">
+<link rel="stylesheet" href="assets/app.css?v=20261127-clear1">
+<link rel="stylesheet" href="assets/mobile.css?v=20261127-clear1">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261126-modes1" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261127-clear1" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
@@ -215,8 +215,36 @@
       <div class="events-tools">
         <input id="filter" type="search" placeholder="Filter tags…" autocomplete="off">
         <button class="btn small ghost" id="verifyAll" type="button" title="Seek every tag and compare timestamps">Check replay</button>
+        <button class="btn small ghost clear-tags-btn" id="clearTags" type="button"
+                aria-haspopup="true" aria-expanded="false"
+                title="Erase saved tags from this device so you can start a fresh tagging round">Clear</button>
       </div>
     </div>
+
+    <!-- Clear is deliberately two-step: the panel states exactly what will be
+         removed, downloads a backup first, and never touches the weekfile or
+         any published video. -->
+    <div class="clear-panel" id="clearPanel" role="group" aria-label="Clear saved tags" hidden>
+      <div class="clear-panel-head">
+        <strong>Clear saved tags</strong>
+        <span id="clearWeekName">this week</span>
+      </div>
+      <p>Removes tags stored on <b>this device</b> only. The weekfile &gt; Tags sheet and any published videos stay as they are. A backup JSON is downloaded automatically before clearing, and a copy is kept here so you can undo the clear.</p>
+      <div class="clear-scope">
+        <label><input type="radio" name="clearScope" value="week" checked>
+          All clips of <span id="clearScopeWeek">W13</span> — <b id="clearWeekCount">0</b> tags</label>
+        <label><input type="radio" name="clearScope" value="clip">
+          This clip only — <b id="clearClipCount">0</b> tags</label>
+      </div>
+      <div class="clear-actions">
+        <button class="btn small ghost" id="clearBackup" type="button">Download backup</button>
+        <button class="btn small ghost" id="clearRestore" type="button" hidden
+                title="Put back the tags from the last Clear on this device">Undo last clear</button>
+        <button class="btn small ghost" id="clearCancel" type="button">Cancel</button>
+        <button class="btn small danger" id="clearConfirm" type="button">Clear tags</button>
+      </div>
+    </div>
+
     <div class="table-wrap">
       <table id="eventTable">
         <thead>
@@ -256,12 +284,12 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261126-modes1"></script>
-<script src="data/weeks.js?v=20261126-modes1"></script>
-<script src="data/w13-data.js?v=20261126-modes1"></script>
-<script src="data/reviewers.js?v=20261126-modes1"></script>
-<script src="assets/core.js?v=20261126-modes1"></script>
-<script src="assets/app.js?v=20261126-modes1"></script>
-<script src="assets/mobile.js?v=20261126-modes1"></script>
+<script src="data/pilot-data.js?v=20261127-clear1"></script>
+<script src="data/weeks.js?v=20261127-clear1"></script>
+<script src="data/w13-data.js?v=20261127-clear1"></script>
+<script src="data/reviewers.js?v=20261127-clear1"></script>
+<script src="assets/core.js?v=20261127-clear1"></script>
+<script src="assets/app.js?v=20261127-clear1"></script>
+<script src="assets/mobile.js?v=20261127-clear1"></script>
 </body>
 </html>

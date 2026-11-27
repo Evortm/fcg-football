@@ -142,3 +142,15 @@ tbody td:first-child,.p-id,.seg-cell small{display:none}
 .compact-phone .mode-note{margin-top:10px;padding:10px}
 .compact-phone .mode-note>span:not(.mode-len){flex-basis:100%}
 }
+/* Clear must be reachable on phone too: it is the only visible control in
+   .events-tools there (filter and Check replay are intentionally hidden). */
+@media(max-width:700px){
+.compact-phone .events-tools{justify-content:flex-start}
+.compact-phone #clearTags{height:44px;min-height:44px;font-size:14px}
+.compact-phone .clear-panel{padding:10px;font-size:14px;line-height:1.55}
+.compact-phone .clear-panel p{margin:6px 0 12px}
+.compact-phone .clear-scope{gap:12px}
+.compact-phone .clear-scope label{min-height:44px;align-items:center}
+.compact-phone .clear-scope input{width:20px;height:20px}
+.compact-phone .clear-actions .btn{flex:1 1 45%;min-height:44px;font-size:14px}
+}

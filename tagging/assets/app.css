@@ -647,6 +647,43 @@ textarea:hover { border-color: var(--fcg-border-strong); }
   background: var(--fcg-surface); font-size: 14px;
 }
 
+/* ---- Clear saved tags: two-step, backup first, device-local only ---- */
+/* The late a11y rule below sets .btn.ghost borders; these selectors need to be
+   at least as specific so the destructive action keeps its red outline. */
+.btn.ghost.clear-tags-btn { color: var(--fcg-danger); border-color: var(--fcg-danger-line); }
+.btn.ghost.clear-tags-btn:hover:not(:disabled) {
+  background: var(--fcg-danger-surface); color: var(--fcg-danger);
+  border-color: var(--fcg-danger);
+}
+.btn.danger {
+  background: var(--fcg-danger-surface); color: var(--fcg-danger);
+  border-color: var(--fcg-danger-line);
+}
+.btn.danger:hover:not(:disabled) {
+  background: var(--fcg-danger); color: #200d0d; border-color: var(--fcg-danger);
+}
+.btn.ghost.clear-tags-btn:disabled, .clear-panel .btn:disabled {
+  opacity: .45; cursor: not-allowed;
+}
+.btn.ghost.clear-tags-btn:disabled:hover { background: transparent; border-color: var(--fcg-danger-line); }
+
+.clear-panel {
+  margin: 0 0 14px; padding: 12px 16px;
+  border: 1px solid var(--fcg-danger-line); border-radius: var(--fcg-radius-card);
+  background: var(--fcg-surface); color: var(--fcg-text-secondary);
+  font-size: 13px; line-height: 1.5;
+}
+.clear-panel[hidden] { display: none; }
+.clear-panel p { margin: 6px 0 12px; max-width: 92ch; }
+.clear-panel b { color: var(--fcg-text); }
+.clear-panel-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--fcg-text); font-size: 14px; }
+.clear-panel-head span { color: var(--fcg-text-muted); font-family: var(--fcg-mono); font-size: 12px; }
+.clear-scope { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.clear-scope label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.clear-scope input { width: 16px; height: 16px; margin: 0; accent-color: var(--fcg-accent); }
+.clear-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.clear-actions .btn[hidden] { display: none; }
+
 .table-wrap { overflow-x: auto; border: 1px solid var(--fcg-border); border-radius: 10px; }
 table { width: 100%; border-collapse: collapse; min-width: 860px; }
 thead th {
