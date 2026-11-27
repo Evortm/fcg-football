@@ -1,7 +1,10 @@
 {
-  "_comment": "W13 Track 3 feedback sentences. Key = <age>|<focus code>|<status>. Written from the FP tab focus text in w13-focus.json, never from internal codes. 'Cannot assess' is never listed - the renderer omits those points. Weeks without this file fall back to a light past-tense rewrite of the FP text.",
+  "_comment": "W13 Track 3 feedback sentences. phrases key = <age>|<focus code>|<status>. comments key = event_id, an extra coach sentence shown only when the tag has no free comment. Written from the FP tab focus text in w13-focus.json, never from internal codes. 'Cannot assess' is never listed - the renderer omits those points. Weeks without this file fall back to a light past-tense rewrite of the FP text.",
   "week": "W13",
   "source": "tools/data/w13-focus.json (W13-2026Fall FP tab, current-topic column)",
+  "comments": {
+    "EVT-D1FU06GACTMON-W13D1-0001": "He was motivated from first till last minute this training."
+  },
   "phrases": {
     "5|PA|Demonstrated": "Passed with the inside of the foot and stayed balanced.",
     "5|PA|Needs improvement": "Needs to pass with the inside of the foot while staying balanced.",

@@ -145,7 +145,11 @@ def main():
         name, size = p.name, p.stat().st_size
         found = existing.get(name)
         if args.dry_run:
-            print("  %-42s %8d B  %s" % (name, size, "exists" if found else "UPLOAD"))
+            action = ("UPLOAD" if not found else
+                      "REPLACE" if found["size"] != size and args.replace else
+                      "CHANGED (no --replace)" if found["size"] != size else
+                      "exists")
+            print("  %-42s %8d B  %s" % (name, size, action))
             continue
         if found and found["size"] != size and args.replace and not args.dry_run:
             print("  retiring superseded %s (cloud %d B != local %d B)" % (

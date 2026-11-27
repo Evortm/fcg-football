@@ -254,10 +254,13 @@ def _crest():
 # Track 3 feedback caption (Easy, 2026-11-27)
 #
 # Top left    : standalone FCG crest + compact dark-forest panel, lime rule,
-#               player name (bold) and week/topic/team/block (soft).
+#               player name (bold) and topic/team/REAL SHOOT DATE (soft).
+#               No Wnn week code and no training block: parents need to see
+#               when the footage was actually filmed.
 # Bottom left : one short English sentence per ASSESSED focus point, aligned
 #               with the top panel. Cannot assess is omitted. A coach comment
-#               is appended only when present. No heading, no timecodes, no
+#               is appended only when present (tag comment, or a per-event
+#               override in wNN-feedback.json). No heading, no timecodes, no
 #               clip/event IDs, no "Player Moment" chip. If there is nothing
 #               to say, the whole lower panel is omitted.
 # --------------------------------------------------------------------------
@@ -313,6 +316,45 @@ def crest_asset():
 def phrase_lib(week):
     p = REPO / "tools" / "data" / ("%s-feedback.json" % week.lower())
     return json.loads(p.read_text(encoding="utf-8")).get("phrases", {}) if p.exists() else {}
+
+
+def comment_lib(week):
+    """Optional per-event coach sentence, keyed by event_id.
+
+    Used only when the tag itself has no free comment, so a full moments
+    re-run keeps an extra line Easy asked for on a specific player clip.
+    """
+    p = REPO / "tools" / "data" / ("%s-feedback.json" % week.lower())
+    return json.loads(p.read_text(encoding="utf-8")).get("comments", {}) if p.exists() else {}
+
+
+def week_config(week):
+    p = REPO / "tools" / "data" / "weeks.json"
+    if not p.exists():
+        return {}
+    return json.loads(p.read_text(encoding="utf-8")).get("weeks", {}).get(week.upper(), {})
+
+
+def clip_date(clip, week):
+    """Real calendar date the take was filmed, e.g. '23 November 2026'.
+
+    Resolution: explicit clip date -> weeks.json session_dates[day] -> week
+    fallback date. The day comes from shotDay / the window prefix, NOT from
+    the pinned -MON- slug in the video id (W13 Tuesday reshoots kept MON ids).
+    """
+    cfg = week_config(week)
+    raw = clean_text(clip.get("date") or "")
+    day = clean_text(clip.get("shotDay") or "").upper()[:3]
+    if not day:
+        m = re.match(r"^([A-Z]{3})\b", clean_text(clip.get("window") or "").upper())
+        day = m.group(1) if m else ""
+    if not raw:
+        raw = cfg.get("session_dates", {}).get(day, "") or cfg.get("date", "")
+    try:
+        d = dt.date.fromisoformat(raw)
+    except (TypeError, ValueError):
+        return ""
+    return "%d %s %d" % (d.day, d.strftime("%B"), d.year)
 
 
 def focus_lib(week):
@@ -393,9 +435,9 @@ def make_feedback_caption(tag, clip, week, path):
     im = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(im)
     name = tag.get("player") or "Unknown player"
-    meta = "%s · %s · %s · %s" % (
-        week, clip.get("topic", ""), tag.get("team", ""),
-        PHASE_LABEL.get(tag.get("phase"), tag.get("phase", "")))
+    shoot_date = clip_date(clip, week)
+    meta = " · ".join(p for p in (clip.get("topic", ""), tag.get("team", ""),
+                                  shoot_date) if p)
 
     # --- top left: crest next to a compact dark-forest panel ---------------
     f_name, f_meta = bold_cjk(42), latin(24)
@@ -418,7 +460,8 @@ def make_feedback_caption(tag, clip, week, path):
 
     # --- bottom left: feedback only ---------------------------------------
     blocks = [dict(line) for line in feedback_lines(tag, week)]
-    comment = tag.get("words") or ""
+    comment = (tag.get("words")
+               or clean_text(comment_lib(week).get(tag.get("event_id"), "")))
     if comment:
         blocks.append({"kind": "comment", "text": comment})
     if not blocks:
@@ -824,7 +867,9 @@ def main():
         for i, t in enumerate(tags, 1):
             dst = out_dir / ("%s.mp4" % t["event_id"])
             caption = Path(tmp.name) / ("caption-%02d.png" % i)
-            caption_fn(t, {"topic": topic}, wk, caption)
+            # Full clip metadata lets the caption resolve the real shoot date;
+            # topic stays the short code for both caption styles.
+            caption_fn(t, dict(dataset[t["video_id"]], topic=topic), wk, caption)
             src = source_root / t["source"]
             print("  [%2d/%d] %-42s %6.2fs  %s" % (
                 i, len(tags), t["event_id"], t["seconds"], t["player"]))
