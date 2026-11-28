@@ -427,7 +427,7 @@
     state.duration = clip.duration || 0;
     state.start = null;
     state.end = null;
-    state.ratings = {};
+    state.ratings = defaultRatings();
     state.replayStop = null;
     el.video.pause();
     state.remoteTried = null;
@@ -822,7 +822,16 @@
     }
   }
 
-  /* ------------------------------------------------------------ ratings */
+  /* ------------------------------------------------------------ ratings
+     Every focus point starts at "Cannot assess". A coach clicks ONLY the
+     points he actually assessed (Demonstrated / Needs improvement); an
+     unrated form is therefore already valid and needs no filler clicks. */
+  function defaultRatings() {
+    var out = {};
+    (V.focus || []).forEach(function (code) { out[code] = "Cannot assess"; });
+    return out;
+  }
+
   function renderRatings() {
     $$(".obs-row").forEach(function (row) {
       var field = row.dataset.field;
@@ -830,8 +839,11 @@
         btn.setAttribute("aria-pressed", String(state.ratings[field] === btn.dataset.value));
       });
     });
-    var rated = Object.keys(state.ratings).filter(function (k) { return !!state.ratings[k]; }).length;
-    el.fillRest.hidden = !(rated > 0 && rated < V.focus.length);
+    /* "Reset" is only useful once something has actually been assessed. */
+    var assessed = (V.focus || []).filter(function (code) {
+      return state.ratings[code] && state.ratings[code] !== "Cannot assess";
+    }).length;
+    el.fillRest.hidden = assessed === 0;
   }
 
   function setRating(field, value) {
@@ -898,7 +910,7 @@
   }
 
   /* ------------------------------------------------------ two tag modes
-     Player tag -> player, four quality ratings, free comment.
+     Player tag -> player, focus ratings (Cannot assess by default), free comment.
      Drillbox   -> ONLY the >= 20 s window. No player, no ratings, no comment.
      The mode is a workspace preference (remembered in the store); the saved
      row uses C.DRILLBOX_PLAYER_ID as a sentinel so the publisher and the
@@ -968,7 +980,7 @@
 
   function resetForm(keepMarkers) {
     state.player = null;
-    state.ratings = {};
+    state.ratings = defaultRatings();
     state.status = "Draft";
     state.drillbox = state.mode === "drillbox";
     state.editing = null;
@@ -1015,7 +1027,14 @@
     store.mode = state.mode;
     state.start = ev.t_start;
     state.end = ev.t_end;
-    state.ratings = Object.assign({}, ev.observations || {});
+    /* Start from the default, then overlay the ratings this tag already has.
+       Legacy rows with blank focus points become "Cannot assess", not errors. */
+    state.ratings = defaultRatings();
+    Object.keys(ev.observations || {}).forEach(function (code) {
+      if (C.RATINGS.indexOf(ev.observations[code]) >= 0) {
+        state.ratings[code] = ev.observations[code];
+      }
+    });
     state.status = ev.confirmation;
     state.drillbox = hasDrillbox(ev);
     state.editing = ev.event_id;
@@ -1606,6 +1625,9 @@
       || DATA.clips.filter(function (clip) { return clip.id === DATA.defaultClip; })[0]
       || DATA.clips[0];
     V = initial;
+    /* Focus codes are age-specific, so seed the defaults from the restored
+       clip rather than from DATA.clips[0]. */
+    state.ratings = defaultRatings();
     document.title = "FCG · " + WEEK_META.short + " team tagging";
     initWeekSelect();
     initClipSelect();
@@ -1719,9 +1741,7 @@
     });
 
     el.fillRest.addEventListener("click", function () {
-      V.focus.forEach(function (code) {
-        if (!state.ratings[code]) state.ratings[code] = "Cannot assess";
-      });
+      state.ratings = defaultRatings();
       renderRatings();
     });
 
@@ -1750,7 +1770,7 @@
         renderSegment();
         toast(next === "drillbox"
           ? "Drillbox: just mark a window of at least 20 s."
-          : "Player tag: pick a player, rate the focus points, add a comment.", "good");
+          : "Player tag: pick a player, click only the focus points you assessed.", "good");
       });
     });
 
