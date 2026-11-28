@@ -107,8 +107,6 @@
     sameTimeBtn: $("#sameTimeBtn"),
     clearBtn: $("#clearForm"),
     deleteBtn: $("#deleteBtn"),
-    formTitle: $("#formTitle"),
-    modeBadge: $("#modeBadge"),
     formError: $("#formError"),
     eventBody: $("#eventBody"),
     eventCount: $("#eventCount"),
@@ -128,7 +126,6 @@
     storeNote: $("#storeNote"),
     toast: $("#toast"),
     exportBtn: $("#exportBtn"),
-    exportMenu: $("#exportMenu"),
     importFile: $("#importFile"),
     videoChip: $("#videoChip"),
     chipLegend: $("#chipLegend"),
@@ -931,9 +928,6 @@
     $$("#modeSwitch button").forEach(function (btn) {
       btn.setAttribute("aria-pressed", String(btn.dataset.mode === state.mode));
     });
-    el.formTitle.textContent = state.editing
-      ? (drillbox ? "Edit Drillbox example" : "Edit player tag")
-      : (drillbox ? "Drillbox example" : "Tag a player");
     el.drillboxNote.hidden = !drillbox;
     updateSaveButton();
     updateModeNote();
@@ -997,8 +991,6 @@
     updateStatusButtons();
     renderSegment();
     showError("");
-    el.modeBadge.textContent = "New";
-    el.modeBadge.classList.remove("editing");
     applyMode();
     el.deleteBtn.hidden = true;
     el.eventBody.querySelectorAll("tr.editing").forEach(function (tr) { tr.classList.remove("editing"); });
@@ -1047,9 +1039,6 @@
     updateStatusButtons();
     renderSegment();
     showError("");
-
-    el.modeBadge.textContent = "Editing";
-    el.modeBadge.classList.add("editing");
     applyMode();
     el.deleteBtn.hidden = false;
 
@@ -1549,7 +1538,7 @@
       document.body.appendChild(area);
       area.select();
       try { document.execCommand("copy"); toast("Rows copied — paste into the current weekfile > Tags > A2.", "good"); }
-      catch (err) { toast("Copy failed. Use Export → Events CSV.", "bad"); }
+      catch (err) { toast("Copy failed. Use Quick start → Events CSV.", "bad"); }
       document.body.removeChild(area);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1737,7 +1726,6 @@
 
     document.addEventListener("mousedown", function (ev) {
       if (!el.playerList.hidden && !ev.target.closest(".combo")) closeCombo();
-      if (!el.exportMenu.hidden && !ev.target.closest(".menu-wrap")) toggleMenu(false);
     });
 
     el.fillRest.addEventListener("click", function () {
@@ -1803,13 +1791,13 @@
       toggleClearPanel(false);
     });
 
-    el.exportBtn.addEventListener("click", function () { toggleMenu(); });
-    $$("#exportMenu [data-action]").forEach(function (btn) {
+    /* Export is a single action: copy rows for weekfile > Tags. The three
+       less-used tools live in the Quick start panel, wired below. */
+    el.exportBtn.addEventListener("click", copyRows);
+    $$("[data-secondary-export]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        toggleMenu(false);
-        var action = btn.dataset.action;
+        var action = btn.dataset.secondaryExport;
         if (action === "csv") exportCsv();
-        if (action === "tsv") copyRows();
         if (action === "json") exportJson();
         if (action === "import") el.importFile.click();
       });
@@ -1847,15 +1835,9 @@
     if (el.video.paused) updateClock();
   }
 
-  function toggleMenu(force) {
-    var open = typeof force === "boolean" ? force : el.exportMenu.hidden;
-    el.exportMenu.hidden = !open;
-    el.exportBtn.setAttribute("aria-expanded", String(open));
-  }
-
   function onKey(ev) {
     /* Escape closes overlays even when a Clear radio or form field has focus. */
-    if (ev.key === "Escape") { closeCombo(); toggleMenu(false); toggleClearPanel(false); return; }
+    if (ev.key === "Escape") { closeCombo(); toggleClearPanel(false); return; }
     var tag = (ev.target.tagName || "").toLowerCase();
     if (tag === "input" || tag === "textarea" || tag === "select" || ev.target.isContentEditable) return;
     if (ev.code === "Space") {

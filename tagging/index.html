@@ -6,14 +6,14 @@
 <title>FCG · W13 D1 team tagging</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" href="assets/fcg-logo.png" type="image/png">
-<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261128-fpdefault1">
-<link rel="stylesheet" href="assets/app.css?v=20261128-fpdefault1">
-<link rel="stylesheet" href="assets/mobile.css?v=20261128-fpdefault1">
+<link rel="stylesheet" href="assets/fcg-tokens.css?v=20261128-ui2">
+<link rel="stylesheet" href="assets/app.css?v=20261128-ui2">
+<link rel="stylesheet" href="assets/mobile.css?v=20261128-ui2">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
-    <img class="crest" src="assets/fcg-logo.png?v=20261128-fpdefault1" alt="FCG crest">
+    <img class="crest" src="assets/fcg-logo.png?v=20261128-ui2" alt="FCG crest">
     <div class="titles">
       <h1>FCG · Player tagging</h1>
       <p id="clipSubtitle">—</p>
@@ -36,15 +36,10 @@
     <button class="video-chip" id="videoChip" title="Copy video ID" type="button">
       <span>Video</span><code id="videoIdLabel">—</code>
     </button>
-    <div class="menu-wrap">
-      <button class="btn ghost" id="exportBtn" type="button" aria-haspopup="true" aria-expanded="false">Export</button>
-      <div class="menu" id="exportMenu" hidden>
-        <button type="button" data-action="csv"><span>Events CSV</span><small>for the overview sheet</small></button>
-        <button type="button" data-action="tsv"><span>Copy rows</span><small>paste into weekfile &gt; Tags</small></button>
-        <button type="button" data-action="json"><span>Backup JSON</span><small>all tags on this device</small></button>
-        <button type="button" data-action="import"><span>Import backup…</span><small>merge by event ID</small></button>
-      </div>
-    </div>
+    <!-- One action only: copy the tag rows straight to the clipboard. The
+         less-used export tools live in the Quick start panel at the bottom. -->
+    <button class="btn ghost" id="exportBtn" type="button"
+            title="Copy all tags, then paste into weekfile > Tags > A2 · 复制标签行，粘贴到周文件 Tags">Export 导出</button>
   </div>
 </header>
 
@@ -143,13 +138,13 @@
 
   <section class="card tagform" id="tagForm" data-mode="player">
     <div class="card-head">
-      <h2 id="formTitle">Tag a player</h2>
       <div class="head-actions">
         <div class="mode-switch" id="modeSwitch" role="group" aria-label="Tag type">
-          <button type="button" data-mode="player" aria-pressed="true">Player tag</button>
-          <button type="button" data-mode="drillbox" aria-pressed="false">Drillbox</button>
+          <button type="button" data-mode="player" aria-pressed="true"
+                  title="给单个球员打标签：选人、评估观察点、写评语。">Player tag<small>球员标签</small></button>
+          <button type="button" data-mode="drillbox" aria-pressed="false"
+                  title="只标记一段至少 20 秒的示范窗口，不需要选球员。">Drillbox<small>示范片段</small></button>
         </div>
-        <span class="mode" id="modeBadge">New</span>
       </div>
     </div>
 
@@ -274,9 +269,15 @@
         <li><span class="num">2</span><span>Mark start (<kbd>S</kbd>) and end (<kbd>E</kbd>).</span></li>
         <li><span class="num">3</span><span><strong>Drillbox:</strong> just a 20 s+ window — no player, ratings or comment. Save it.</span></li>
         <li><span class="num">4</span><span><strong>Player tag:</strong> pick a player, rate the focus points, add a comment, then save.</span></li>
-        <li><span class="num">5</span><span>Replay, then export for the overview.</span></li>
+        <li><span class="num">5</span><span>Replay, press <strong>Export 导出</strong>, then paste into weekfile &gt; Tags.</span></li>
       </ol>
       <p class="guardrail">Manual observation only — no automatic judgments, scores or training use. Unknown identity is allowed; never guess.</p>
+      <div class="help-exports">
+        <span>Other export tools · 其他导出</span>
+        <button class="link" type="button" data-secondary-export="csv">Events CSV</button>
+        <button class="link" type="button" data-secondary-export="json">Backup JSON</button>
+        <button class="link" type="button" data-secondary-export="import">Import backup…</button>
+      </div>
     </details>
   </section>
 </main>
@@ -284,12 +285,12 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
 
-<script src="data/pilot-data.js?v=20261128-fpdefault1"></script>
-<script src="data/weeks.js?v=20261128-fpdefault1"></script>
-<script src="data/w13-data.js?v=20261128-fpdefault1"></script>
-<script src="data/reviewers.js?v=20261128-fpdefault1"></script>
-<script src="assets/core.js?v=20261128-fpdefault1"></script>
-<script src="assets/app.js?v=20261128-fpdefault1"></script>
-<script src="assets/mobile.js?v=20261128-fpdefault1"></script>
+<script src="data/pilot-data.js?v=20261128-ui2"></script>
+<script src="data/weeks.js?v=20261128-ui2"></script>
+<script src="data/w13-data.js?v=20261128-ui2"></script>
+<script src="data/reviewers.js?v=20261128-ui2"></script>
+<script src="assets/core.js?v=20261128-ui2"></script>
+<script src="assets/app.js?v=20261128-ui2"></script>
+<script src="assets/mobile.js?v=20261128-ui2"></script>
 </body>
 </html>

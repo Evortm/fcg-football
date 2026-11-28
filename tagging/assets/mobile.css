@@ -67,8 +67,7 @@ body{font-size:15px}
 .compact-phone .seg-timer>span:not(.timer-track){font-size:11px}
 .compact-phone .keys{display:none!important}
 kbd{display:none}
-.tagform>.card-head{padding:4px 0;min-height:0}
-.tagform>.card-head h2{font-size:18px}
+.tagform>.card-head{padding:4px 0;min-height:0;justify-content:flex-end}
 .tagform .group{padding:4px 0;margin:0}
 .group-label{font-size:14px;margin-bottom:4px}
 .combo input,textarea{font-size:16px!important}
@@ -138,7 +137,8 @@ tbody td:first-child,.p-id,.seg-cell small{display:none}
 .compact-phone .tagform>.card-head{flex-wrap:wrap;gap:6px}
 .compact-phone .head-actions{flex:1 1 100%;flex-wrap:wrap}
 .compact-phone .mode-switch{width:100%}
-.compact-phone .mode-switch button{flex:1;height:44px;min-height:44px;font-size:14px}
+.compact-phone .mode-switch button{flex:1;height:48px;min-height:48px;font-size:14px;padding:0 6px}
+.compact-phone .mode-switch button small{font-size:11px}
 .compact-phone .mode-note{margin-top:10px;padding:10px}
 .compact-phone .mode-note>span:not(.mode-len){flex-basis:100%}
 }
